@@ -1,0 +1,13 @@
+# Secrets
+secrets.fish
+*.secrets.fish
+
+# System files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Result symlinks
+result
+result-*
