@@ -48,6 +48,9 @@
         end
         echo "Sourced $envfile"
       end
+
+      # Enable Atuin
+      atuin init fish | sed "s/-k up/up/g" | source
     '';
     
     shellAliases = {

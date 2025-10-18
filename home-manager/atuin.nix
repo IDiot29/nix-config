@@ -5,6 +5,6 @@
   programs.atuin = {
     enable = true;
     # Disable auto fish integration to avoid bind -k error
-    enableFishIntegration = true;
+    enableFishIntegration = false;
   };
 }
