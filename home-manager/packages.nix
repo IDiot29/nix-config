@@ -1,5 +1,5 @@
 # My packages
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -35,5 +35,8 @@
     # Wayland
     swaylock    
     xwayland-satellite
+    
+    # Zed - Using prebuild from github release
+    (pkgs.callPackage ./zed.nix {})
   ];
 }

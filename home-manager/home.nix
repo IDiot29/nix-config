@@ -15,6 +15,9 @@
     # DankMaterialShell (without niri module to prevent config regeneration)
     inputs.dankMaterialShell.homeModules.dankMaterialShell.default
     
+    # Zen Browser (using beta module)
+    inputs.zen-browser.homeModules.beta
+    
     # Custom configurations
     ./niri.nix
     ./fish.nix
@@ -36,6 +39,9 @@
 
   # Programs
   programs.home-manager.enable = true;
+
+  # Zen Browser
+  programs.zen-browser.enable = true;
 
   # DankMaterialShell configuration
   programs.dankMaterialShell = {
