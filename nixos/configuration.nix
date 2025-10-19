@@ -35,7 +35,7 @@
     settings = {
       experimental-features = "nix-command flakes";
       auto-optimise-store = true;
-      
+
       # Binary caches for faster builds
       substituters = [
         "https://cache.nixos.org"
@@ -64,7 +64,7 @@
 
   # Custom hosts entries
   networking.hosts = {
-    "127.0.0.345" = [ "example.com" ];
+    "127.0.0.345" = ["example.com"];
   };
 
   # Set your time zone
@@ -75,11 +75,11 @@
 
   # Enable the X11 windowing system
   services.xserver.enable = true;
-  
+
   # GNOME Desktop
   services.desktopManager.gnome.enable = true;
   services.displayManager.gdm.enable = false;
-  
+
   # Greetd display manager
   services.greetd = {
     enable = true;
@@ -90,11 +90,11 @@
       };
     };
   };
-  
+
   # Define a user account
   users.users.rivaldo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager" "docker"];
     packages = with pkgs; [
       tree
     ];
@@ -112,8 +112,13 @@
   services.openssh = {
     enable = true;
     settings = {
-       PasswordAuthentication = false;
+      PasswordAuthentication = false;
     };
+  };
+
+  # Enable virtualisation
+  virtualisation.docker = {
+    enable = true;
   };
 
   # List packages installed in system profile
@@ -132,8 +137,8 @@
 
   #Systemd
   #For Pritunl
-  systemd.packages = [ pkgs.pritunl-client ];
-  systemd.targets.multi-user.wants = [ "pritunl-client.service" ];
+  systemd.packages = [pkgs.pritunl-client];
+  systemd.targets.multi-user.wants = ["pritunl-client.service"];
 
   # Fonts
   fonts.packages = with pkgs; [
