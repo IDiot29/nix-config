@@ -18,6 +18,11 @@ Leader key: `Space`
 |---------|--------|-------------|
 | `<leader>e` | Toggle File Tree | Open/Close NvimTree file explorer |
 
+**Navigation between file tree and editor:**
+- Use `Ctrl+h` to move to file tree (left window)
+- Use `Ctrl+l` to move back to editor (right window)
+- Or use arrow keys in NvimTree and press Enter to open files
+
 **Note:** File tree will NOT auto-open when you type `nvim`. Use `<leader>e` to open it manually.
 
 ## Window Navigation
@@ -66,6 +71,7 @@ GitSigns is also enabled for inline git status in the sign column.
 - Opens in a new tab (won't mess with your current layout)
 - Press `q` to quit lazygit - tab closes automatically
 - Or use `<leader>tc` to manually close the tab
+- **Themed with Catppuccin Mocha** to match your Neovim!
 
 ## Code Editing
 
@@ -89,20 +95,26 @@ GitSigns is also enabled for inline git status in the sign column.
 
 ## Auto-completion (nvim-cmp)
 
-When the completion menu appears, nvf provides these default keybindings:
+When the completion menu appears:
 
 | Keybind | Action | Description |
 |---------|--------|-------------|
-| `Ctrl+n` | Next Item | Navigate to next suggestion |
-| `Ctrl+p` | Previous Item | Navigate to previous suggestion |
-| `Tab` | Next/Expand | Next item or expand snippet |
-| `Shift+Tab` | Previous/Jump | Previous item or jump back in snippet |
+| `↓` or `Ctrl+n` | Next Item | Navigate to next suggestion |
+| `↑` or `Ctrl+p` | Previous Item | Navigate to previous suggestion |
+| `Tab` | Next | Next item in menu |
+| `Shift+Tab` | Previous | Previous item in menu |
 | `Enter` | Confirm | Accept selected suggestion |
 | `Ctrl+e` | Close | Close completion menu |
 
-**Note:** Arrow keys (↑/↓) work in the completion menu by default in nvf.
+**Arrow keys now work!** Use ↑/↓ to navigate completions.
 
 ## Additional Features
+
+### Indent Guides & Scope Highlighting
+**indent-blankline** plugin is enabled to show:
+- Vertical indent guides (│) for better code structure visibility
+- Highlighted scope - shows which block/function you're currently in
+- Helps track brackets, braces, and code blocks easily
 
 ### Auto-pairs
 Automatically closes brackets, quotes, and parentheses.

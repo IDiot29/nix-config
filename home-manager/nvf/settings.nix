@@ -56,6 +56,7 @@
 
       # Git
       lazygit
+      delta
 
       # Nix
       nil
@@ -202,6 +203,7 @@
         actions = {
           open_file = {
             quit_on_open = false;
+            resize_window = false;
           };
         };
       };
@@ -325,6 +327,48 @@
         ">" = {
           action = ">gv";
           desc = "Indent right";
+        };
+      };
+    };
+
+    # Custom Lua configuration for arrow keys in nvim-cmp
+    luaConfigRC.cmp-arrow-keys = ''
+      local cmp = require('cmp')
+
+      -- Setup arrow keys for nvim-cmp
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ['<Down>'] = cmp.mapping.select_next_item(),
+          ['<Up>'] = cmp.mapping.select_prev_item(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+        }),
+      })
+    '';
+
+    visuals.indent-blankline = {
+      enable = true;
+      setupOpts = {
+        indent = {
+          char = "│";
+        };
+        scope = {
+          enabled = true;
+          show_start = true;
+          show_end = true;
         };
       };
     };
