@@ -28,6 +28,12 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # NVF - declarative Neovim configuration
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -36,6 +42,7 @@
     home-manager,
     niri,
     zen-browser,
+    nvf,
     ...
   } @ inputs: let
     inherit (self) outputs;

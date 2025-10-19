@@ -17,6 +17,9 @@
     
     # Zen Browser (using beta module)
     inputs.zen-browser.homeModules.beta
+
+    # NVF Home-Manager module
+    inputs.nvf.homeManagerModules.default
     
     # Custom configurations
     ./niri.nix
@@ -29,6 +32,7 @@
     ./fzf.nix
     ./zoxide.nix
     ./atuin.nix
+    ./nvf/default.nix
   ];
 
   # User info
