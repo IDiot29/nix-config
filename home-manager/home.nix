@@ -11,16 +11,16 @@
   imports = [
     # Niri
     inputs.niri.homeModules.niri
-    
+
     # DankMaterialShell (without niri module to prevent config regeneration)
     inputs.dankMaterialShell.homeModules.dankMaterialShell.default
-    
+
     # Zen Browser (using beta module)
     inputs.zen-browser.homeModules.beta
 
     # NVF Home-Manager module
     inputs.nvf.homeManagerModules.default
-    
+
     # Custom configurations
     ./niri.nix
     ./fish.nix
@@ -55,7 +55,6 @@
     enableClipboard = true;
     enableVPN = true;
     enableBrightnessControl = true;
-    enableNightMode = true;
     enableDynamicTheming = true;
     enableAudioWavelength = true;
     enableCalendarEvents = true;
