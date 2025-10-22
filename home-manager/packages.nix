@@ -27,6 +27,7 @@
     dig
     helm
     sops
+    uv
 
     # GUI
     alacritty
