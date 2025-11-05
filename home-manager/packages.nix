@@ -24,10 +24,8 @@
     kubectl
     kustomize
     fluxcd
-    dig
     helm
     sops
-    uv
 
     # GUI
     alacritty
@@ -36,6 +34,7 @@
     mpv
     pritunl-client
     keepassxc
+    telegram-desktop
 
     # Wayland
     swaylock
