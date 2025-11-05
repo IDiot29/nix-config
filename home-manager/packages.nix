@@ -26,6 +26,7 @@
     fluxcd
     helm
     sops
+    gh
 
     # GUI
     alacritty
