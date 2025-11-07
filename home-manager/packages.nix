@@ -4,44 +4,53 @@
   pkgs,
   inputs,
   ...
-}: {
-  home.packages = with pkgs; [
-    # CLI
-    neovim
-    git
-    nil
-    nixpkgs-fmt
-    nodejs
-    ripgrep
-    bat
-    btop
-    fastfetch
-    eza
-    fd
-    fzf
-    zoxide
-    atuin
-    kubectl
-    kustomize
-    fluxcd
-    helm
-    sops
-    gh
+}: let
+  system = pkgs.stdenv.hostPlatform.system;
+  winappsPkgs = inputs.winapps.packages.${system};
+in {
+  home.packages =
+    (with pkgs; [
+      # CLI
+      neovim
+      git
+      nil
+      nixpkgs-fmt
+      nodejs
+      ripgrep
+      bat
+      btop
+      fastfetch
+      eza
+      fd
+      fzf
+      zoxide
+      atuin
+      kubectl
+      kustomize
+      fluxcd
+      helm
+      sops
+      gh
+      podman-compose
 
-    # GUI
-    alacritty
-    fuzzel
-    obs-studio
-    mpv
-    pritunl-client
-    keepassxc
-    telegram-desktop
+      # GUI
+      alacritty
+      fuzzel
+      obs-studio
+      mpv
+      pritunl-client
+      keepassxc
+      telegram-desktop
 
-    # Wayland
-    swaylock
-    xwayland-satellite
+      # Wayland
+      swaylock
+      xwayland-satellite
 
-    # Zed - Using prebuild from github release
-    (pkgs.callPackage ./zed.nix {})
-  ];
+      # Zed - Using prebuild from github release
+      (pkgs.callPackage ./zed.nix {})
+    ])
+    ++ [
+      winappsPkgs.winapps
+      winappsPkgs.winapps-launcher
+    ];
 }

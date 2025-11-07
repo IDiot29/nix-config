@@ -34,6 +34,12 @@
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # WinApps
+    winapps = {
+      url = "github:winapps-org/winapps";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -43,6 +49,7 @@
     niri,
     zen-browser,
     nvf,
+    winapps,
     ...
   } @ inputs: let
     inherit (self) outputs;

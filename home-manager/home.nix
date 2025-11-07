@@ -22,7 +22,7 @@
     inputs.nvf.homeManagerModules.default
 
     # Custom configurations
-    ./niri.nix
+    ./niri
     ./fish.nix
     ./git.nix
     ./packages.nix
@@ -32,6 +32,7 @@
     ./fzf.nix
     ./zoxide.nix
     ./atuin.nix
+    ./winapps
     ./nvf/default.nix
   ];
 
@@ -46,6 +47,13 @@
 
   # Zen Browser
   programs.zen-browser.enable = true;
+
+  # WinApps
+  programs.winapps = {
+    enable = true;
+    manageConfigFile = false;
+    manageComposeFile = false;
+  };
 
   # DankMaterialShell configuration
   programs.dankMaterialShell = {
