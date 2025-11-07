@@ -94,7 +94,7 @@
   # Define a user account
   users.users.rivaldo = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "docker"];
+    extraGroups = ["wheel" "networkmanager"];
     packages = with pkgs; [
       tree
     ];
@@ -117,7 +117,7 @@
   };
 
   # Enable virtualisation
-  virtualisation.docker = {
+  virtualisation.podman = {
     enable = true;
   };
 
