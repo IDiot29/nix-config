@@ -9,10 +9,7 @@
 }: {
   # Import other home-manager modules
   imports = [
-    # Niri
-    inputs.niri.homeModules.niri
-
-    # DankMaterialShell (without niri module to prevent config regeneration)
+    # DankMaterialShell
     inputs.dankMaterialShell.homeModules.dankMaterialShell.default
 
     # Zen Browser (using beta module)
@@ -44,6 +41,8 @@
     username = "rivaldo";
     homeDirectory = "/home/rivaldo";
   };
+
+  programs.niri.package = inputs.niri.packages."${pkgs.system}".niri-stable;
 
   # Programs
   programs.home-manager.enable = true;
