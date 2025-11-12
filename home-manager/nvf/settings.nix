@@ -3,6 +3,7 @@
 
 let
   lazygitBin = "${pkgs.lazygit}/bin/lazygit";
+  fishShell = "${pkgs.fish}/bin/fish";
 in {
   vim = {
     package = pkgs.neovim-unwrapped;
@@ -297,6 +298,28 @@ in {
           desc = "Open LazyGit in new tab";
         };
 
+        # Terminal helpers (fish shell)
+        "<leader>tt" = {
+          action = "<cmd>lua ToggleFishTerminal()<CR>";
+          desc = "Toggle fish terminal";
+        };
+        "<leader>t+" = {
+          action = "<cmd>lua ResizeFishTerminal(5)<CR>";
+          desc = "Increase terminal height";
+        };
+        "<leader>t-" = {
+          action = "<cmd>lua ResizeFishTerminal(-5)<CR>";
+          desc = "Decrease terminal height";
+        };
+        "<leader>tx" = {
+          action = "<cmd>lua HideFishTerminal()<CR>";
+          desc = "Hide fish terminal";
+        };
+        "<leader>tk" = {
+          action = "<cmd>lua KillFishTerminal()<CR>";
+          desc = "Kill fish terminal session";
+        };
+
         # LSP
         "gd" = {
           action = "<cmd>lua vim.lsp.buf.definition()<CR>";
@@ -359,6 +382,70 @@ in {
           end, { 'i', 's' }),
         }),
       })
+    '';
+
+    # Floating fish terminal helper (persistent session)
+    luaConfigRC.fish-terminal = ''
+      local state = { buf = nil, win = nil }
+
+      local function is_term_running(bufnr)
+        if not bufnr or not vim.api.nvim_buf_is_valid(bufnr) then
+          return false
+        end
+        local ok, job_id = pcall(function()
+          return vim.b[bufnr].terminal_job_id
+        end)
+        if not ok or not job_id then
+          return false
+        end
+        return vim.fn.jobwait({ job_id }, 0)[1] == -1
+      end
+
+      function ToggleFishTerminal()
+        if state.win and vim.api.nvim_win_is_valid(state.win) then
+          vim.api.nvim_win_close(state.win, true)
+          state.win = nil
+          return
+        end
+
+        if not is_term_running(state.buf) then
+          state.buf = vim.api.nvim_create_buf(false, true)
+          vim.api.nvim_buf_set_option(state.buf, 'bufhidden', 'hide')
+          vim.api.nvim_buf_call(state.buf, function()
+            vim.fn.termopen('${fishShell}')
+          end)
+        end
+
+        vim.cmd('botright 15split')
+        state.win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(state.win, state.buf)
+        vim.cmd('startinsert')
+      end
+
+      function ResizeFishTerminal(delta)
+        if state.win and vim.api.nvim_win_is_valid(state.win) then
+          local height = vim.api.nvim_win_get_height(state.win) + delta
+          if height < 5 then
+            height = 5
+          end
+          vim.api.nvim_win_set_height(state.win, height)
+        end
+      end
+
+      function HideFishTerminal()
+        if state.win and vim.api.nvim_win_is_valid(state.win) then
+          vim.api.nvim_win_close(state.win, true)
+          state.win = nil
+        end
+      end
+
+      function KillFishTerminal()
+        HideFishTerminal()
+        if state.buf and vim.api.nvim_buf_is_valid(state.buf) then
+          vim.api.nvim_buf_delete(state.buf, { force = true })
+        end
+        state.buf = nil
+      end
     '';
 
     visuals.indent-blankline = {
