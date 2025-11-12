@@ -40,9 +40,9 @@ in {
           defaultFgColor:
             - '#cdd6f4' # Text
       git:
-        paging:
-          colorArg: always
-          pager: delta --dark --paging=never
+        pagers:
+          - colorArg: always
+            pager: delta --dark --paging=never
     '';
   };
 }

@@ -1,7 +1,9 @@
 # Declarative NVF settings
 { pkgs, lib }:
 
-{
+let
+  lazygitBin = "${pkgs.lazygit}/bin/lazygit";
+in {
   vim = {
     package = pkgs.neovim-unwrapped;
     viAlias = false;
@@ -291,7 +293,7 @@
 
         # Git
         "<leader>gg" = {
-          action = "<cmd>tabnew | terminal lazygit<CR>i";
+          action = "<cmd>tabnew | terminal ${lazygitBin}<CR><cmd>startinsert<CR>";
           desc = "Open LazyGit in new tab";
         };
 
