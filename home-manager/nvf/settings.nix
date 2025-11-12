@@ -272,18 +272,18 @@ in {
           desc = "Previous buffer";
         };
 
-        # Tab navigation
+        # Bufferline "tabs" navigation
         "<leader>tn" = {
-          action = "<cmd>tabnext<CR>";
-          desc = "Next tab";
+          action = "<cmd>BufferLineCycleNext<CR>";
+          desc = "Next buffer tab";
         };
         "<leader>tp" = {
-          action = "<cmd>tabprevious<CR>";
-          desc = "Previous tab";
+          action = "<cmd>BufferLineCyclePrev<CR>";
+          desc = "Previous buffer tab";
         };
         "<leader>tc" = {
-          action = "<cmd>tabclose<CR>";
-          desc = "Close current tab";
+          action = "<cmd>BufferLinePickClose<CR>";
+          desc = "Close buffer tab";
         };
 
         # Clear search highlight

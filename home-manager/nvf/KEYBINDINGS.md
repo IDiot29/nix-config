@@ -64,6 +64,9 @@ Leader key: `Space`
 | Keybind | Action | Description |
 |---------|--------|-------------|
 | `<leader>gg` | LazyGit | Open LazyGit in new tab |
+| `<leader>tn` | Next Buffer Tab | Cycle to the next Bufferline tab |
+| `<leader>tp` | Previous Buffer Tab | Cycle to the previous Bufferline tab |
+| `<leader>tc` | Close Buffer Tab | Pick and close a Bufferline tab |
 | `<leader>tt` | Toggle Fish Terminal | Show/hide persistent fish terminal split |
 | `<leader>t+` | Grow Terminal | Increase fish terminal height by 5 |
 | `<leader>t-` | Shrink Terminal | Decrease fish terminal height by 5 |
