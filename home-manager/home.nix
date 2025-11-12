@@ -42,7 +42,7 @@
     homeDirectory = "/home/rivaldo";
   };
 
-  programs.niri.package = inputs.niri.packages."${pkgs.system}".niri-stable;
+  programs.niri.package = inputs.niri.packages."${pkgs.stdenv.hostPlatform.system}".niri-stable;
 
   # Programs
   programs.home-manager.enable = true;
@@ -60,7 +60,7 @@
   # DankMaterialShell configuration
   programs.dankMaterialShell = {
     enable = true;
-    enableSystemd = true;
+    systemd.enable = true;
     enableSystemMonitoring = true;
     enableClipboard = true;
     enableVPN = true;

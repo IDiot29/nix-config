@@ -6,7 +6,7 @@
   pkgs,
   ...
 }: let
-  niriPackage = inputs.niri.packages."${pkgs.system}".niri-stable;
+  niriPackage = inputs.niri.packages."${pkgs.stdenv.hostPlatform.system}".niri-stable;
 in {
   imports = [
     # If you want to use modules your own flake exports (from modules/nixos):
