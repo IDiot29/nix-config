@@ -64,6 +64,11 @@ Leader key: `Space`
 | Keybind | Action | Description |
 |---------|--------|-------------|
 | `<leader>gg` | LazyGit | Open LazyGit in new tab |
+| `<leader>tt` | Toggle Fish Terminal | Show/hide persistent fish terminal split |
+| `<leader>t+` | Grow Terminal | Increase fish terminal height by 5 |
+| `<leader>t-` | Shrink Terminal | Decrease fish terminal height by 5 |
+| `<leader>tx` | Hide Terminal | Temporarily hide fish terminal (keeps session alive) |
+| `<leader>tk` | Kill Terminal | Close fish terminal and end the session |
 
 GitSigns is also enabled for inline git status in the sign column.
 
