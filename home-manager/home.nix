@@ -21,6 +21,9 @@
     # NVF Home-Manager module
     inputs.nvf.homeManagerModules.default
 
+    # Vicinae launcher/service
+    inputs.vicinae.homeManagerModules.default
+
     # Custom configurations
     ./niri
     ./fish.nix
@@ -66,6 +69,24 @@
     enableDynamicTheming = true;
     enableAudioWavelength = true;
     enableCalendarEvents = true;
+  };
+
+  # Vicinae launcher configuration
+  services.vicinae = {
+    enable = true;
+    autoStart = true;
+    settings = {
+      faviconService = "twenty";
+      font.size = 11;
+      popToRootOnClose = false;
+      rootSearch.searchFiles = false;
+      theme.name = "catppuccin-mocha";
+      window = {
+        csd = true;
+        opacity = 0.95;
+        rounding = 10;
+      };
+    };
   };
 
   # Nicely reload system units when changing configs

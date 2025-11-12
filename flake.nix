@@ -1,6 +1,15 @@
 {
   description = "Rivaldo's NixOS Configuration";
 
+  nixConfig = {
+    "extra-substituters" = [
+      "https://vicinae.cachix.org"
+    ];
+    "extra-trusted-public-keys" = [
+      "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+    ];
+  };
+
   inputs = {
     # Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -35,6 +44,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Vicinae - application launcher
+    vicinae.url = "github:vicinaehq/vicinae";
+
     # WinApps
     winapps = {
       url = "github:winapps-org/winapps";
@@ -49,6 +61,7 @@
     niri,
     zen-browser,
     nvf,
+    vicinae,
     winapps,
     ...
   } @ inputs: let

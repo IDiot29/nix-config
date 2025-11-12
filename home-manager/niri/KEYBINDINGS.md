@@ -15,7 +15,7 @@
 | Keybind | Action |
 |---------|--------|
 | `Mod+T` | Open terminal (alacritty) |
-| `Mod+D` | Run application (fuzzel) |
+| `Mod+D` | Launch Vicinae |
 | `Mod+Space` | Application launcher (DankMaterialShell) |
 | `Mod+M` | Task manager |
 | `Mod+N` | Notification center |
