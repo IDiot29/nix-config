@@ -7,6 +7,7 @@
 }: let
   system = pkgs.stdenv.hostPlatform.system;
   winappsPkgs = inputs.winapps.packages.${system};
+  antigravityPackage = inputs.antigravity-nix.packages.${system}.default;
 in {
   home.packages =
     (with pkgs; [
@@ -41,6 +42,7 @@ in {
       pritunl-client
       keepassxc
       telegram-desktop
+      antigravityPackage
 
       # Wayland
       swaylock
