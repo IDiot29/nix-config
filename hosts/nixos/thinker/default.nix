@@ -74,6 +74,7 @@
   };
 
   programs.firefox.enable = true;
+  programs.niri.enable = true;  # Enable niri compositor at system level
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;

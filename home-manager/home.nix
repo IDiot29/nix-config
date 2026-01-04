@@ -7,6 +7,7 @@
 }: {
   imports = [
     # Flake inputs
+    # Note: niri home module is provided via NixOS module integration
     inputs.dankMaterialShell.homeModules.dank-material-shell
     inputs.zen-browser.homeModules.beta
     inputs.nvf.homeManagerModules.default
@@ -26,6 +27,7 @@
     ./common/zed.nix
     # NixOS-specific modules (have platform guards)
     ./nixos/niri/default.nix
+    ./nixos/ghostty.nix
     ./nixos/vicinae.nix
     ./nixos/dank-material-shell.nix
     ./nixos/nvf/default.nix
