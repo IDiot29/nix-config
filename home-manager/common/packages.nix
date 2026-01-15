@@ -23,6 +23,7 @@
     podman-compose
     fzf
     kubernetes-helm
+    jq
 
     # GUI
     keepassxc

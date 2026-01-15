@@ -92,7 +92,7 @@ in {
       nil
       nixd
       alejandra
-      nixfmt-rfc-style
+      nixfmt
       statix
       deadnix
       stylua
