@@ -24,6 +24,7 @@
     fzf
     kubernetes-helm
     jq
+    devenv
 
     # GUI
     keepassxc
