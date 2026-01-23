@@ -25,6 +25,7 @@
     kubernetes-helm
     jq
     devenv
+    bun
 
     # GUI
     keepassxc
