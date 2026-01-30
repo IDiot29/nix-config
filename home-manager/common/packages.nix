@@ -26,6 +26,7 @@
     jq
     devenv
     bun
+    python3
 
     # GUI
     keepassxc
