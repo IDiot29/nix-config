@@ -27,7 +27,7 @@
     devenv
     bun
     python3
-    jj
+    jujutsu
 
     # GUI
     keepassxc
