@@ -5,8 +5,6 @@
   lazygitBin = "${pkgs.lazygit}/bin/lazygit";
   fishShell = "${pkgs.fish}/bin/fish";
 
-  # Use nvim-treesitter.withPlugins for proper grammar and query installation
-  # Kubernetes files use yaml grammar; completion comes from yaml-language-server
   treesitterWithGrammars = pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
     p.nix
     p.bash
@@ -136,7 +134,6 @@ in {
           cmp-nvim-lsp
           cmp-buffer
           cmp-path
-          cmp_luasnip
           cmp-nvim-lua
           copilot-cmp
         ];
