@@ -110,6 +110,7 @@
     tailscale
     openvpn
     pritunl-client
+    home-manager
   ];
 
   fonts.packages = with pkgs; [
