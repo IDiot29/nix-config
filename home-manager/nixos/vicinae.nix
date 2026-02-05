@@ -1,4 +1,5 @@
-{config, pkgs, lib, inputs, ...}: {
+{config, pkgs, lib, inputs, ...}:
+{
   services.vicinae = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
     systemd = {
