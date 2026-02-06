@@ -8,8 +8,8 @@
 
     settings = {
       user = {
-        name = "vldo766hi";
-        email = "rivaldo.silalahi@lintasarta.co.id";
+        name = "valdo766hi";
+        email = "rivaldosilalahi13@gmail.com";
       };
 
       alias = {
