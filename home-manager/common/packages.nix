@@ -28,6 +28,7 @@
     bun
     python3
     jujutsu
+    yq
 
     # GUI
     keepassxc
