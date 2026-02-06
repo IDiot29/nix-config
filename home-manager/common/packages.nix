@@ -31,5 +31,6 @@
 
     # GUI
     keepassxc
+    obs-studio
   ];
 }
