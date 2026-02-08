@@ -14,6 +14,7 @@
     inputs.vicinae.homeManagerModules.default
     # Common modules (cross-platform)
     ./common/shell.nix
+    ./common/nushell.nix
     ./common/git.nix
     ./common/packages.nix
     ./common/starship.nix

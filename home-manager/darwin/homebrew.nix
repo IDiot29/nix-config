@@ -17,7 +17,6 @@
     ];
 
     brews = [
-      "nushell"
       "asdf"
       "wireguard-tools"
       "wireguard-go"

@@ -7,6 +7,7 @@
   home.packages = with pkgs; [
     # CLI
     neovim
+    nushell
     bat
     btop
     pwgen
