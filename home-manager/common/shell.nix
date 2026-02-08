@@ -79,6 +79,7 @@
       nv = "nvim";
       cd = "z";
       ff = "fastfetch";
+      k = "kubectl";
     } // lib.optionalAttrs pkgs.stdenv.isLinux {
       bjg = "echo I use NixOS, BTW";
     };
