@@ -8,8 +8,9 @@
 
     settings = {
       add_newline = true;
-      format = "$directory${"$"}{custom.dir_endcap}$git_branch$git_status\n\n$character";
-      right_format = "$time";
+      # Keep time on the top line, aligned to the right.
+      # (Avoids putting the timestamp on the command-entry line.)
+      format = "$directory${"$"}{custom.dir_endcap}$git_branch$git_status${"$"}{fill}$time\n\n$character";
 
       character = {
         error_symbol = "[❯](bold fg:#f38ba8) ";
@@ -50,6 +51,10 @@
         behind = "[⇣](bold fg:#f38ba8)";
         diverged = "[⇕](bold fg:#fab387)";
         up_to_date = "";
+      };
+
+      fill = {
+        symbol = " ";
       };
 
       time = {
