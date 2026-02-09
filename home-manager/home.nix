@@ -9,6 +9,7 @@
     # Flake inputs
     # Note: niri home module is provided via NixOS module integration
     inputs.dankMaterialShell.homeModules.dank-material-shell
+    inputs.noctalia.homeModules.default
     inputs.zen-browser.homeModules.beta
     inputs.nvf.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
@@ -31,6 +32,7 @@
     ./nixos/ghostty.nix
     ./nixos/vicinae.nix
     ./nixos/dank-material-shell.nix
+    ./nixos/noctalia-shell.nix
     ./nixos/nvf/default.nix
     ./nixos/flatpak.nix
   ];

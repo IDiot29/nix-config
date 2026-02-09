@@ -80,6 +80,19 @@ animations {
     // off
 }
 
+// Noctalia recommended compositor settings
+window-rule {
+    // Rounded corners. Set to 0 to disable.
+    geometry-corner-radius 0
+    // Only useful when geometry-corner-radius > 0.
+    clip-to-geometry false
+}
+
+debug {
+    // Allows notification actions and window activation from Noctalia.
+    honor-xdg-activation-with-invalid-serial
+}
+
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
@@ -202,6 +215,15 @@ binds {
     Mod+Shift+Comma hotkey-overlay-title="Consume Window into Column" { consume-window-into-column; }
     Mod+Comma hotkey-overlay-title="DMS Settings" { spawn "dms" "ipc" "call" "settings" "toggle"; }
     Mod+Period { expel-window-from-column; }
+
+    // Noctalia (optional). These do not conflict with the DMS defaults.
+    Mod+Ctrl+Space hotkey-overlay-title="Noctalia Launcher" { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+Ctrl+S hotkey-overlay-title="Noctalia Control Center" { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+    Mod+Ctrl+Comma hotkey-overlay-title="Noctalia Settings" { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+    Mod+Ctrl+N hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+    Mod+Ctrl+M hotkey-overlay-title="Noctalia System Monitor" { spawn "noctalia-shell" "ipc" "call" "systemMonitor" "toggle"; }
+    Mod+Ctrl+V hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    Mod+Ctrl+Alt+L hotkey-overlay-title="Noctalia Lock Screen" { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
 
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { switch-preset-window-height; }
