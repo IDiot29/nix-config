@@ -1,6 +1,12 @@
 # Niri Keybindings Reference
 
-## System & Help
+This doc is split into:
+
+- Global Niri keybindings (compositor actions)
+- DMS keybindings (commands that call `dms ipc ...`)
+- Noctalia keybindings (commands that call `noctalia-shell ipc ...`)
+
+## Global: System & Help
 
 | Keybind | Action |
 |---------|--------|
@@ -10,20 +16,14 @@
 | `Mod+Escape` | Toggle keyboard shortcuts inhibit |
 | `Mod+Shift+P` | Power off monitors |
 
-## Application Launcher & Tools
+## Global: Application Launcher & Tools
 
 | Keybind | Action |
 |---------|--------|
 | `Mod+T` | Open terminal (alacritty) |
 | `Mod+D` | Launch Vicinae |
-| `Mod+Space` | Application launcher (DankMaterialShell) |
-| `Mod+M` | Task manager |
-| `Mod+N` | Notification center |
-| `Mod+Shift+N` | Notepad |
-| `Mod+V` | Clipboard manager |
-| `Mod+Comma` | DMS Settings |
 
-## Window Management
+## Global: Window Management
 
 | Keybind | Action |
 |---------|--------|
@@ -33,7 +33,7 @@
 | `Mod+Shift+V` | Switch focus between floating and tiling |
 | `Mod+O` | Toggle overview |
 
-## Window Focus (Arrow Keys)
+## Global: Window Focus (Arrow Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -42,7 +42,7 @@
 | `Mod+Up` | Focus window up |
 | `Mod+Down` | Focus window down |
 
-## Window Focus (Vim Keys)
+## Global: Window Focus (Vim Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -51,7 +51,7 @@
 | `Mod+K` | Focus window up |
 | `Mod+J` | Focus window down |
 
-## Move Windows/Columns (Arrow Keys)
+## Global: Move Windows/Columns (Arrow Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -60,7 +60,7 @@
 | `Mod+Ctrl+Up` | Move window up |
 | `Mod+Ctrl+Down` | Move window down |
 
-## Move Windows/Columns (Vim Keys)
+## Global: Move Windows/Columns (Vim Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -69,7 +69,7 @@
 | `Mod+Ctrl+K` | Move window up |
 | `Mod+Ctrl+J` | Move window down |
 
-## Column Navigation
+## Global: Column Navigation
 
 | Keybind | Action |
 |---------|--------|
@@ -78,7 +78,7 @@
 | `Mod+Ctrl+Home` | Move column to first |
 | `Mod+Ctrl+End` | Move column to last |
 
-## Monitor Focus (Arrow Keys)
+## Global: Monitor Focus (Arrow Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -87,7 +87,7 @@
 | `Mod+Shift+Up` | Focus monitor up |
 | `Mod+Shift+Down` | Focus monitor down |
 
-## Monitor Focus (Vim Keys)
+## Global: Monitor Focus (Vim Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -96,7 +96,7 @@
 | `Mod+Shift+K` | Focus monitor up |
 | `Mod+Shift+J` | Focus monitor down |
 
-## Move Column to Monitor (Arrow Keys)
+## Global: Move Column to Monitor (Arrow Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -105,7 +105,7 @@
 | `Mod+Shift+Ctrl+Up` | Move column to monitor up |
 | `Mod+Shift+Ctrl+Down` | Move column to monitor down |
 
-## Move Column to Monitor (Vim Keys)
+## Global: Move Column to Monitor (Vim Keys)
 
 | Keybind | Action |
 |---------|--------|
@@ -114,7 +114,7 @@
 | `Mod+Shift+Ctrl+K` | Move column to monitor up |
 | `Mod+Shift+Ctrl+J` | Move column to monitor down |
 
-## Workspace Navigation
+## Global: Workspace Navigation
 
 | Keybind | Action |
 |---------|--------|
@@ -124,7 +124,7 @@
 | `Mod+Page_Up` | Focus workspace up |
 | `Mod+1` through `Mod+9` | Focus workspace 1-9 |
 
-## Move Column to Workspace
+## Global: Move Column to Workspace
 
 | Keybind | Action |
 |---------|--------|
@@ -134,7 +134,7 @@
 | `Mod+Ctrl+Page_Up` | Move column to workspace up |
 | `Mod+Ctrl+1` through `Mod+Ctrl+9` | Move column to workspace 1-9 |
 
-## Move Workspace
+## Global: Move Workspace
 
 | Keybind | Action |
 |---------|--------|
@@ -143,7 +143,7 @@
 | `Mod+Shift+Page_Down` | Move workspace down |
 | `Mod+Shift+Page_Up` | Move workspace up |
 
-## Column & Window Sizing
+## Global: Column & Window Sizing
 
 | Keybind | Action |
 |---------|--------|
@@ -158,7 +158,7 @@
 | `Mod+Shift+Minus` | Decrease window height by 10% |
 | `Mod+Shift+Equal` | Increase window height by 10% |
 
-## Column Arrangement
+## Global: Column Arrangement
 
 | Keybind | Action |
 |---------|--------|
@@ -169,14 +169,13 @@
 | `Mod+Shift+Comma` | Consume window into column |
 | `Mod+Period` | Expel window from column |
 
-## Lock Screen
+## Global: Lock Screen
 
 | Keybind | Action |
 |---------|--------|
 | `Super+Alt+L` | Lock screen (swaylock) |
-| `Mod+Alt+L` | Lock screen (DMS) |
 
-## Screenshots
+## Global: Screenshots
 
 | Keybind | Action |
 |---------|--------|
@@ -184,7 +183,7 @@
 | `Ctrl+Print` | Screenshot screen |
 | `Alt+Print` | Screenshot window |
 
-## Media & Volume
+## Global: Media & Volume
 
 | Keybind | Action |
 |---------|--------|
@@ -195,7 +194,7 @@
 | `XF86MonBrightnessUp` | Increase brightness |
 | `XF86MonBrightnessDown` | Decrease brightness |
 
-## Mouse Wheel Bindings
+## Global: Mouse Wheel Bindings
 
 ### Workspace Navigation
 - `Mod+WheelScrollDown/Up` - Focus workspace down/up
@@ -210,3 +209,32 @@
 ---
 
 **Note:** "Mod" key is Super (Windows key) when running on TTY, or Alt when running in a window.
+
+## DMS: Shell Keybindings
+
+These keybindings only work when the DMS systemd user service is running.
+
+| Keybind | Action |
+|---------|--------|
+| `Mod+Space` | Application launcher (`dms ipc call spotlight toggle`) |
+| `Mod+M` | Task manager (`dms ipc call processlist toggle`) |
+| `Mod+N` | Notification center (`dms ipc call notifications toggle`) |
+| `Mod+Shift+N` | Notepad (`dms ipc call notepad toggle`) |
+| `Mod+V` | Clipboard manager (`dms ipc call clipboard toggle`) |
+| `Mod+Comma` | Settings (`dms ipc call settings toggle`) |
+| `Mod+Alt+L` | Lock screen (`dms ipc call lock lock`) |
+
+## Noctalia: Shell Keybindings (Optional)
+
+These keybindings only work when the Noctalia systemd user service is running.
+They are intentionally non-conflicting with the DMS defaults.
+
+| Keybind | Action |
+|---------|--------|
+| `Mod+Ctrl+Space` | Launcher (`noctalia-shell ipc call launcher toggle`) |
+| `Mod+Ctrl+S` | Control Center (`noctalia-shell ipc call controlCenter toggle`) |
+| `Mod+Ctrl+Comma` | Settings (`noctalia-shell ipc call settings toggle`) |
+| `Mod+Ctrl+N` | Notifications history (`noctalia-shell ipc call notifications toggleHistory`) |
+| `Mod+Ctrl+M` | System monitor (`noctalia-shell ipc call systemMonitor toggle`) |
+| `Mod+Ctrl+V` | Clipboard (`noctalia-shell ipc call launcher clipboard`) |
+| `Mod+Ctrl+Alt+L` | Lock screen (`noctalia-shell ipc call lockScreen lock`) |
