@@ -30,8 +30,9 @@
     python3
     jujutsu
     yq
-
-    # GUI
+    sops
+    pandoc
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
     keepassxc
     obs-studio
   ];

@@ -16,8 +16,13 @@
 
       set fish_greeting
 
-      if test -f ~/.config/fish/secrets.fish
-        source ~/.config/fish/secrets.fish
+      set -l fish_secrets_path ~/.config/fish/secrets.fish
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
+        set fish_secrets_path /run/secrets/rendered/fish-secrets
+      ''}
+
+      if test -f $fish_secrets_path
+        source $fish_secrets_path
       end
 
       function envsource
@@ -54,6 +59,8 @@
 
       atuin init fish | sed "s/-k up/up/g" | source
 
+      starship init fish | source
+
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         eval (/opt/homebrew/bin/brew shellenv fish)
 
@@ -66,8 +73,8 @@
     '';
 
     shellAliases = {
-      rebuild = "${if pkgs.stdenv.isLinux then "cd ~/.config/nixos && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix-config && darwin-rebuild switch --flake .#darwin"}";
-      update-flake = "${if pkgs.stdenv.isLinux then "cd ~/.config/nixos && nix flake update" else "cd ~/.config/nix-config && nix flake update"}";
+      rebuild = "${if pkgs.stdenv.isLinux then "cd ~/.config/nixos && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nixos && nix run nix-darwin/master#darwin-rebuild -- switch --flake .#Rivaldos-MacBook-Pro"}";
+      update-flake = "cd ~/.config/nixos && nix flake update";
       g = "git";
       gs = "git status";
       ga = "git add";

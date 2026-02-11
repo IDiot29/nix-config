@@ -1,0 +1,17 @@
+{...}: {
+  imports = [
+    ./atuin.nix
+    ./bat.nix
+    ./eza.nix
+    ./git.nix
+    ./lazygit.nix
+    ./nushell.nix
+    ./packages.nix
+    ./shell.nix
+    ./starship.nix
+    ./tmux.nix
+    ./yazi/default.nix
+    ./zed.nix
+    ./zoxide.nix
+  ];
+}

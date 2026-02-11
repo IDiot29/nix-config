@@ -48,8 +48,13 @@
   xdg.configFile."nushell/config.nu".text = ''
     # Nushell interactive config
 
-    # Secrets are managed by sops-nix at ~/.config/nushell/secrets.nu
-    const secrets = "~/.config/nushell/secrets.nu"
+    # Secrets are managed by sops-nix.
+    ${lib.optionalString pkgs.stdenv.isLinux ''
+      const secrets = "~/.config/nushell/secrets.nu"
+    ''}
+    ${lib.optionalString pkgs.stdenv.isDarwin ''
+      const secrets = "/run/secrets/rendered/nushell-secrets"
+    ''}
     source-env $secrets
 
     # Source bash-style env files (.env) into Nushell
@@ -118,8 +123,8 @@
         sudo nixos-rebuild switch --flake .#thinker
       ''}
       ${lib.optionalString pkgs.stdenv.isDarwin ''
-        cd ($env.HOME | path join ".config" "nix-config")
-        darwin-rebuild switch --flake .#darwin
+        cd ($env.HOME | path join ".config" "nixos")
+        nix run nix-darwin/master#darwin-rebuild -- switch --flake .#Rivaldos-MacBook-Pro
       ''}
     }
 
@@ -129,7 +134,7 @@
         nix flake update
       ''}
       ${lib.optionalString pkgs.stdenv.isDarwin ''
-        cd ($env.HOME | path join ".config" "nix-config")
+        cd ($env.HOME | path join ".config" "nixos")
         nix flake update
       ''}
     }
