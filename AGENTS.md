@@ -1,250 +1,156 @@
-# NixOS Configuration Management Guidelines
+# Unified NixOS + nix-darwin Guidelines
 
-## Quick Reference
+This repository manages one NixOS host and one macOS host with a shared Home Manager base.
+
+## Quick Commands
+
 ```bash
-# Most Common Commands
-nix flake check                                      # Always run first!
-sudo nixos-rebuild switch --flake .#thinker          # Apply NixOS system changes
-darwin-rebuild switch --flake .#darwin               # Apply macOS system changes
-home-manager switch --flake .#rivaldo@thinker        # Apply user changes (NixOS)
-git status                                           # Check for untracked files
-nix flake update                                     # Update all flake inputs
+# Always do this first
+nix flake check
+
+# NixOS (local on thinker)
+sudo nixos-rebuild switch --flake .#thinker
+
+# macOS (run on Mac)
+sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
+
+# macOS (remote from NixOS over Tailscale/SSH)
+ssh -tt rivaldo@rivaldos-macbook-pro 'cd ~/.config/nixos && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro'
+
+# Update all inputs
+nix flake update
 ```
 
-## Project Structure & Module Organization
-- `flake.nix`: Main entry point defining inputs, outputs, system & home configurations
-- `flake.lock`: Pinned dependencies (auto-updated with `nix flake update`)
-- `hosts/`: Host-specific system configurations
-  - `nixos/thinker/`: NixOS host (thinker)
-    - `default.nix`: Main config, imports modules
-    - `hardware-configuration.nix`: Hardware-specific (auto-generated)
-  - `darwin/`: macOS host
-    - `default.nix`: Main config, imports modules
-- `home-manager/`: User-level configuration
-  - `home.nix`: Main home-manager entry point
-  - `common/`: Shared across both platforms (fish, git, starship, bat, zoxide, atuin, tmux, packages)
-  - `nixos/`: Linux-specific (niri, vicinae, dank-material-shell, nvf, winapps)
-  - `darwin/`: macOS-specific (aerospace, homebrew)
-- `modules/`: Reusable system modules
-  - `shared/`: Cross-platform modules (core services)
-  - `nixos/`: Linux-only modules (desktop, virtualisation)
-  - `darwin/`: macOS-only modules (desktop, homebrew)
+## Repository Layout
+
+- `flake.nix`: main entrypoint, host outputs, shared module wiring
+- `flake.lock`: pinned inputs
+- `hosts/`
+  - `hosts/nixos/thinker/configuration.nix`: thin NixOS host wrapper
+  - `hosts/nixos/thinker/hardware-configuration.nix`: hardware-specific file
+  - `hosts/darwin/configuration.nix`: thin Darwin host wrapper
+- `modules/`
+  - `modules/nixos/common/default.nix`: shared NixOS system settings
+  - `modules/nixos/desktop.nix`, `modules/nixos/virtualisation.nix`, `modules/nixos/secrets.nix`
+  - `modules/darwin/common/default.nix`, `modules/darwin/homebrew/default.nix`, `modules/darwin/aerospace/default.nix`, `modules/darwin/secrets.nix`
+- `home-manager/`
+  - `home-manager/home.nix`: shared HM base (single canonical home file)
+  - `home-manager/common/`: shared HM modules
+  - `home-manager/nixos/`: Linux-only HM modules
+  - `home-manager/darwin/`: macOS-only HM modules
+- `secrets/`
+  - `secrets/secrets.yaml`: encrypted with sops
+  - `.sops.yaml`: sops creation rules
+- `docs/`
+  - `docs/AEROSPACE_KEYBINDINGS.md`
+  - `docs/NIRI_KEYBINDINGS.md`
+  - `docs/NVF_KEYBINDINGS.md`
+
+## Current Design Rules
+
+1. Host files stay thin; real config goes in reusable modules.
+2. Home Manager has one shared base (`home-manager/home.nix`), platform specifics are imported by host wiring.
+3. One package manager owner per tool:
+   - Nix/Home Manager for CLI tools
+   - Homebrew for macOS GUI apps and selected exceptions (currently `asdf`)
+4. Secrets are managed via `sops-nix`, not plain text files.
+
+## Package Ownership Policy
+
+- CLI tools: managed by Nix/Home Manager (`home-manager/common/packages.nix`)
+- GUI apps on macOS: managed by Homebrew casks (`modules/darwin/homebrew/default.nix`)
+- Homebrew formulas on macOS: keep minimal and intentional (currently only `asdf`)
+- Avoid duplicates across Nix and Homebrew.
+
+## Secrets (sops-nix)
+
+- Encrypted source: `secrets/secrets.yaml`
+- NixOS key file: `/home/rivaldo/.config/sops/age/keys.txt`
+- Darwin key file: `/Users/rivaldo/.config/sops/age/keys.txt`
+- Managed secret keys currently include:
+  - `fish_secrets`
+  - `nushell_secrets`
+  - `winapps_rdp_user`
+  - `winapps_rdp_pass`
+
+Edit secrets with:
+
+```bash
+nix shell nixpkgs#sops -c sops secrets/secrets.yaml
+```
 
 ## Pre-Change Checklist
-Before making ANY changes:
-1. Run `nix flake check` to ensure current state is valid
-2. Check `git status` for untracked files (they break builds!)
-3. Review ESP space if touching bootloader: `df -h /boot`
-4. Backup important configs if making risky changes
 
-## Common Operations
+1. `nix flake check`
+2. `git status --short`
+3. For bootloader-related NixOS changes: `df -h /boot`
 
-### Adding a New Package
-```nix
-# For shared packages: home-manager/common/packages.nix
-home.packages = with pkgs; [
-  existing-package
-  new-package
-];
+## Common Workflows
 
-# For Linux-only: use lib.mkIf in nixos-specific module
-home.packages = with pkgs; lib.optionals pkgs.stdenv.isLinux [
-  linux-only-package
-];
+### Add a shared CLI package
 
-# For macOS-only: use lib.mkIf in darwin-specific module
-home.packages = with pkgs; lib.optionals pkgs.stdenv.isDarwin [
-  macos-only-package
-];
-```
+Edit `home-manager/common/packages.nix`.
 
-### Creating a New Module
-1. Decide where it belongs:
-   - `home-manager/common/` for cross-platform user config
-   - `home-manager/nixos/` for Linux-only user config
-   - `home-manager/darwin/` for macOS-only user config
-   - `modules/nixos/` for Linux-only system config
-   - `modules/darwin/` for macOS-only system config
-2. Import in `home.nix` or host `default.nix` respectively
-3. Use this template:
-```nix
-{ config, pkgs, lib, ... }:
-{
-  # Module configuration here
-}
-```
+### Add Linux-only Home Manager config
 
-### Platform-Conditional Configuration
-```nix
-{ config, pkgs, lib, ... }:
+1. Create file in `home-manager/nixos/`
+2. Import it from `home-manager/nixos/default.nix`
 
-{
-  # Conditionally enable on Linux
-  programs.example = lib.mkIf pkgs.stdenv.isLinux {
-    enable = true;
-  };
+### Add macOS-only Home Manager config
 
-  # Conditionally add packages
-  home.packages = with pkgs; lib.optionals pkgs.stdenv.isDarwin [
-    darwin-package
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
-    linux-package
-  ];
-}
-```
+1. Create file in `home-manager/darwin/`
+2. Import it from `home-manager/darwin/default.nix`
 
-## Coding Style & Best Practices
-- **Indentation**: 2 spaces, consistent throughout
-- **Attributes**: Group logically, sort alphabetically within groups
-- **Imports**: Be explicit, avoid `with` unless it significantly reduces duplication
-- **Package references**: Use explicit `pkgs.packageName`
-- **Platform detection**: Use `pkgs.stdenv.isLinux` and `pkgs.stdenv.isDarwin`
-- **Avoid duplicates**: One source per package (prevents path conflicts)
-- **Asset management**: Track all new files with `git add` immediately
+### Add NixOS system module
 
-## Testing & Validation
+1. Create file in `modules/nixos/`
+2. Export/import through `flake.nix` and host wrapper
 
-### Build Validation (NixOS)
+### Add Darwin system module
+
+1. Create file in `modules/darwin/`
+2. Export/import through `flake.nix` and `hosts/darwin/configuration.nix`
+
+## Validation
+
 ```bash
-nix flake check                                      # Catch syntax/eval errors
-sudo nixos-rebuild dry-build --flake .#thinker       # Test system build
-home-manager build --flake .#rivaldo@thinker         # Test home build
+# Global
+nix flake check
+
+# NixOS
+sudo nixos-rebuild dry-build --flake .#thinker
+home-manager build --flake .#rivaldo@thinker
+
+# Darwin local (on Mac)
+darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
 ```
 
-### Build Validation (macOS)
+## Known Operational Notes
+
+- Flake mode only sees tracked files. If you add/rename files and see "path ... does not exist", run `git add -A` first.
+- Home Manager collision handling is enabled with `backupFileExtension = "hm-bak"`.
+- If HM fails with `Permission denied` in `~/.config/*`, fix ownership once:
+  - `sudo chown -R rivaldo:staff ~/.config/nushell ~/.config/fish`
+
+## Rollback
+
+### NixOS
+
 ```bash
-nix flake check                                      # Catch syntax/eval errors
-darwin-rebuild build --flake .#darwin                # Test system build
-home-manager build --flake .#rivaldo@darwin          # Test home build
-```
-
-### Manual Smoke Tests After Changes
-- Yazi: `y` command works and returns to last directory
-- Bat: `bat --list-themes | grep Catppuccin` shows theme
-- Fish: Shell loads with correct prompt/aliases
-- NVF: Neovim loads with correct settings
-- Bootloader: Entries appear correctly (check ESP space!)
-
-## Critical Safety Notes
-
-### ESP/Bootloader Constraints (NixOS only)
-- **ESP Size**: ~247MB - CRITICAL LIMIT!
-- Keep `boot.loader.systemd-boot.configurationLimit = 5` or lower
-- Clean old generations if space errors: `sudo nix-collect-garbage --delete-older-than 7d`
-- Check space before bootloader changes: `df -h /boot`
-
-### Network & Downloads
-- Pin all downloaded sources with hashes
-- Avoid network fetches at build time
-- Use `fetchFromGitHub` with `rev` and `sha256`
-
-### Package Management
-- Use Home Manager modules over `home.packages` when module exists
-- Never duplicate package installations (causes conflicts)
-- Check for existing packages: `nix-env -q | grep package-name`
-
-## Troubleshooting
-
-### Common Issues & Solutions
-| Issue | Solution |
-|-------|----------|
-| "No space left on /boot" | Run `sudo nix-collect-garbage -d` then rebuild |
-| "Untracked files" error | `git add` the files or add to `.gitignore` |
-| "Attribute not found" | Check spelling, ensure module is imported |
-| "Infinite recursion" | Look for circular dependencies in configs |
-| Build succeeds but app missing | Check PATH, may need shell reload |
-| Darwin build fails | Check `nixpkgs.hostPlatform` is "aarch64-darwin" |
-
-### Debugging Commands
-```bash
-nix repl '<nixpkgs>'          # Interactive Nix exploration
-nix-store --verify --check-contents  # Verify store integrity
-nix why-depends <path1> <path2>      # Dependency analysis
-journalctl -xe                       # System service logs (NixOS)
-log show --predicate 'process == "darwin-rebuild"' --last 10  # macOS logs
-```
-
-## Commit & PR Guidelines
-
-### Commit Messages
-- Present tense, imperative mood ("Add", "Fix", "Update", not "Added", "Fixed")
-- Format: `<verb> <what> [where]`
-- Examples:
-  - Good: `Add Catppuccin theme to bat`
-  - Good: `Fix bootloader space constraints`
-  - Good: `Add AeroSpace config for macOS`
-  - Good: `Unify fish shell config across platforms`
-
-### Pull Request Template
-```markdown
-## Changes
-- Main change description
-- Secondary changes
-
-## Testing
-- [ ] `nix flake check` passes
-- [ ] NixOS rebuild tested (if applicable)
-- [ ] macOS rebuild tested (if applicable)
-- [ ] Home-manager rebuild tested
-- [ ] Manual smoke tests performed
-
-## Risks
-- Bootloader: [yes/no]
-- System services: [affected services]
-- User environment: [affected tools]
-```
-
-## Agent Learning Log
-*Append lessons learned here immediately to preserve knowledge:*
-
-- **2025-11-26**: Both CLAUDE.md and AGENTS.md must stay synchronized for multi-agent collaboration
-- **Bootloader**: ESP is only ~247M, always check space before changes
-- **Packages**: Avoid duplicates - one source per tool, use overrides in modules
-- **Assets**: Untracked files break flake builds, always `git add` new themes/configs
-- **Wrapper naming**: Keep it minimal (e.g., `y` for yazi, not `yazi-wrapper`)
-- **2026-01-02**: Unified NixOS + nix-darwin in single repo
-  - Use `lib.mkIf pkgs.stdenv.isLinux/Darwin` for conditional config
-  - `self` is not available in module context (darwin configRevision)
-  - Use `lib.optionalAttrs` for conditional attributes in sets
-  - Home Manager as module on both platforms for unified rebuilds
-
-## Rollback Procedures
-
-### NixOS Rollback
-```bash
-# List previous generations
-sudo nix-env --list-generations -p /nix/var/nix/profiles/system
-
-# Rollback system
 sudo nixos-rebuild switch --rollback --flake .#thinker
-
-# Rollback home-manager
-home-manager generations  # list
-home-manager switch --flake .#rivaldo@thinker --rollback
-
-# Nuclear option: boot previous generation from bootloader menu
 ```
 
-### macOS Rollback
+### Darwin
+
 ```bash
-# List previous generations
-darwin-rebuild list-generations
-
-# Rollback system
-darwin-rebuild switch --rollback --flake .#darwin
-
-# Rollback home-manager
-home-manager generations
-home-manager switch --flake .#rivaldo@darwin --rollback
+darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Pro
 ```
 
-## Essential Resources
-- [NixOS Options Search](https://search.nixos.org/options)
-- [Nixpkgs Search](https://search.nixos.org/packages)
-- [Home Manager Options](https://nix-community.github.io/home-manager/options.html)
-- [nix-darwin Manual](https://daiderd.com/nix-darwin/manual/)
-- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep understanding
-- Local flake: Check `flake.nix` for current input versions
+## Commit Style
 
----
-*Remember: When in doubt, `nix flake check` first, ask questions second!*
+- Imperative present tense (`Add`, `Fix`, `Refactor`, `Update`)
+- Keep scope clear
+- Examples:
+  - `Refactor Darwin host wiring and Home Manager composition`
+  - `Add sops-nix secrets module for macOS`
+  - `Fix Home Manager homeDirectory resolution on Darwin`

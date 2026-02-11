@@ -113,4 +113,4 @@ These apps open as floating windows:
 
 ---
 
-**Note:** AeroSpace runs at login (auto-started).
+**Note:** `start-at-login` is currently set to `false` in `modules/darwin/aerospace/default.nix`.
