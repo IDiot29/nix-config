@@ -8,10 +8,6 @@ secrets.fish
 *.swo
 *~
 
-# WinApps
-home-manager/winapps/winapps.conf
-home-manager/winapps/compose.yaml
-
 # Result symlinks
 result
 result-*
