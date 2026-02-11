@@ -1,15 +1,10 @@
 {
   inputs,
-  lib,
-  config,
   pkgs,
   ...
 }: {
   imports = [
-    ./hardware-configuration.nix
     inputs.niri.nixosModules.niri
-    inputs.self.nixosModules.desktop
-    inputs.self.nixosModules.virtualisation
   ];
 
   nixpkgs = {
@@ -42,12 +37,11 @@
 
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 7;
+    configurationLimit = 5;
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "thinker";
   networking.networkmanager = {
     enable = true;
     logLevel = "INFO";
@@ -56,7 +50,7 @@
     ];
   };
   networking.hosts = {
-    "127.0.0.345" = ["example.com"];
+    "127.0.0.1" = ["example.com"];
   };
 
   time.timeZone = "Asia/Jakarta";
@@ -74,7 +68,7 @@
   };
 
   programs.firefox.enable = true;
-  programs.niri.enable = true;  # Enable niri compositor at system level
+  programs.niri.enable = true;
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -100,7 +94,6 @@
   systemd.packages = [pkgs.pritunl-client];
   systemd.targets.multi-user.wants = ["pritunl-client.service"];
 
-  # System packages
   environment.systemPackages = with pkgs; [
     vim
     wget

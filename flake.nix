@@ -25,6 +25,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -85,6 +90,7 @@
     nixpkgs,
     nix-darwin,
     home-manager,
+    sops-nix,
     nix-homebrew,
     homebrew-core,
     homebrew-cask,
@@ -106,7 +112,7 @@
       thinker = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         modules = [
-          ./hosts/nixos/thinker/default.nix
+          ./hosts/nixos/thinker/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -140,7 +146,9 @@
     };
 
     nixosModules = {
+      common = import ./modules/nixos/common/default.nix;
       desktop = import ./modules/nixos/desktop.nix;
+      secrets = import ./modules/nixos/secrets.nix;
       virtualisation = import ./modules/nixos/virtualisation.nix;
     };
 

@@ -1,0 +1,8 @@
+keys:
+  - &default_age age16s27v27evqqknux05t78kwf3pqxfz3qluwdnnq5f56p8gglk44wq7yuvx4
+
+creation_rules:
+  - path_regex: ^secrets/.*\.ya?ml$
+    key_groups:
+      - age:
+          - *default_age

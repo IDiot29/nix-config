@@ -8,17 +8,6 @@
 
     mkdir -p "$HOME/.config/nushell" "$HOME/.local/share/nushell/vendor/autoload"
 
-    # Ensure secrets file exists so `source-env` doesn't fail at parse-time.
-    if [ ! -f "$HOME/.config/nushell/secrets.nu" ]; then
-      umask 077
-      cat > "$HOME/.config/nushell/secrets.nu" <<'EOF'
-    export-env {
-      # Put secrets here. Example:
-      # $env.MY_SECRET = "XXXXXX"
-    }
-EOF
-    fi
-
     ${pkgs.starship}/bin/starship init nu > "$HOME/.local/share/nushell/vendor/autoload/starship.nu"
     ${pkgs.atuin}/bin/atuin init nu > "$HOME/.local/share/nushell/vendor/autoload/atuin.nu"
     ${pkgs.zoxide}/bin/zoxide init nushell > "$HOME/.local/share/nushell/vendor/autoload/zoxide.nu"
@@ -59,7 +48,7 @@ EOF
   xdg.configFile."nushell/config.nu".text = ''
     # Nushell interactive config
 
-    # Optional per-machine secrets (not managed by Nix)
+    # Secrets are managed by sops-nix at ~/.config/nushell/secrets.nu
     const secrets = "~/.config/nushell/secrets.nu"
     source-env $secrets
 

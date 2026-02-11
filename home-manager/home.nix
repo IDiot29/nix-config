@@ -13,28 +13,9 @@
     inputs.zen-browser.homeModules.beta
     inputs.nvf.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
-    # Common modules (cross-platform)
-    ./common/shell.nix
-    ./common/nushell.nix
-    ./common/git.nix
-    ./common/packages.nix
-    ./common/starship.nix
-    ./common/bat.nix
-    ./common/zoxide.nix
-    ./common/atuin.nix
-    ./common/tmux.nix
-    ./common/lazygit.nix
-    ./common/eza.nix
-    ./common/yazi/default.nix
-    ./common/zed.nix
-    # NixOS-specific modules (have platform guards)
-    ./nixos/niri/default.nix
-    ./nixos/ghostty.nix
-    ./nixos/vicinae.nix
-    ./nixos/dank-material-shell.nix
-    ./nixos/noctalia-shell.nix
-    ./nixos/nvf/default.nix
-    ./nixos/flatpak.nix
+    # Shared Home Manager module sets
+    ../modules/home-manager/common/default.nix
+    ../modules/home-manager/nixos/default.nix
   ];
 
   home = {
