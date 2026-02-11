@@ -32,7 +32,6 @@
 
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     homebrew-core = {
@@ -118,7 +117,19 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.rivaldo = import ./home-manager/home.nix;
+              backupFileExtension = "hm-bak";
+              users.rivaldo = {
+                imports = [
+                  ./home-manager/home.nix
+                  # Note: niri home module is provided via NixOS module integration
+                  inputs.dankMaterialShell.homeModules.dank-material-shell
+                  inputs.noctalia.homeModules.default
+                  inputs.zen-browser.homeModules.beta
+                  inputs.nvf.homeManagerModules.default
+                  inputs.vicinae.homeManagerModules.default
+                  ./home-manager/nixos/default.nix
+                ];
+              };
               extraSpecialArgs = {inherit inputs;};
             };
           }
@@ -131,13 +142,19 @@
         system = "aarch64-darwin";
         specialArgs = {inherit inputs;};
         modules = [
-          ./hosts/darwin/default.nix
+          ./hosts/darwin/configuration.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.rivaldo = import ./home-manager/home.nix;
+              backupFileExtension = "hm-bak";
+              users.rivaldo = {
+                imports = [
+                  ./home-manager/home.nix
+                  ./home-manager/darwin/default.nix
+                ];
+              };
               extraSpecialArgs = {inherit inputs;};
             };
           }
@@ -152,6 +169,13 @@
       virtualisation = import ./modules/nixos/virtualisation.nix;
     };
 
+    darwinModules = {
+      aerospace = import ./modules/darwin/aerospace/default.nix;
+      common = import ./modules/darwin/common/default.nix;
+      homebrew = import ./modules/darwin/homebrew/default.nix;
+      secrets = import ./modules/darwin/secrets.nix;
+    };
+
     homeConfigurations = {
       "rivaldo@thinker" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -161,6 +185,13 @@
         extraSpecialArgs = {inherit inputs;};
         modules = [
           ./home-manager/home.nix
+          # Note: niri home module is provided via NixOS module integration
+          inputs.dankMaterialShell.homeModules.dank-material-shell
+          inputs.noctalia.homeModules.default
+          inputs.zen-browser.homeModules.beta
+          inputs.nvf.homeManagerModules.default
+          inputs.vicinae.homeManagerModules.default
+          ./home-manager/nixos/default.nix
         ];
       };
     };
