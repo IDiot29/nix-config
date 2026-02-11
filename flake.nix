@@ -152,6 +152,7 @@
               users.rivaldo = {
                 imports = [
                   ./home-manager/home.nix
+                  inputs.nvf.homeManagerModules.default
                   ./home-manager/darwin/default.nix
                 ];
               };

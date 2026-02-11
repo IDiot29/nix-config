@@ -77,32 +77,38 @@ in {
       }
     ];
 
-    extraPackages = with pkgs; [
-      wl-clipboard
-      chafa
-      imagemagick
-      poppler-utils
-      ffmpegthumbnailer
-      ripgrep
-      fd
-      lazygit
-      delta
-      nil
-      nixd
-      alejandra
-      nixfmt
-      statix
-      deadnix
-      stylua
-      lua-language-server
-      shfmt
-      shellcheck
-      rust-analyzer
-      pyright
-      nodejs_22
-      yaml-language-server
-      actionlint
-    ];
+    extraPackages =
+      (with pkgs; [
+        chafa
+        imagemagick
+        poppler-utils
+        ffmpegthumbnailer
+        ripgrep
+        fd
+        lazygit
+        delta
+        nil
+        nixd
+        alejandra
+        nixfmt
+        statix
+        deadnix
+        stylua
+        lua-language-server
+        shfmt
+        shellcheck
+        rust-analyzer
+        pyright
+        nodejs_22
+        yaml-language-server
+        actionlint
+      ])
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        pkgs.wl-clipboard
+      ]
+      ++ lib.optionals pkgs.stdenv.isDarwin [
+        pkgs.pngpaste
+      ];
 
     withPython3 = true;
     python3Packages = ["pynvim"];
