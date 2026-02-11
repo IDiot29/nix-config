@@ -1,15 +1,9 @@
 {
   inputs,
-  outputs,
-  lib,
-  config,
   pkgs,
   ...
 }: {
-  imports = [
-    ../../modules/darwin/desktop.nix
-    ../../modules/darwin/homebrew.nix
-  ];
+  nixpkgs.config.allowUnfree = true;
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
@@ -20,9 +14,12 @@
     };
   };
 
+  programs.fish.enable = true;
+
   system = {
     primaryUser = "rivaldo";
     stateVersion = 6;
+    configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
 
     defaults = {
       dock = {
@@ -43,18 +40,5 @@
         askForPasswordDelay = 10;
       };
     };
-  };
-
-  nix-homebrew = {
-    enable = true;
-    user = "rivaldo";
-    enableRosetta = true;
-    autoMigrate = false;
-
-    taps = {
-      "homebrew/homebrew-core" = inputs.homebrew-core;
-      "homebrew/homebrew-cask" = inputs.homebrew-cask;
-    };
-    mutableTaps = true;
   };
 }
