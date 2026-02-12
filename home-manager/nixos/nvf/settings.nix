@@ -141,10 +141,10 @@ in {
           cmp-buffer
           cmp-path
           cmp-nvim-lua
-          copilot-cmp
+          # copilot-cmp
         ];
         sources = {
-          copilot = "[Copilot]";
+          # copilot = "[Copilot]";
           nvim_lsp = "[LSP]";
           buffer = "[Buffer]";
           path = "[Path]";
@@ -173,16 +173,16 @@ in {
         '';
       };
 
-      copilot-lua = {
-        package = pkgs.vimPlugins.copilot-lua;
-        setup = ''
-          require('copilot').setup({
-            suggestion = { enabled = false },
-            panel = { enabled = false },
-          })
-          require('copilot_cmp').setup()
-        '';
-      };
+      # copilot-lua = {
+      #   package = pkgs.vimPlugins.copilot-lua;
+      #   setup = ''
+      #     require('copilot').setup({
+      #       suggestion = { enabled = false },
+      #       panel = { enabled = false },
+      #     })
+      #     require('copilot_cmp').setup()
+      #   '';
+      # };
 
       # FIXME: Disabled temporarily - re-enable when needed
       # copilot-chat = {
@@ -495,34 +495,35 @@ in {
           desc = "Code action";
         };
 
-        "<leader>cc" = {
-          action = "<cmd>CopilotChatToggle<CR>";
-          desc = "Toggle Copilot Chat";
-        };
-        "<leader>ce" = {
-          action = "<cmd>CopilotChatExplain<CR>";
-          desc = "Copilot Explain";
-        };
-        "<leader>cr" = {
-          action = "<cmd>CopilotChatReview<CR>";
-          desc = "Copilot Review";
-        };
-        "<leader>cf" = {
-          action = "<cmd>CopilotChatFix<CR>";
-          desc = "Copilot Fix";
-        };
-        "<leader>co" = {
-          action = "<cmd>CopilotChatOptimize<CR>";
-          desc = "Copilot Optimize";
-        };
-        "<leader>cd" = {
-          action = "<cmd>CopilotChatDocs<CR>";
-          desc = "Copilot Docs";
-        };
-        "<leader>ct" = {
-          action = "<cmd>CopilotChatTests<CR>";
-          desc = "Copilot Tests";
-        };
+        # "<leader>cc" = {
+        #   action = "<cmd>CopilotChatToggle<CR>";
+        #   desc = "Copilot Chat";
+        # };
+        # "<leader>ce" = {
+        #   action = "<cmd>CopilotChatExplain<CR>";
+        #   desc = "Copilot Explain";
+        # };
+        # "<leader>cr" = {
+        #   action = "<cmd>CopilotChatReview<CR>";
+        #   desc = "Copilot Review";
+        # };
+        # "<leader>cf" = {
+        #   action = "<cmd>CopilotChatFix<CR>";
+        #   desc = "Copilot Fix";
+        # };
+        # "<leader>co" = {
+        #   action = "<cmd>CopilotChatOptimize<CR>";
+        #   desc = "Copilot Optimize";
+        # };
+        # "<leader>cd" = {
+        #   action = "<cmd>CopilotChatDocs<CR>";
+        #   desc = "Copilot Docs";
+        # };
+        # "<leader>ct" = {
+        #   action = "<cmd>CopilotChatTests<CR>";
+        #   desc = "Copilot Tests";
+        # };
+
       };
 
       visual = {
