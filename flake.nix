@@ -161,6 +161,30 @@
           }
         ];
       };
+
+      "Rivaldos-MacBook-Air" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "hm-bak";
+              users.rivaldo = {
+                imports = [
+                  ./home-manager/home.nix
+                  inputs.nvf.homeManagerModules.default
+                  ./home-manager/darwin/default.nix
+                ];
+              };
+              extraSpecialArgs = {inherit inputs;};
+            };
+          }
+        ];
+      };
     };
 
     nixosModules = {
