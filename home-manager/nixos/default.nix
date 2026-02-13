@@ -2,7 +2,6 @@
   imports = [
     ./dank-material-shell.nix
     ./flatpak.nix
-    ./ghostty.nix
     ./niri/default.nix
     ./noctalia-shell.nix
     ./nvf/default.nix

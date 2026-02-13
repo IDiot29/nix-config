@@ -33,6 +33,7 @@
     sops
     pandoc
   ] ++ lib.optionals pkgs.stdenv.isLinux [
+    ghostty
     keepassxc
     obs-studio
   ];

@@ -4,6 +4,7 @@
     ./bat.nix
     ./eza.nix
     ./git.nix
+    ./ghostty.nix
     ./lazygit.nix
     ./nushell.nix
     ./packages.nix
