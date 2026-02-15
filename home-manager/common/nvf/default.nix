@@ -1,14 +1,13 @@
 {
+  inputs,
   pkgs,
   lib,
   ...
-}: let
-  nvfSettings = import ./settings.nix { inherit pkgs lib; };
-in {
+}: {
   programs.nvf = {
     enable = true;
     enableManpages = true;
     defaultEditor = true;
-    settings = nvfSettings;
+    settings = import ./settings.nix {inherit inputs pkgs lib;};
   };
 }

@@ -1,7 +1,5 @@
 {lib, ...}: {
-  imports = [
-    ./nvf/default.nix
-  ];
+  imports = [ ];
 
   home.homeDirectory = lib.mkForce "/Users/rivaldo";
 }

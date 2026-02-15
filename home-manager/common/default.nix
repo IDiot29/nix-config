@@ -6,6 +6,7 @@
     ./git.nix
     ./ghostty.nix
     ./lazygit.nix
+    ./nvf/default.nix
     ./nushell.nix
     ./packages.nix
     ./shell.nix

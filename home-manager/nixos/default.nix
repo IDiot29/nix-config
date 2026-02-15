@@ -4,7 +4,6 @@
     ./flatpak.nix
     ./niri/default.nix
     ./noctalia-shell.nix
-    ./nvf/default.nix
     ./vicinae.nix
     ./winapps.nix
   ];

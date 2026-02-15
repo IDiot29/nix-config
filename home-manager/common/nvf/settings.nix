@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
 }: let
@@ -154,6 +155,27 @@ in {
     };
 
     extraPlugins = {
+      snacks-nvim = {
+        package = pkgs.vimPlugins.snacks-nvim;
+        setup = ''
+          require('snacks').setup({
+            image = { enabled = true },
+          })
+        '';
+      };
+
+      fff-nvim = {
+        package = inputs.fff-nvim.packages.${pkgs.stdenv.hostPlatform.system}.fff-nvim;
+        setup = ''
+          require('fff').setup({
+            title = 'FFFiles',
+            prompt = '>',
+            max_results = 100,
+            lazy_sync = true,
+          })
+        '';
+      };
+
       # Manual treesitter setup using new API (nvf's built-in is broken - issue #1312)
       nvim-treesitter = {
         package = treesitterWithGrammars;
@@ -379,8 +401,12 @@ in {
     maps = {
       normal = {
         "<leader>ff" = {
+          action = "<cmd>lua require('fff').find_files()<CR>";
+          desc = "Find files (fff)";
+        };
+        "<leader>fF" = {
           action = "<cmd>Telescope find_files<CR>";
-          desc = "Find files";
+          desc = "Find files (telescope)";
         };
         "<leader>fg" = {
           action = "<cmd>Telescope live_grep<CR>";
@@ -523,7 +549,6 @@ in {
         #   action = "<cmd>CopilotChatTests<CR>";
         #   desc = "Copilot Tests";
         # };
-
       };
 
       visual = {
@@ -547,10 +572,42 @@ in {
       local actions = require('telescope.actions')
       local previewers = require('telescope.previewers')
 
-      local image_previewer = function(filepath, bufnr, opts)
-        local image_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp'}
+      local function snacks_image(filepath, bufnr, opts)
+        local ok_snacks, Snacks = pcall(require, 'snacks')
+        if not ok_snacks then
+          return false
+        end
+        if not (Snacks.image and Snacks.image.render) then
+          return false
+        end
+        local ok_render = pcall(function()
+          Snacks.image.render(filepath, { buf = bufnr, win = opts.winid })
+        end)
+        return ok_render
+      end
+
+      local image_extensions = { 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'heic', 'avif' }
+      local function is_image(filepath)
         local ext = filepath:match("^.+%.(.+)$")
-        if ext and vim.tbl_contains(image_extensions, ext:lower()) then
+        if not ext then
+          return false
+        end
+        ext = ext:lower()
+        for _, e in ipairs(image_extensions) do
+          if e == ext then
+            return true
+          end
+        end
+        return false
+      end
+
+      local image_previewer = function(filepath, bufnr, opts)
+        if is_image(filepath) and snacks_image(filepath, bufnr, opts) then
+          return true
+        end
+
+        -- Fallback to chafa if snacks image rendering isn't available
+        if is_image(filepath) then
           local term = vim.api.nvim_open_term(bufnr, {})
           local width = vim.api.nvim_win_get_width(opts.winid)
           local height = vim.api.nvim_win_get_height(opts.winid)
@@ -570,13 +627,14 @@ in {
           })
           return true
         end
+
         return false
       end
 
       telescope.setup({
         defaults = {
           file_previewer = function(...)
-            local args = {...}
+            local args = { ... }
             local filepath = args[1]
             local bufnr = args[2]
             local opts = args[3] or {}
@@ -706,7 +764,7 @@ in {
           border = 'rounded',
         }
 
-        local win = vim.api.nvim_open_win(buf, true, opts)
+        vim.api.nvim_open_win(buf, true, opts)
         vim.fn.termopen('${lazygitBin}', {
           on_exit = function()
             if vim.api.nvim_buf_is_valid(buf) then
