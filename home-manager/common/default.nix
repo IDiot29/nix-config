@@ -5,6 +5,7 @@
     ./eza.nix
     ./git.nix
     ./ghostty.nix
+    ./kitty.nix
     ./lazygit.nix
     ./nvf/default.nix
     ./nushell.nix

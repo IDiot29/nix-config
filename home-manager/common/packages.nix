@@ -32,6 +32,7 @@
     yq
     sops
     pandoc
+    ripgrep
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     ghostty
     keepassxc
