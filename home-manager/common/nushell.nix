@@ -30,10 +30,14 @@
     # Keep ~/.npm-global/bin early in PATH (Linux)
     ${lib.optionalString pkgs.stdenv.isLinux ''
       _path_prepend ($env.HOME | path join ".npm-global" "bin")
+      $env.NPM_CONFIG_PREFIX = ($env.HOME | path join ".npm-global")
     ''}
 
     # Basic Homebrew compatibility for Nushell (macOS)
     ${lib.optionalString pkgs.stdenv.isDarwin ''
+      _path_prepend ($env.HOME | path join ".npm-global" "bin")
+      $env.NPM_CONFIG_PREFIX = ($env.HOME | path join ".npm-global")
+
       _path_prepend "/opt/homebrew/sbin"
       _path_prepend "/opt/homebrew/bin"
 

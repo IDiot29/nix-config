@@ -12,6 +12,7 @@
 
       ${lib.optionalString pkgs.stdenv.isLinux ''
         set -gx PATH ~/.npm-global/bin $PATH
+        set -gx NPM_CONFIG_PREFIX ~/.npm-global
       ''}
 
       set fish_greeting
@@ -62,6 +63,9 @@
       starship init fish | source
 
       ${lib.optionalString pkgs.stdenv.isDarwin ''
+        set -gx PATH ~/.npm-global/bin $PATH
+        set -gx NPM_CONFIG_PREFIX ~/.npm-global
+
         eval (/opt/homebrew/bin/brew shellenv fish)
 
         if test -f /opt/homebrew/opt/asdf/libexec/asdf.fish
