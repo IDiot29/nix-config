@@ -172,6 +172,10 @@ in {
             prompt = '>',
             max_results = 100,
             lazy_sync = true,
+            grep = {
+              modes = { 'plain', 'regex', 'fuzzy' },
+              smart_case = true,
+            },
           })
         '';
       };
@@ -409,8 +413,12 @@ in {
           desc = "Find files (telescope)";
         };
         "<leader>fg" = {
+          action = "<cmd>lua OpenFffLiveGrep()<CR>";
+          desc = "Live grep (fff)";
+        };
+        "<leader>fG" = {
           action = "<cmd>Telescope live_grep<CR>";
-          desc = "Live grep";
+          desc = "Live grep (telescope)";
         };
         "<leader>fb" = {
           action = "<cmd>Telescope buffers<CR>";
@@ -655,6 +663,22 @@ in {
           },
         },
       })
+    '';
+
+    luaConfigRC.fff-grep-compat = ''
+      function OpenFffLiveGrep()
+        local ok_fff, fff = pcall(require, 'fff')
+        if ok_fff and type(fff.live_grep) == 'function' then
+          fff.live_grep()
+          return
+        end
+
+        vim.notify(
+          'fff.nvim in current lock has no live_grep(); using Telescope live_grep fallback',
+          vim.log.levels.WARN
+        )
+        vim.cmd('Telescope live_grep')
+      end
     '';
 
     luaConfigRC.cmp-arrow-keys = ''
