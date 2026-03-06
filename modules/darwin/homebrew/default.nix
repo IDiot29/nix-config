@@ -28,9 +28,7 @@
       upgrade = true;
     };
 
-    brews = [
-      "asdf"
-    ];
+    brews = [];
 
     casks = [
       "ghostty"

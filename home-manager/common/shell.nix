@@ -67,10 +67,6 @@
         set -gx NPM_CONFIG_PREFIX ~/.npm-global
 
         eval (/opt/homebrew/bin/brew shellenv fish)
-
-        if test -f /opt/homebrew/opt/asdf/libexec/asdf.fish
-          source /opt/homebrew/opt/asdf/libexec/asdf.fish
-        end
       ''}
 
       zoxide init fish | source

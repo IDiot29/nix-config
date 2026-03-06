@@ -55,7 +55,7 @@ Use one owner per tool to avoid path conflicts:
 
 - CLI tools -> Nix/Home Manager
 - macOS GUI apps -> Homebrew casks
-- Homebrew formulas -> minimal exceptions only (currently `asdf`)
+- Homebrew formulas -> avoid for CLI tools unless strictly necessary
 
 If a tool is already managed in Nix, do not also manage it in Brew.
 

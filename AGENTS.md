@@ -52,14 +52,14 @@ nix flake update
 2. Home Manager has one shared base (`home-manager/home.nix`), platform specifics are imported by host wiring.
 3. One package manager owner per tool:
    - Nix/Home Manager for CLI tools
-   - Homebrew for macOS GUI apps and selected exceptions (currently `asdf`)
+   - Homebrew for macOS GUI apps; keep CLI tools in Nix/Home Manager
 4. Secrets are managed via `sops-nix`, not plain text files.
 
 ## Package Ownership Policy
 
 - CLI tools: managed by Nix/Home Manager (`home-manager/common/packages.nix`)
 - GUI apps on macOS: managed by Homebrew casks (`modules/darwin/homebrew/default.nix`)
-- Homebrew formulas on macOS: keep minimal and intentional (currently only `asdf`)
+- Homebrew formulas on macOS: avoid for CLI tools unless strictly necessary
 - Avoid duplicates across Nix and Homebrew.
 
 ## Secrets (sops-nix)
