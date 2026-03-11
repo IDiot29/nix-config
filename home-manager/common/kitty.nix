@@ -13,6 +13,7 @@
     shellIntegration.enableFishIntegration = true;
     settings = {
       shell = lib.getExe pkgs.fish;
+      map = "shift+enter send_text all \\x1b[13;2u"; # Can't do shift+enter on opencode on tmux, https://github.com/anomalyco/opencode/issues/167#issuecomment-3708163433
     };
   };
 }
