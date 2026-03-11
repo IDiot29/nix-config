@@ -38,6 +38,19 @@ in {
         enabled = true;
       };
 
+      mcp.exa = {
+        type = "remote";
+        url = "https://mcp.exa.ai/mcp";
+        enabled = true;
+      };
+
+      mcp.firecrawl = {
+        type = "local";
+        command = ["npx" "-y" "firecrawl-mcp"];
+        environment.FIRECRAWL_API_KEY = "{env:FIRECRAWL_API_KEY}";
+        enabled = true;
+      };
+
       provider = {
         google = {
           name = "Google";
