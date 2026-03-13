@@ -16,6 +16,22 @@
         identityFile = "~/.ssh/idiot29";
         identitiesOnly = true;
       };
+
+      "semesta-lb01" = {
+        hostname = "10.200.1.93";
+        user = "root";
+        port = 22;
+        identityFile = "~/.ssh/idiot29";
+        identitiesOnly = true;
+      };
+
+      "semesta-kube01" = {
+        hostname = "10.200.3.212";
+        user = "root";
+        port = 22;
+        identityFile = "~/.ssh/idiot29";
+        identitiesOnly = true;
+      };
     };
   };
 }
