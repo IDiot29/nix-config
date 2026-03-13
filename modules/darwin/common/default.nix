@@ -29,6 +29,7 @@
   };
 
   programs.fish.enable = true;
+  services.netbird.enable = true;
 
   system = {
     primaryUser = "rivaldo";

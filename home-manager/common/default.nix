@@ -12,6 +12,7 @@
     ./nushell.nix
     ./packages.nix
     ./shell.nix
+    ./ssh.nix
     ./starship.nix
     ./tmux.nix
     ./yazi/default.nix

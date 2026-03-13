@@ -89,6 +89,7 @@
     };
   };
   services.flatpak.enable = true;
+  services.netbird.enable = true;
   services.tailscale.enable = true;
 
   systemd.packages = [pkgs.pritunl-client];
