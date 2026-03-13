@@ -26,7 +26,7 @@
       };
 
       "semesta-kube01" = {
-        hostname = "10.200.3.212";
+        hostname = "10.200.0.177";
         user = "root";
         port = 22;
         identityFile = "~/.ssh/idiot29";
