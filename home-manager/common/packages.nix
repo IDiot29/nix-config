@@ -33,6 +33,7 @@
     sops
     pandoc
     ripgrep
+    antigravity
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     ghostty
     keepassxc
