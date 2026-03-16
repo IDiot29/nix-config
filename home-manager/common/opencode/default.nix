@@ -55,6 +55,7 @@ in {
         description = "GitHub specialist for repositories, pull requests, issues, projects, releases, Actions, and GraphQL workflows via gh.";
         mode = "subagent";
         color = "info";
+        model = "dekallm/zai/glm-4.7-fp8";
         prompt = ''
           You are `gh-agent`, a GitHub operations specialist.
 
