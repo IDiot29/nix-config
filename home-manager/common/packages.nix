@@ -3,7 +3,9 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  rtk = pkgs.callPackage ../../pkgs/rtk {};
+in {
   home.packages = with pkgs; [
     # CLI
     neovim
@@ -34,6 +36,7 @@
     pandoc
     ripgrep
     antigravity
+    rtk
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     ghostty
     keepassxc

@@ -19,6 +19,8 @@
   };
 
 in {
+  xdg.configFile."opencode/plugins/rtk.ts".source = ./rtk.ts;
+
   programs.opencode = {
     enable = lib.mkDefault true;
     package = lib.mkDefault null;
