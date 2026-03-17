@@ -45,6 +45,7 @@ nix flake update
   - `docs/AEROSPACE_KEYBINDINGS.md`
   - `docs/NIRI_KEYBINDINGS.md`
   - `docs/NVF_KEYBINDINGS.md`
+  - `docs/RTK_OPENCODE.md`
 
 ## Current Design Rules
 
