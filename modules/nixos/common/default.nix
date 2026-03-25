@@ -68,6 +68,10 @@
   };
 
   programs.firefox.enable = true;
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
   programs.niri.enable = true;
   programs.steam = {
     enable = true;
@@ -104,6 +108,7 @@
     tailscale
     openvpn
     pritunl-client
+    devenv
     home-manager
   ];
 

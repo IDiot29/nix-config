@@ -28,6 +28,14 @@
     };
   };
 
+  environment.systemPackages = with pkgs; [
+    devenv
+  ];
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
   programs.fish.enable = true;
   services.netbird.enable = true;
 

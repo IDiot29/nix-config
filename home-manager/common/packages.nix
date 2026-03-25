@@ -27,7 +27,6 @@ in {
     fzf
     kubernetes-helm
     jq
-    devenv
     bun
     python3
     jujutsu
