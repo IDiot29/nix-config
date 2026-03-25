@@ -31,6 +31,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 env:
   NETBIRD_MANAGEMENT_URL: https://netbird.pelindungbumi.dev
@@ -53,6 +54,9 @@ jobs:
         with:
           extra-conf: |
             accept-flake-config = true
+
+      - name: Restore GitHub Actions Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Build Linux outputs
         run: |
@@ -131,17 +135,9 @@ jobs:
           sudo netbird service uninstall || true
 
   build-darwin:
-    name: Build Darwin output (${{ matrix.host }})
+    name: Build Darwin output
     runs-on: macos-14
     timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - host: Rivaldos-MacBook-Pro
-            installable: '.#darwinConfigurations."Rivaldos-MacBook-Pro".config.system.build.toplevel'
-          - host: Rivaldos-MacBook-Air
-            installable: '.#darwinConfigurations."Rivaldos-MacBook-Air".config.system.build.toplevel'
 
     steps:
       - name: Check out repository
@@ -153,10 +149,13 @@ jobs:
           extra-conf: |
             accept-flake-config = true
 
+      - name: Restore GitHub Actions Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+
       - name: Build Darwin output
         run: |
           mkdir -p "$RUNNER_TEMP/nix-paths"
-          nix build -L --no-link --print-out-paths '${{ matrix.installable }}' > "$RUNNER_TEMP/nix-paths/darwin.txt"
+          nix build -L --no-link --print-out-paths '.#darwinConfigurations."Rivaldos-MacBook-Pro".config.system.build.toplevel' > "$RUNNER_TEMP/nix-paths/darwin.txt"
 
       - name: Install NetBird
         run: |
