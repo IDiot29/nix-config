@@ -1,0 +1,205 @@
+name: Build and cache
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NETBIRD_MANAGEMENT_URL: https://netbird.pelindungbumi.dev
+  NIXTIP_CACHE_DESTINATION: ssh-ng://cachepush@10.200.1.93
+  NIXTIP_CACHE_HOST: 10.200.1.93
+  NIXTIP_CACHE_USER: cachepush
+
+jobs:
+  build-linux:
+    name: Build Linux outputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            accept-flake-config = true
+
+      - name: Build Linux outputs
+        run: |
+          mkdir -p "$RUNNER_TEMP/nix-paths"
+          nix flake check -L
+          nix build -L --no-link --print-out-paths '.#nixosConfigurations.thinker.config.system.build.toplevel' > "$RUNNER_TEMP/nix-paths/nixos.txt"
+          nix build -L --no-link --print-out-paths '.#homeConfigurations."rivaldo@thinker".activationPackage' > "$RUNNER_TEMP/nix-paths/home.txt"
+
+      - name: Install NetBird
+        run: |
+          curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
+
+      - name: Connect to NetBird
+        env:
+          NETBIRD_SETUP_KEY: ${{ secrets.NETBIRD_SETUP_KEY }}
+        run: |
+          test -n "$NETBIRD_MANAGEMENT_URL"
+          test -n "$NETBIRD_SETUP_KEY"
+
+          sudo netbird service install || true
+          sudo netbird service start
+          sudo netbird up --management-url "$NETBIRD_MANAGEMENT_URL" --setup-key "$NETBIRD_SETUP_KEY"
+
+      - name: Configure SSH for cache upload
+        env:
+          GH_ACTION_SSH_KEY: ${{ secrets.GH_ACTION_SSH_KEY }}
+          NIXTIP_SSH_KNOWN_HOSTS: ${{ secrets.NIXTIP_SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$NIXTIP_CACHE_DESTINATION"
+          test -n "$NIXTIP_CACHE_HOST"
+          test -n "$NIXTIP_CACHE_USER"
+          test -n "$GH_ACTION_SSH_KEY"
+          test -n "$NIXTIP_SSH_KNOWN_HOSTS"
+
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$GH_ACTION_SSH_KEY" > ~/.ssh/nixtip_cache
+          printf '%s\n' "$NIXTIP_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/nixtip_cache ~/.ssh/known_hosts
+
+          printf '%s\n' \
+            "Host ${NIXTIP_CACHE_HOST}" \
+            "  HostName ${NIXTIP_CACHE_HOST}" \
+            "  User ${NIXTIP_CACHE_USER}" \
+            "  IdentityFile ~/.ssh/nixtip_cache" \
+            "  IdentitiesOnly yes" \
+            "  StrictHostKeyChecking yes" \
+            "  UserKnownHostsFile ~/.ssh/known_hosts" \
+            > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Wait for cache host over NetBird
+        run: |
+          for attempt in $(seq 1 24); do
+            if nc -z "$NIXTIP_CACHE_HOST" 22; then
+              exit 0
+            fi
+
+            sudo netbird status || true
+            sleep 5
+          done
+
+          exit 1
+
+      - name: Upload Linux outputs to nixtip
+        run: |
+          paths="$(cat "$RUNNER_TEMP"/nix-paths/*.txt)"
+          test -n "$paths"
+          export NIX_SSHOPTS="-F $HOME/.ssh/config"
+          nix copy --to "$NIXTIP_CACHE_DESTINATION" $paths
+
+      - name: Disconnect NetBird
+        if: always()
+        run: |
+          sudo netbird down || true
+          sudo netbird service stop || true
+          sudo netbird service uninstall || true
+
+  build-darwin:
+    name: Build Darwin output (${{ matrix.host }})
+    runs-on: macos-14
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - host: Rivaldos-MacBook-Pro
+            installable: '.#darwinConfigurations."Rivaldos-MacBook-Pro".config.system.build.toplevel'
+          - host: Rivaldos-MacBook-Air
+            installable: '.#darwinConfigurations."Rivaldos-MacBook-Air".config.system.build.toplevel'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            accept-flake-config = true
+
+      - name: Build Darwin output
+        run: |
+          mkdir -p "$RUNNER_TEMP/nix-paths"
+          nix build -L --no-link --print-out-paths '${{ matrix.installable }}' > "$RUNNER_TEMP/nix-paths/darwin.txt"
+
+      - name: Install NetBird
+        run: |
+          brew install netbirdio/tap/netbird
+
+      - name: Connect to NetBird
+        env:
+          NETBIRD_SETUP_KEY: ${{ secrets.NETBIRD_SETUP_KEY }}
+        run: |
+          test -n "$NETBIRD_MANAGEMENT_URL"
+          test -n "$NETBIRD_SETUP_KEY"
+
+          sudo netbird service install || true
+          sudo netbird service start
+          sudo netbird up --management-url "$NETBIRD_MANAGEMENT_URL" --setup-key "$NETBIRD_SETUP_KEY"
+
+      - name: Configure SSH for cache upload
+        env:
+          GH_ACTION_SSH_KEY: ${{ secrets.GH_ACTION_SSH_KEY }}
+          NIXTIP_SSH_KNOWN_HOSTS: ${{ secrets.NIXTIP_SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$NIXTIP_CACHE_DESTINATION"
+          test -n "$NIXTIP_CACHE_HOST"
+          test -n "$NIXTIP_CACHE_USER"
+          test -n "$GH_ACTION_SSH_KEY"
+          test -n "$NIXTIP_SSH_KNOWN_HOSTS"
+
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$GH_ACTION_SSH_KEY" > ~/.ssh/nixtip_cache
+          printf '%s\n' "$NIXTIP_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/nixtip_cache ~/.ssh/known_hosts
+
+          printf '%s\n' \
+            "Host ${NIXTIP_CACHE_HOST}" \
+            "  HostName ${NIXTIP_CACHE_HOST}" \
+            "  User ${NIXTIP_CACHE_USER}" \
+            "  IdentityFile ~/.ssh/nixtip_cache" \
+            "  IdentitiesOnly yes" \
+            "  StrictHostKeyChecking yes" \
+            "  UserKnownHostsFile ~/.ssh/known_hosts" \
+            > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Wait for cache host over NetBird
+        run: |
+          for attempt in $(seq 1 24); do
+            if nc -z "$NIXTIP_CACHE_HOST" 22; then
+              exit 0
+            fi
+
+            sudo netbird status || true
+            sleep 5
+          done
+
+          exit 1
+
+      - name: Upload Darwin output to nixtip
+        run: |
+          paths="$(cat "$RUNNER_TEMP"/nix-paths/*.txt)"
+          test -n "$paths"
+          export NIX_SSHOPTS="-F $HOME/.ssh/config"
+          nix copy --to "$NIXTIP_CACHE_DESTINATION" $paths
+
+      - name: Disconnect NetBird
+        if: always()
+        run: |
+          sudo netbird down || true
+          sudo netbird service stop || true
+          sudo netbird service uninstall || true
