@@ -1,6 +1,6 @@
 # Unified NixOS + nix-darwin Guidelines
 
-This repository manages one NixOS host and one macOS host with a shared Home Manager base.
+This repository manages one NixOS host and two macOS hosts with a shared Home Manager base.
 
 ## Quick Commands
 
@@ -11,11 +11,11 @@ nix flake check
 # NixOS (local on thinker)
 sudo nixos-rebuild switch --flake .#thinker
 
-# macOS (run on Mac)
+# macOS (run on the target Mac)
 sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
 
-# macOS (remote from NixOS over Tailscale/SSH)
-ssh -tt rivaldo@rivaldos-macbook-pro 'cd ~/.config/nixos && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro'
+# macOS (MacBook Air)
+sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Air
 
 # Update all inputs
 nix flake update
@@ -52,16 +52,17 @@ nix flake update
 1. Host files stay thin; real config goes in reusable modules.
 2. Home Manager has one shared base (`home-manager/home.nix`), platform specifics are imported by host wiring.
 3. One package manager owner per tool:
-   - Nix/Home Manager for CLI tools
-   - Homebrew for macOS GUI apps; keep CLI tools in Nix/Home Manager
+   - Nix system modules or Home Manager for CLI tools
+   - Homebrew for macOS GUI apps; keep CLI tools in Nix and avoid duplicate ownership across layers
 4. Secrets are managed via `sops-nix`, not plain text files.
 
 ## Package Ownership Policy
 
-- CLI tools: managed by Nix/Home Manager (`home-manager/common/packages.nix`)
+- CLI tools: managed by Nix, either in system modules or Home Manager
+- Tools with native NixOS or nix-darwin options should live in `modules/*`
 - GUI apps on macOS: managed by Homebrew casks (`modules/darwin/homebrew/default.nix`)
 - Homebrew formulas on macOS: avoid for CLI tools unless strictly necessary
-- Avoid duplicates across Nix and Homebrew.
+- Avoid duplicates across system modules, Home Manager, and Homebrew.
 
 ## Secrets (sops-nix)
 
@@ -90,7 +91,9 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 
 ### Add a shared CLI package
 
-Edit `home-manager/common/packages.nix`.
+If it is user-scoped and does not need system integration, edit `home-manager/common/packages.nix`.
+
+If it needs native system options or shell/system integration, add it in `modules/nixos/common/default.nix` and/or `modules/darwin/common/default.nix`.
 
 ### Add Linux-only Home Manager config
 
@@ -122,8 +125,11 @@ nix flake check
 sudo nixos-rebuild dry-build --flake .#thinker
 home-manager build --flake .#rivaldo@thinker
 
-# Darwin local (on Mac)
+# Darwin local (on the target Mac)
 darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
+
+# Darwin local (MacBook Air)
+darwin-rebuild build --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Known Operational Notes
@@ -145,6 +151,9 @@ sudo nixos-rebuild switch --rollback --flake .#thinker
 
 ```bash
 darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Pro
+
+# Or on the MacBook Air
+darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Commit Style

@@ -12,6 +12,7 @@ The design is simple:
 
 - NixOS: `thinker`
 - Darwin: `Rivaldos-MacBook-Pro`
+- Darwin: `Rivaldos-MacBook-Air`
 
 ## Directory guide
 
@@ -39,21 +40,19 @@ nix flake check
 # Apply NixOS
 sudo nixos-rebuild switch --flake .#thinker
 
-# Apply Darwin (run on Mac)
+# Apply Darwin (run on the target Mac)
 sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
-```
 
-Remote Darwin apply from Linux (Tailscale/SSH):
-
-```bash
-ssh -tt rivaldo@rivaldos-macbook-pro 'cd ~/.config/nixos && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro'
+# Or on the MacBook Air
+sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Package ownership policy
 
 Use one owner per tool to avoid path conflicts:
 
-- CLI tools -> Nix/Home Manager
+- CLI tools -> Nix (system modules or Home Manager)
+- Tools with native OS integration -> prefer system modules
 - macOS GUI apps -> Homebrew casks
 - Homebrew formulas -> avoid for CLI tools unless strictly necessary
 
@@ -79,6 +78,7 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 2. Make the change in the right layer:
    - system-level -> `modules/*`
    - user-level -> `home-manager/*`
+   - shared user-scoped CLI tools -> `home-manager/common/packages.nix`
 3. Import new module from the nearest `default.nix` aggregator.
 4. `git add -A` when adding/renaming files (flakes only see tracked files).
 5. Run `nix flake check` again.
@@ -93,8 +93,11 @@ sudo nixos-rebuild dry-build --flake .#thinker
 # Home Manager eval on Linux
 home-manager build --flake .#rivaldo@thinker
 
-# Darwin build (on Mac)
+# Darwin build (on the target Mac)
 darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
+
+# Or on the MacBook Air
+darwin-rebuild build --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Troubleshooting notes
@@ -114,6 +117,9 @@ sudo chown -R rivaldo:staff ~/.config/nushell ~/.config/fish
 # NixOS
 sudo nixos-rebuild switch --rollback --flake .#thinker
 
-# Darwin
+# Darwin (on the target Mac)
 darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Pro
+
+# Or on the MacBook Air
+darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Air
 ```

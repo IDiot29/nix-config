@@ -55,6 +55,7 @@ sudo nixos-rebuild switch --flake .#thinker
 ### macOS
 
 ```bash
+# Replace the host name with the target Darwin machine if needed
 sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
 ```
 
@@ -129,6 +130,7 @@ Optional deeper checks:
 
 ```bash
 nix build "path:$PWD#homeConfigurations.\"rivaldo@thinker\".activationPackage"
+# Replace the Darwin host name with the target machine if needed
 nix eval --impure --json --expr 'let flake = builtins.getFlake (toString ./.); in builtins.map (pkg: pkg.pname or pkg.name or "") flake.darwinConfigurations."Rivaldos-MacBook-Pro".config.home-manager.users.rivaldo.home.packages'
 ```
 
@@ -136,6 +138,7 @@ nix eval --impure --json --expr 'let flake = builtins.getFlake (toString ./.); i
 
 ```bash
 home-manager switch --flake .#rivaldo@thinker
+# Replace the host name with the target Darwin machine if needed
 sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
 ```
 
