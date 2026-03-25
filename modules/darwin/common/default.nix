@@ -17,11 +17,13 @@
       ];
       substituters = [
         "https://cache.nixos.org"
+        "https://nixtip.pelindungbumi.dev"
         "https://vicinae.cachix.org"
         "https://niri.cachix.org"
       ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nixtip.pelindungbumi.dev-1:2w1Zf43fmGc63a7dkAYA0PmweRCUGEYHtp+gqdRQPkY="
         "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
         "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       ];

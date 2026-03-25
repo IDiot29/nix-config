@@ -3,10 +3,12 @@
 
   nixConfig = {
     "extra-substituters" = [
+      "https://nixtip.pelindungbumi.dev"
       "https://vicinae.cachix.org"
       "https://niri.cachix.org"
     ];
     "extra-trusted-public-keys" = [
+      "nixtip.pelindungbumi.dev-1:2w1Zf43fmGc63a7dkAYA0PmweRCUGEYHtp+gqdRQPkY="
       "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
     ];
