@@ -165,7 +165,7 @@ in {
       };
 
       fff-nvim = {
-        package = inputs.fff-nvim.packages.${pkgs.stdenv.hostPlatform.system}.fff-nvim;
+        package = pkgs.vimPlugins.fff-nvim;
         setup = ''
           require('fff').setup({
             title = 'FFFiles',
