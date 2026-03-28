@@ -27,6 +27,4 @@
     ];
     config.common.default = ["wlr" "gtk"];
   };
-
-  programs.firefox.enable = true;
 }
