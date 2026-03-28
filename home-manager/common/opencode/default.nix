@@ -73,6 +73,10 @@ in {
       };
 
       provider = {
+        minimax = {
+          options.apiKey = "{env:MINIMAX_API_KEY}";
+        };
+
         google = {
           name = "Google";
           models = {
