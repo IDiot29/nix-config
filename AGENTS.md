@@ -1,166 +1,81 @@
-# Unified NixOS + nix-darwin Guidelines
+# Nix Config Agent Guide
 
-This repository manages one NixOS host and two macOS hosts with a shared Home Manager base.
+This repo manages one NixOS host (`thinker`) and two macOS hosts (`Rivaldos-MacBook-Pro`, `Rivaldos-MacBook-Air`) with a shared Home Manager base. Optimize for small, reusable module changes and keep host files thin.
 
-## Quick Commands
+## Hard Rules
 
-```bash
-# Always do this first
-nix flake check
+- Never run `sudo`, `nixos-rebuild`, `darwin-rebuild`, activation switch commands, rollback commands, or other password-requiring commands from this workspace.
+- Never run host rebuilds or dry-build equivalents here. They usually require a password, machine-local context, or both.
+- Never run `git commit`, `git commit --amend`, `git rebase`, or other git history-writing commands unless the user explicitly asks for them.
+- Default to non-privileged validation only.
+- Do not duplicate ownership of the same tool across NixOS modules, Darwin modules, Home Manager, and Homebrew.
+- Secrets live in `secrets/secrets.yaml` via `sops-nix`, never in plain text.
 
-# NixOS (local on thinker)
-sudo nixos-rebuild switch --flake .#thinker
+## Repo Map
 
-# macOS (run on the target Mac)
-sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
+- `flake.nix`: main entrypoint, inputs, host outputs, exported modules, and standalone Home Manager output for `rivaldo@thinker`
+- `hosts/nixos/thinker/configuration.nix`: thin NixOS host wrapper importing shared NixOS modules plus hardware config
+- `hosts/darwin/configuration.nix`: thin Darwin host wrapper importing shared Darwin modules
+- `modules/nixos/`: NixOS system modules
+- `modules/darwin/`: nix-darwin system modules
+- `home-manager/home.nix`: shared Home Manager base
+- `home-manager/common/`: cross-platform Home Manager modules
+- `home-manager/nixos/`: Linux-only Home Manager modules
+- `home-manager/darwin/`: macOS-only Home Manager modules
+- `secrets/secrets.yaml`: encrypted secrets source
+- `docs/`: reference docs and keybindings
 
-# macOS (MacBook Air)
-sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Air
+## Placement Rules
 
-# Update all inputs
-nix flake update
-```
+- Put NixOS system integration in `modules/nixos/*`.
+- Put Darwin system integration in `modules/darwin/*`.
+- Put shared user-scoped packages and shell/editor/tool config in `home-manager/common/*`.
+- Put Linux-only Home Manager config in `home-manager/nixos/*` and import it from `home-manager/nixos/default.nix`.
+- Put macOS-only Home Manager config in `home-manager/darwin/*` and import it from `home-manager/darwin/default.nix`.
+- Keep `hosts/*/configuration.nix` thin. If logic grows, move it into a reusable module.
+- If a new module is introduced, wire it through the existing import path instead of growing host wrappers.
 
-## Repository Layout
+## Package and App Ownership
 
-- `flake.nix`: main entrypoint, host outputs, shared module wiring
-- `flake.lock`: pinned inputs
-- `hosts/`
-  - `hosts/nixos/thinker/configuration.nix`: thin NixOS host wrapper
-  - `hosts/nixos/thinker/hardware-configuration.nix`: hardware-specific file
-  - `hosts/darwin/configuration.nix`: thin Darwin host wrapper
-- `modules/`
-  - `modules/nixos/common/default.nix`: shared NixOS system settings
-  - `modules/nixos/desktop.nix`, `modules/nixos/virtualisation.nix`, `modules/nixos/secrets.nix`
-  - `modules/darwin/common/default.nix`, `modules/darwin/homebrew/default.nix`, `modules/darwin/aerospace/default.nix`, `modules/darwin/secrets.nix`
-- `home-manager/`
-  - `home-manager/home.nix`: shared HM base (single canonical home file)
-  - `home-manager/common/`: shared HM modules
-  - `home-manager/nixos/`: Linux-only HM modules
-  - `home-manager/darwin/`: macOS-only HM modules
-- `secrets/`
-  - `secrets/secrets.yaml`: encrypted with sops
-  - `.sops.yaml`: sops creation rules
-- `docs/`
-  - `docs/AEROSPACE_KEYBINDINGS.md`
-  - `docs/NIRI_KEYBINDINGS.md`
-  - `docs/NVF_KEYBINDINGS.md`
-  - `docs/RTK_OPENCODE.md`
+- CLI tools belong in Nix, usually Home Manager or system modules.
+- Prefer Home Manager for user-scoped CLI tools that do not need system integration.
+- Prefer `modules/nixos/common/default.nix` or `modules/darwin/common/default.nix` when a tool needs platform-native system options or service wiring.
+- macOS GUI apps belong in Homebrew casks in `modules/darwin/homebrew/default.nix`.
+- Avoid Homebrew formulas for CLI tools unless there is a strong reason Nix cannot own them.
 
-## Current Design Rules
+## Repo-Specific Facts
 
-1. Host files stay thin; real config goes in reusable modules.
-2. Home Manager has one shared base (`home-manager/home.nix`), platform specifics are imported by host wiring.
-3. One package manager owner per tool:
-   - Nix system modules or Home Manager for CLI tools
-   - Homebrew for macOS GUI apps; keep CLI tools in Nix and avoid duplicate ownership across layers
-4. Secrets are managed via `sops-nix`, not plain text files.
+- Home Manager has one shared base: `home-manager/home.nix`.
+- NixOS imports `home-manager/nixos/default.nix`; Darwin imports `home-manager/darwin/default.nix`.
+- `backupFileExtension = "hm-bak"` is enabled.
+- Flake mode only sees tracked files. If a new file is added and Nix reports a missing path, run `git add -A`.
+- Darwin Home Manager uses `/Users/rivaldo`; NixOS uses `/home/rivaldo`.
+- Current secrets include `fish_secrets`, `nushell_secrets`, and on NixOS also `winapps_rdp_user` and `winapps_rdp_pass`.
 
-## Package Ownership Policy
+## Safe Workflow
 
-- CLI tools: managed by Nix, either in system modules or Home Manager
-- Tools with native NixOS or nix-darwin options should live in `modules/*`
-- GUI apps on macOS: managed by Homebrew casks (`modules/darwin/homebrew/default.nix`)
-- Homebrew formulas on macOS: avoid for CLI tools unless strictly necessary
-- Avoid duplicates across system modules, Home Manager, and Homebrew.
+1. Inspect the relevant existing module before editing.
+2. Keep changes minimal and reuse the current module split.
+3. Check package ownership before adding any package or app.
+4. Run `git status --short` before and after changes.
+5. Run `nix flake check` when validation is needed and it does not require privilege.
 
-## Secrets (sops-nix)
+## Safe Validation
+
+- Preferred: `nix flake check`
+- Allowed: non-mutating reads, searches, and static inspection
+- Do not run: `nixos-rebuild`, `darwin-rebuild`, `home-manager switch`, rollback commands, or other privileged/local-machine activation commands
+
+## Secrets
 
 - Encrypted source: `secrets/secrets.yaml`
-- NixOS key file: `/home/rivaldo/.config/sops/age/keys.txt`
-- Darwin key file: `/Users/rivaldo/.config/sops/age/keys.txt`
-- Managed secret keys currently include:
-  - `fish_secrets`
-  - `nushell_secrets`
-  - `winapps_rdp_user`
-  - `winapps_rdp_pass`
-
-Edit secrets with:
-
-```bash
-nix shell nixpkgs#sops -c sops secrets/secrets.yaml
-```
-
-## Pre-Change Checklist
-
-1. `nix flake check`
-2. `git status --short`
-3. For bootloader-related NixOS changes: `df -h /boot`
-
-## Common Workflows
-
-### Add a shared CLI package
-
-If it is user-scoped and does not need system integration, edit `home-manager/common/packages.nix`.
-
-If it needs native system options or shell/system integration, add it in `modules/nixos/common/default.nix` and/or `modules/darwin/common/default.nix`.
-
-### Add Linux-only Home Manager config
-
-1. Create file in `home-manager/nixos/`
-2. Import it from `home-manager/nixos/default.nix`
-
-### Add macOS-only Home Manager config
-
-1. Create file in `home-manager/darwin/`
-2. Import it from `home-manager/darwin/default.nix`
-
-### Add NixOS system module
-
-1. Create file in `modules/nixos/`
-2. Export/import through `flake.nix` and host wrapper
-
-### Add Darwin system module
-
-1. Create file in `modules/darwin/`
-2. Export/import through `flake.nix` and `hosts/darwin/configuration.nix`
-
-## Validation
-
-```bash
-# Global
-nix flake check
-
-# NixOS
-sudo nixos-rebuild dry-build --flake .#thinker
-home-manager build --flake .#rivaldo@thinker
-
-# Darwin local (on the target Mac)
-darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
-
-# Darwin local (MacBook Air)
-darwin-rebuild build --flake .#Rivaldos-MacBook-Air
-```
-
-## Known Operational Notes
-
-- Flake mode only sees tracked files. If you add/rename files and see "path ... does not exist", run `git add -A` first.
-- Home Manager collision handling is enabled with `backupFileExtension = "hm-bak"`.
-- If HM fails with `Permission denied` in `~/.config/*`, fix ownership once:
-  - `sudo chown -R rivaldo:staff ~/.config/nushell ~/.config/fish`
-
-## Rollback
-
-### NixOS
-
-```bash
-sudo nixos-rebuild switch --rollback --flake .#thinker
-```
-
-### Darwin
-
-```bash
-darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Pro
-
-# Or on the MacBook Air
-darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Air
-```
+- Edit with: `nix shell nixpkgs#sops -c sops secrets/secrets.yaml`
+- NixOS age key: `/home/rivaldo/.config/sops/age/keys.txt`
+- Darwin age key: `/Users/rivaldo/.config/sops/age/keys.txt`
 
 ## Commit Style
 
-- Imperative present tense (`Add`, `Fix`, `Refactor`, `Update`)
-- Keep scope clear
-- Examples:
-  - `Refactor Darwin host wiring and Home Manager composition`
-  - `Add sops-nix secrets module for macOS`
-  - `Fix Home Manager homeDirectory resolution on Darwin`
+- Use imperative present tense: `Add`, `Fix`, `Refactor`, `Update`
+- Keep scope obvious and repo-specific
+- This is for commit message style only. Do not create commits unless the user explicitly asks.
+- Example: `Refactor Darwin module placement rules in AGENTS guide`
