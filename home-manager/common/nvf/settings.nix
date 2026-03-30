@@ -861,7 +861,12 @@ in {
         lsp.enable = true;
         format.enable = true;
         extraDiagnostics.enable = true;
-        extensions."ts-error-translator".enable = true;
+        extensions."ts-error-translator" = {
+          enable = true;
+          setupOpts = {
+            auto_attach = true;
+          };
+        };
       };
 
       markdown = {
