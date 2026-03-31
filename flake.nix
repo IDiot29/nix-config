@@ -220,6 +220,32 @@
           ./home-manager/nixos/default.nix
         ];
       };
+
+      "rivaldo@Rivaldos-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+        };
+        extraSpecialArgs = {inherit inputs;};
+        modules = [
+          ./home-manager/home.nix
+          inputs.nvf.homeManagerModules.default
+          ./home-manager/darwin/default.nix
+        ];
+      };
+
+      "rivaldo@Rivaldos-MacBook-Air" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+        };
+        extraSpecialArgs = {inherit inputs;};
+        modules = [
+          ./home-manager/home.nix
+          inputs.nvf.homeManagerModules.default
+          ./home-manager/darwin/default.nix
+        ];
+      };
     };
   };
 }
