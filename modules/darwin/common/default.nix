@@ -30,6 +30,7 @@
 
   environment.systemPackages = with pkgs; [
     devenv
+    home-manager
   ];
 
   # Temporarily disabled due to upstream direnv build failure on darwin.
