@@ -2,6 +2,7 @@
   imports = [
     ./atuin.nix
     ./bat.nix
+    ./claude-code/default.nix
     ./eza.nix
     ./git.nix
     ./ghostty.nix
