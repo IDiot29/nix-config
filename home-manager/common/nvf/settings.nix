@@ -5,7 +5,6 @@
 }: let
   lazygitBin = "${pkgs.lazygit}/bin/lazygit";
   fishShell = "${pkgs.fish}/bin/fish";
-  fffNvim = pkgs.callPackage ../../../pkgs/fff-nvim {};
 
   treesitterWithGrammars = pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
     p.nix
@@ -166,7 +165,7 @@ in {
       };
 
       fff-nvim = {
-        package = fffNvim;
+        package = pkgs.vimPlugins.fff-nvim;
         setup = ''
           require('fff').setup({
             title = 'FFFiles',
