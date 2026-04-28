@@ -10,6 +10,7 @@
 
     extraConfig = ''
       set -g default-shell ${pkgs.fish}/bin/fish
+      set -g extended-keys always
     '';
   };
 }
