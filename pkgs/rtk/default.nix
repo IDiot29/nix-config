@@ -4,7 +4,7 @@
   fetchurl,
 }:
 let
-  version = "0.37.02";
+  version = "0.37.2";
   sources = {
     x86_64-linux = {
       url = "https://github.com/rtk-ai/rtk/releases/download/v${version}/rtk-x86_64-unknown-linux-musl.tar.gz";
