@@ -23,7 +23,6 @@ in {
 
   programs.opencode = {
     enable = lib.mkDefault true;
-    package = lib.mkDefault null;
     settings = lib.mkDefault {
       plugin = [
         "opencode-antigravity-auth@latest"
@@ -75,6 +74,10 @@ in {
       provider = {
         minimax = {
           options.apiKey = "{env:MINIMAX_API_KEY}";
+        };
+
+        opencode-go = {
+          options.apiKey = "{env:OPENCODE_GO_API_KEY}";
         };
 
         google = {
