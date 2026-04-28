@@ -5,6 +5,7 @@
 }: let
   lazygitBin = "${pkgs.lazygit}/bin/lazygit";
   fishShell = "${pkgs.fish}/bin/fish";
+  fffNvim = pkgs.callPackage ../../../pkgs/fff-nvim {};
 
   treesitterWithGrammars = pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
     p.nix
@@ -165,7 +166,7 @@ in {
       };
 
       fff-nvim = {
-        package = pkgs.vimPlugins.fff-nvim;
+        package = fffNvim;
         setup = ''
           require('fff').setup({
             title = 'FFFiles',
@@ -856,7 +857,7 @@ in {
         extraDiagnostics.enable = true;
       };
 
-      ts = {
+      typescript = {
         enable = true;
         lsp.enable = true;
         format.enable = true;
@@ -866,7 +867,10 @@ in {
       markdown = {
         enable = true;
         lsp.enable = false;
-        format.enable = true;
+        format = {
+          enable = true;
+          type = ["rumdl"];
+        };
         extraDiagnostics.enable = true;
       };
 
