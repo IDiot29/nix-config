@@ -3,7 +3,18 @@
   pkgs,
   ...
 }: {
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+
+    overlays = [
+      (_final: _super: {
+        direnv = _super.direnv.overrideAttrs (_: {
+          # TODO: Remove when https://github.com/NixOS/nixpkgs/issues/507531 is fixed.
+          doCheck = false;
+        });
+      })
+    ];
+  };
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
