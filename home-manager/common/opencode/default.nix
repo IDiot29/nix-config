@@ -49,14 +49,14 @@ in {
         type = "local";
         command = ["npx" "-y" "firecrawl-mcp"];
         environment.FIRECRAWL_API_KEY = "{env:FIRECRAWL_API_KEY}";
-        enabled = true;
+        enabled = false;
       };
 
       mcp.github = {
         type = "local";
         command = ["${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio"];
         environment.GITHUB_PERSONAL_ACCESS_TOKEN = "{env:GH_TOKEN}";
-        enabled = true;
+        enabled = false;
       };
 
       agent.gh-agent = {

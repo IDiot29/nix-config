@@ -18,6 +18,7 @@
         env = {
           FIRECRAWL_API_KEY = "\${FIRECRAWL_API_KEY:-}";
         };
+        enabled = false;
       };
 
       github = {
@@ -26,6 +27,7 @@
         env = {
           GITHUB_PERSONAL_ACCESS_TOKEN = "\${GH_TOKEN:-}";
         };
+        enabled = false;
       };
     };
   };
