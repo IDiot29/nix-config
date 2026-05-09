@@ -42,6 +42,7 @@ in {
       mcp.exa = {
         type = "remote";
         url = "https://mcp.exa.ai/mcp";
+        headers."x-api-key" = "{env:EXA_API_KEY}";
         enabled = true;
       };
 
