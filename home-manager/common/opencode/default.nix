@@ -24,9 +24,7 @@ in {
   programs.opencode = {
     enable = lib.mkDefault true;
     settings = lib.mkDefault {
-      plugin = [
-        "opencode-antigravity-auth@latest"
-      ];
+      plugin = [ ];
 
       skills.paths = [
         "{env:HOME}/.config/opencode/skills"
@@ -86,106 +84,6 @@ in {
 
         opencode-go = {
           options.apiKey = "{env:OPENCODE_GO_API_KEY}";
-        };
-
-        google = {
-          name = "Google";
-          models = {
-            "antigravity-gemini-3-pro" = mkModel {
-              name = "Gemini 3 Pro (Antigravity)";
-              context = 1048576;
-              output = 65535;
-              inputs = ["text" "image" "pdf"];
-              variants = {
-                low.thinkingLevel = "low";
-                high.thinkingLevel = "high";
-              };
-            };
-
-            "antigravity-gemini-3.1-pro" = mkModel {
-              name = "Gemini 3.1 Pro (Antigravity)";
-              context = 1048576;
-              output = 65535;
-              inputs = ["text" "image" "pdf"];
-              variants = {
-                low.thinkingLevel = "low";
-                high.thinkingLevel = "high";
-              };
-            };
-
-            "antigravity-gemini-3-flash" = mkModel {
-              name = "Gemini 3 Flash (Antigravity)";
-              context = 1048576;
-              output = 65536;
-              inputs = ["text" "image" "pdf"];
-              variants = {
-                minimal.thinkingLevel = "minimal";
-                low.thinkingLevel = "low";
-                medium.thinkingLevel = "medium";
-                high.thinkingLevel = "high";
-              };
-            };
-
-            "antigravity-claude-sonnet-4-6" = mkModel {
-              name = "Claude Sonnet 4.6 (Antigravity)";
-              context = 200000;
-              output = 64000;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "antigravity-claude-opus-4-6-thinking" = mkModel {
-              name = "Claude Opus 4.6 Thinking (Antigravity)";
-              context = 200000;
-              output = 64000;
-              inputs = ["text" "image" "pdf"];
-              variants = {
-                low.thinkingConfig.thinkingBudget = 8192;
-                max.thinkingConfig.thinkingBudget = 32768;
-              };
-            };
-
-            "gemini-2.5-flash" = mkModel {
-              name = "Gemini 2.5 Flash (Gemini CLI)";
-              context = 1048576;
-              output = 65536;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "gemini-2.5-pro" = mkModel {
-              name = "Gemini 2.5 Pro (Gemini CLI)";
-              context = 1048576;
-              output = 65536;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "gemini-3-flash-preview" = mkModel {
-              name = "Gemini 3 Flash Preview (Gemini CLI)";
-              context = 1048576;
-              output = 65536;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "gemini-3-pro-preview" = mkModel {
-              name = "Gemini 3 Pro Preview (Gemini CLI)";
-              context = 1048576;
-              output = 65535;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "gemini-3.1-pro-preview" = mkModel {
-              name = "Gemini 3.1 Pro Preview (Gemini CLI)";
-              context = 1048576;
-              output = 65535;
-              inputs = ["text" "image" "pdf"];
-            };
-
-            "gemini-3.1-pro-preview-customtools" = mkModel {
-              name = "Gemini 3.1 Pro Preview Custom Tools (Gemini CLI)";
-              context = 1048576;
-              output = 65535;
-              inputs = ["text" "image" "pdf"];
-            };
-          };
         };
 
         dekallm = {
