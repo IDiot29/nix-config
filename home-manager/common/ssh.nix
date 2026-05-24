@@ -2,35 +2,35 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "github.com" = {
-        hostname = "github.com";
-        identityFile = "~/.ssh/idiot29";
-        identitiesOnly = true;
+        HostName = "github.com";
+        IdentityFile = "~/.ssh/idiot29";
+        IdentitiesOnly = true;
       };
 
       "semesta-vpn" = {
-        hostname = "103.125.103.148";
-        user = "batman";
-        port = 22222;
-        identityFile = "~/.ssh/idiot29";
-        identitiesOnly = true;
+        HostName = "103.125.103.148";
+        User = "batman";
+        Port = 22222;
+        IdentityFile = "~/.ssh/idiot29";
+        IdentitiesOnly = true;
       };
 
       "semesta-lb01" = {
-        hostname = "10.200.1.93";
-        user = "batman";
-        port = 22;
-        identityFile = "~/.ssh/idiot29";
-        identitiesOnly = true;
+        HostName = "10.200.1.93";
+        User = "batman";
+        Port = 22;
+        IdentityFile = "~/.ssh/idiot29";
+        IdentitiesOnly = true;
       };
 
       "semesta-kube01" = {
-        hostname = "10.200.0.177";
-        user = "batman";
-        port = 22;
-        identityFile = "~/.ssh/idiot29";
-        identitiesOnly = true;
+        HostName = "10.200.0.177";
+        User = "batman";
+        Port = 22;
+        IdentityFile = "~/.ssh/idiot29";
+        IdentitiesOnly = true;
       };
     };
   };
