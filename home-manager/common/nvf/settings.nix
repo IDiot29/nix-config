@@ -68,11 +68,6 @@ in {
         command = "bdelete!";
       }
       {
-        event = ["TermClose"];
-        pattern = ["term://*lazygit"];
-        command = "lua local ok, api = pcall(require, 'nvim-tree.api'); if ok then api.tree.reload() end";
-      }
-      {
         event = ["FocusGained" "BufEnter" "TermClose" "TermLeave"];
         command = "checktime";
       }
@@ -175,6 +170,33 @@ in {
             grep = {
               modes = { 'plain', 'regex', 'fuzzy' },
               smart_case = true,
+            },
+          })
+        '';
+      };
+
+      oil-nvim = {
+        package = pkgs.vimPlugins.oil-nvim;
+        setup = ''
+          require('oil').setup({
+            default_file_explorer = true,
+            cleanup_delay_ms = 2000,
+            watch_for_changes = true,
+            columns = { 'icon' },
+            keymaps = {
+              ['<C-h>'] = false,
+            },
+            float = {
+              padding = 2,
+              max_width = 0.7,
+              max_height = 0.8,
+              border = 'rounded',
+            },
+            view_options = {
+              show_hidden = false,
+            },
+            win_options = {
+              relativenumber = true,
             },
           })
         '';
@@ -373,33 +395,6 @@ in {
     statusline.lualine.enable = true;
     tabline.nvimBufferline.enable = true;
 
-    filetree.nvimTree = {
-      enable = true;
-      openOnSetup = false;
-      setupOpts = {
-        hijack_cursor = true;
-        reload_on_bufenter = true;
-        filesystem_watchers = {
-          enable = true;
-          debounce_delay = 50;
-        };
-        view = {
-          width = 36;
-          relativenumber = true;
-        };
-        renderer = {
-          highlight_git = true;
-          add_trailing = false;
-        };
-        actions = {
-          open_file = {
-            quit_on_open = false;
-            resize_window = false;
-          };
-        };
-      };
-    };
-
     binds.whichKey.enable = true;
 
     maps = {
@@ -434,8 +429,12 @@ in {
         };
 
         "<leader>e" = {
-          action = "<cmd>NvimTreeToggle<CR>";
-          desc = "Toggle file tree (open/close)";
+          action = "<cmd>lua require('oil').toggle_float()<CR>";
+          desc = "Toggle file explorer";
+        };
+        "-" = {
+          action = "<cmd>Oil<CR>";
+          desc = "Open parent directory";
         };
 
         "<C-h>" = {

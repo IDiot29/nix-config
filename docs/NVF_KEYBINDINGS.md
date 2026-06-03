@@ -16,14 +16,16 @@ Leader key: `Space`
 
 | Keybind | Action | Description |
 |---------|--------|-------------|
-| `<leader>e` | Toggle File Tree | Open/Close NvimTree file explorer |
+| `<leader>e` | Toggle File Explorer | Open/close Oil floating file explorer |
+| `-` | Open Parent Directory | Open Oil in the current window |
 
-**Navigation between file tree and editor:**
-- Use `Ctrl+h` to move to file tree (left window)
-- Use `Ctrl+l` to move back to editor (right window)
-- Or use arrow keys in NvimTree and press Enter to open files
+**Navigation inside Oil:**
+- Press `Enter` to open a file or enter a directory
+- Press `-` to go to the parent directory
+- Press `g.` to toggle hidden files
+- Press `Ctrl+c` to close the floating explorer
 
-**Note:** File tree will NOT auto-open when you type `nvim`. Use `<leader>e` to open it manually.
+**Note:** Oil becomes Neovim's default directory explorer, so `nvim .` opens the current directory in Oil.
 
 ## Window Navigation
 
