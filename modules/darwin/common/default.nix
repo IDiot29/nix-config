@@ -21,6 +21,7 @@
   nix = {
     enable = false;
     settings = {
+      store = "daemon";
       experimental-features = "nix-command flakes";
       trusted-users = [
         "root"
