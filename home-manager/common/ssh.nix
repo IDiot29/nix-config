@@ -32,6 +32,14 @@
         IdentityFile = "~/.ssh/idiot29";
         IdentitiesOnly = true;
       };
+      "dgx-local-straitpoint" = {
+        HostName = "100.116.9.105";
+        User = "straitpoint";
+        Port = 22;
+        IdentityFile = "~/.ssh/id_ed25519";
+        IdentitiesOnly = true;
+      };
+
     };
   };
 }
