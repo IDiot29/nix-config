@@ -6,6 +6,16 @@
   programs.git = {
     enable = true;
 
+    includes = [
+      {
+        condition = "gitdir:~/Documents/Work/";
+        contents.user = {
+          name = "rivaldo-straitpoint";
+          email = "rivaldo.silalahi@straitpoint.com";
+        };
+      }
+    ];
+
     settings = {
       user = {
         name = "valdo766hi";
