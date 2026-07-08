@@ -40,6 +40,7 @@
         IdentityFile = "~/.ssh/idiot29";
         IdentitiesOnly = true;
       };
+
       "dgx-local-straitpoint" = {
         HostName = "100.116.9.105";
         User = "straitpoint";
@@ -48,6 +49,21 @@
         IdentitiesOnly = true;
       };
 
+      "dgx-us-worker1" = {
+        HostName = "100.72.109.71";
+        User = "straitpoint";
+        Port = 22;
+        IdentityFile = "~/.ssh/id_ed25519_straitpoint";
+        IdentitiesOnly = true;
+      };
+
+      "dgx-us-worker2" = {
+        HostName = "100.86.64.113";
+        User = "straitpoint";
+        Port = 22;
+        IdentityFile = "~/.ssh/id_ed25519_straitpoint";
+        IdentitiesOnly = true;
+      };
     };
   };
 }
