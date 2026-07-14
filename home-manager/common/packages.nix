@@ -19,6 +19,7 @@ in {
     atuin
     gh
     kubectl
+    google-cloud-sdk
     fluxcd
     cilium-cli
     kustomize
