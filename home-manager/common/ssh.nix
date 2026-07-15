@@ -45,7 +45,7 @@
         HostName = "100.116.9.105";
         User = "straitpoint";
         Port = 22;
-        IdentityFile = "~/.ssh/id_ed25519";
+        IdentityFile = "~/.ssh/id_ed25519_straitpoint";
         IdentitiesOnly = true;
       };
 
@@ -58,7 +58,7 @@
       };
 
       "dgx-us-worker2" = {
-        HostName = "100.86.64.113";
+        HostName = "100.108.100.94";
         User = "nvidia";
         Port = 22;
         IdentityFile = "~/.ssh/id_ed25519_straitpoint";
