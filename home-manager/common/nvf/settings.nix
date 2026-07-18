@@ -21,6 +21,9 @@
     p.vimdoc
     p.query
   ]);
+
+  mkKeymaps = mode: mappings:
+    lib.mapAttrsToList (key: mapping: mapping // {inherit key mode;}) mappings;
 in {
   vim = {
     package = pkgs.neovim-unwrapped;
@@ -397,8 +400,8 @@ in {
 
     binds.whichKey.enable = true;
 
-    maps = {
-      normal = {
+    keymaps =
+      (mkKeymaps "n" {
         "<leader>ff" = {
           action = "<cmd>lua require('fff').find_files()<CR>";
           desc = "Find files (fff)";
@@ -556,9 +559,8 @@ in {
         #   action = "<cmd>CopilotChatTests<CR>";
         #   desc = "Copilot Tests";
         # };
-      };
-
-      visual = {
+      })
+      ++ (mkKeymaps "v" {
         "<" = {
           action = "<gv";
           desc = "Indent left";
@@ -567,8 +569,7 @@ in {
           action = ">gv";
           desc = "Indent right";
         };
-      };
-    };
+      });
 
     luaConfigRC.telescope-config = ''
       local ok, telescope = pcall(require, 'telescope')

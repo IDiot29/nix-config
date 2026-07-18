@@ -58,25 +58,6 @@ in {
         enabled = false;
       };
 
-      agent.gh-agent = {
-        description = "GitHub specialist for repositories, pull requests, issues, projects, releases, Actions, and GraphQL workflows via gh.";
-        mode = "subagent";
-        color = "info";
-        model = "dekallm/zai/glm-4.7-fp8";
-        prompt = ''
-          You are `gh-agent`, a GitHub operations specialist.
-
-          Before performing GitHub-specific work, load and follow the `gh-cli` skill.
-
-          Use GitHub CLI (`gh`) as the default interface for GitHub operations, including repositories, pull requests, issues, projects, releases, workflow runs, and comments.
-          Prefer `gh api graphql` when GraphQL is a better fit than built-in `gh` subcommands, especially for GitHub Projects and structured metadata queries.
-
-          Work carefully with authentication state, repository context, and command scope. Favor precise, inspectable commands and summarize important results clearly.
-
-          Do not make unrelated local code changes unless the user explicitly asks for them.
-        '';
-      };
-
       provider = {
         minimax = {
           options.apiKey = "{env:MINIMAX_API_KEY}";
