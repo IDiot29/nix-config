@@ -10,7 +10,7 @@
     ./kitty.nix
     ./lazygit.nix
     ./opencode/default.nix
-    ./pi.nix
+    ./pi/default.nix
     ./nvf/default.nix
     ./nushell.nix
     ./packages.nix

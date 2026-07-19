@@ -1,4 +1,6 @@
 {...}: {
+  home.file.".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
+
   xdg.configFile."mcp/mcp.json".text = builtins.toJSON {
     mcpServers = {
       context7 = {
