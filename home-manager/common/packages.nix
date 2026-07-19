@@ -37,6 +37,7 @@ in {
     ripgrep
     antigravity
     rtk
+    nixd
     fd
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     ghostty
