@@ -1,5 +1,8 @@
 {...}: {
-  home.file.".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
+  home.file = {
+    ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
+    ".pi/agent/themes/catppuccin-mocha.json".source = ./themes/catppuccin-mocha.json;
+  };
 
   xdg.configFile."mcp/mcp.json".text = builtins.toJSON {
     mcpServers = {
@@ -20,7 +23,7 @@
     package = null;
 
     settings = {
-      theme = "dark";
+      theme = "catppuccin-mocha";
       defaultProvider = "openai-codex";
       defaultModel = "gpt-5.6-sol";
       hideThinkingBlock = true;
