@@ -33,6 +33,7 @@
         "npm:pi-lens@3.8.70"
         "npm:pi-mcp-adapter@2.11.0"
         "npm:@plannotator/pi-extension@0.23.1"
+        "npm:pi-subagents@0.35.1"
       ];
     };
   };
