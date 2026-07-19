@@ -7,6 +7,7 @@
     ./eza.nix
     ./git.nix
     ./ghostty.nix
+    ./herdr.nix
     ./kitty.nix
     ./lazygit.nix
     ./opencode/default.nix
