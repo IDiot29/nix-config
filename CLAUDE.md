@@ -1,6 +1,6 @@
 # Nix Config Agent Guide
 
-This repo manages one NixOS host (`thinker`) and two macOS hosts (`Rivaldos-MacBook-Pro`, `Rivaldos-MacBook-Air`) with a shared Home Manager base. Optimize for small, reusable module changes and keep host files thin.
+This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBook-Pro`) with a shared Home Manager base. Optimize for small, reusable module changes and keep host files thin.
 
 ## Hard Rules
 

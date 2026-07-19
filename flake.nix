@@ -157,30 +157,6 @@
           }
         ];
       };
-
-      "Rivaldos-MacBook-Air" = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = {inherit inputs;};
-        modules = [
-          ./hosts/darwin/configuration.nix
-          home-manager.darwinModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-bak";
-              users.rivaldo = {
-                imports = [
-                  ./home-manager/home.nix
-                  inputs.nvf.homeManagerModules.default
-                  ./home-manager/darwin/default.nix
-                ];
-              };
-              extraSpecialArgs = {inherit inputs;};
-            };
-          }
-        ];
-      };
     };
 
     nixosModules = {
@@ -217,19 +193,6 @@
       };
 
       "rivaldo@Rivaldos-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        extraSpecialArgs = {inherit inputs;};
-        modules = [
-          ./home-manager/home.nix
-          inputs.nvf.homeManagerModules.default
-          ./home-manager/darwin/default.nix
-        ];
-      };
-
-      "rivaldo@Rivaldos-MacBook-Air" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
           config.allowUnfree = true;

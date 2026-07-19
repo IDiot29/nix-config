@@ -3,6 +3,7 @@
 This repository manages my Linux and macOS machines from one flake.
 
 The design is simple:
+
 - keep host files thin
 - keep reusable logic in modules
 - keep Home Manager shared-first
@@ -12,7 +13,6 @@ The design is simple:
 
 - NixOS: `thinker`
 - Darwin: `Rivaldos-MacBook-Pro`
-- Darwin: `Rivaldos-MacBook-Air`
 
 ## Directory guide
 
@@ -42,9 +42,6 @@ sudo nixos-rebuild switch --flake .#thinker
 
 # Apply Darwin (run on the target Mac)
 sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
-
-# Or on the MacBook Air
-sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Package ownership policy
@@ -95,9 +92,6 @@ home-manager build --flake .#rivaldo@thinker
 
 # Darwin build (on the target Mac)
 darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
-
-# Or on the MacBook Air
-darwin-rebuild build --flake .#Rivaldos-MacBook-Air
 ```
 
 ## Troubleshooting notes
@@ -119,7 +113,4 @@ sudo nixos-rebuild switch --rollback --flake .#thinker
 
 # Darwin (on the target Mac)
 darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Pro
-
-# Or on the MacBook Air
-darwin-rebuild switch --rollback --flake .#Rivaldos-MacBook-Air
 ```
