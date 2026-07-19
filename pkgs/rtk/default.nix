@@ -4,15 +4,15 @@
   fetchurl,
 }:
 let
-  version = "0.37.2";
+  version = "0.43.0";
   sources = {
     x86_64-linux = {
       url = "https://github.com/rtk-ai/rtk/releases/download/v${version}/rtk-x86_64-unknown-linux-musl.tar.gz";
-      sha256 = "3dfb7a05636a68687ba1c5aa696fa8d5fcb494447ded86d9eb8b88b7100a37c6";
+      sha256 = "sha256:ff8a1e7766496e175291a85aeca1dc97c9ff6df33e51e5893d1fbc78fea2a609";
     };
     aarch64-darwin = {
       url = "https://github.com/rtk-ai/rtk/releases/download/v${version}/rtk-aarch64-apple-darwin.tar.gz";
-      sha256 = "99e20a59847dedbb64032a3f7985f2fe959fcb9674d8eaf940fc58a189e27eca";
+      sha256 = "sha256:8a17e49acbd378997eb21d0eb6f7f861111f35b4fc9b1c74edf4c7448e576c65";
     };
   };
   source =
