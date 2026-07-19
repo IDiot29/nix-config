@@ -217,13 +217,13 @@ binds {
     Mod+Period { expel-window-from-column; }
 
     // Noctalia (optional). These do not conflict with the DMS defaults.
-    Mod+Ctrl+Space hotkey-overlay-title="Noctalia Launcher" { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+Ctrl+S hotkey-overlay-title="Noctalia Control Center" { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-    Mod+Ctrl+Comma hotkey-overlay-title="Noctalia Settings" { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
-    Mod+Ctrl+N hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
-    Mod+Ctrl+M hotkey-overlay-title="Noctalia System Monitor" { spawn "noctalia-shell" "ipc" "call" "systemMonitor" "toggle"; }
-    Mod+Ctrl+V hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
-    Mod+Ctrl+Alt+L hotkey-overlay-title="Noctalia Lock Screen" { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Ctrl+Space hotkey-overlay-title="Noctalia Launcher" { spawn "noctalia" "ipc" "launcher" "toggle"; }
+    Mod+Ctrl+S hotkey-overlay-title="Noctalia Control Center" { spawn "noctalia" "ipc" "controlCenter" "toggle"; }
+    Mod+Ctrl+Comma hotkey-overlay-title="Noctalia Settings" { spawn "noctalia" "ipc" "settings" "toggle"; }
+    Mod+Ctrl+N hotkey-overlay-title="Noctalia Notifications" { spawn "noctalia" "ipc" "notifications" "toggleHistory"; }
+    Mod+Ctrl+M hotkey-overlay-title="Noctalia System Monitor" { spawn "noctalia" "ipc" "systemMonitor" "toggle"; }
+    Mod+Ctrl+V hotkey-overlay-title="Noctalia Clipboard" { spawn "noctalia" "ipc" "launcher" "clipboard"; }
+    Mod+Ctrl+Alt+L hotkey-overlay-title="Noctalia Lock Screen" { spawn "noctalia" "ipc" "lockScreen" "lock"; }
 
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { switch-preset-window-height; }

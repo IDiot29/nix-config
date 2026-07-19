@@ -3,20 +3,20 @@
   pkgs,
   ...
 }: {
-  programs.noctalia-shell = lib.mkIf pkgs.stdenv.isLinux {
+  programs.noctalia = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
-    # dms remains the default shell; but noctalia can be use with systemd
+    # DMS remains the default shell; Noctalia can still be started with systemd.
     systemd.enable = true;
 
-    settings = {
-      colorSchemes.predefinedScheme = "Catppuccin";
+    settings.theme = {
+      mode = "dark";
+      source = "builtin";
+      builtin = "Catppuccin";
     };
   };
 
-  xdg.configFile."noctalia/settings.json".force = true;
-
-  # The unit remains startable via `systemctl --user start noctalia-shell.service`.
-  systemd.user.services.noctalia-shell = lib.mkIf pkgs.stdenv.isLinux {
+  # Keep the unit startable manually instead of enabling it by default.
+  systemd.user.services.noctalia = lib.mkIf pkgs.stdenv.isLinux {
     Install.WantedBy = lib.mkForce [ ];
   };
 }
