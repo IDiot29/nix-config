@@ -11,3 +11,6 @@ secrets.fish
 # Result symlinks
 result
 result-*
+
+# Subagent artifacts
+.pi-subagents/

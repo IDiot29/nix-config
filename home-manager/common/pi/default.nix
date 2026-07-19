@@ -1,4 +1,6 @@
 {...}: {
+  imports = [ ./subagent ];
+
   home.file = {
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/themes/catppuccin-mocha.json".source = ./themes/catppuccin-mocha.json;
