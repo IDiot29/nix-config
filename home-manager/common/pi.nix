@@ -27,6 +27,7 @@
         "npm:cc-safety-net@1.0.6"
         "npm:pi-lens@3.8.70"
         "npm:pi-mcp-adapter@2.11.0"
+        "npm:@plannotator/pi-extension@0.23.1"
       ];
     };
   };
