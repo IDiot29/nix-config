@@ -36,6 +36,7 @@
         "npm:pi-mcp-adapter@2.11.0"
         "npm:@plannotator/pi-extension@0.23.1"
         "npm:pi-subagents@0.35.1"
+        "npm:@gotgenes/pi-permission-system@20.10.0"
       ];
     };
   };
