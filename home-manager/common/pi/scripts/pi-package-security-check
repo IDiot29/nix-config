@@ -1,0 +1,193 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PI_NPM_DIR="${PI_NPM_DIR:-${PI_AGENT_DIR:-$HOME/.pi/agent}/npm}"
+TEMP_DIR=""
+AUDIT_OUTPUT=""
+
+cleanup() {
+  [[ -z "$TEMP_DIR" ]] || rm -rf "$TEMP_DIR"
+  [[ -z "$AUDIT_OUTPUT" ]] || rm -f "$AUDIT_OUTPUT"
+}
+trap cleanup EXIT
+
+info() { printf '[INFO] %s\n' "$*"; }
+pass() { printf '[PASS] %s\n' "$*"; }
+fail() { printf '[FAIL] %s\n' "$*" >&2; }
+
+usage() {
+  cat <<'EOF'
+Usage:
+  pi-package-security-check
+  pi-package-security-check --candidate PACKAGE@VERSION [PACKAGE@VERSION...]
+
+Checks the complete Pi npm dependency tree, including development
+dependencies, for vulnerabilities known to the npm advisory database.
+
+Without arguments, audits the currently installed tree under
+~/.pi/agent/npm. With --candidate, it copies the current lockfile to a
+temporary directory, simulates one or more exact-version package updates
+without running install scripts, and audits the resulting combined tree.
+
+This detects known advisories; it does not prove that package code is safe or
+non-malicious.
+
+Environment:
+  PI_AGENT_DIR  Override ~/.pi/agent
+  PI_NPM_DIR    Override the npm directory directly
+
+Exit codes:
+  0  No known vulnerabilities
+  1  Vulnerabilities found
+  2  Invalid input, missing files, registry failure, or npm failure
+EOF
+}
+
+require_tree() {
+  if [[ ! -f "$PI_NPM_DIR/package.json" || ! -f "$PI_NPM_DIR/package-lock.json" ]]; then
+    fail "Pi npm package.json or package-lock.json not found in $PI_NPM_DIR"
+    exit 2
+  fi
+}
+
+run_audit() {
+  local directory="$1" audit_status classification
+  AUDIT_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/pi-npm-audit.XXXXXX")"
+
+  set +e
+  (cd "$directory" && npm audit --include=dev --json >"$AUDIT_OUTPUT")
+  audit_status=$?
+  set -e
+
+  set +e
+  node - "$AUDIT_OUTPUT" "$audit_status" <<'NODE'
+const fs = require("fs");
+const auditStatus = Number(process.argv[3]);
+let report;
+try {
+  report = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+} catch (error) {
+  console.error(`[FAIL] npm audit did not return valid JSON: ${error.message}`);
+  process.exit(2);
+}
+if (report.error || !report.metadata?.vulnerabilities) {
+  const error = report.error || {};
+  console.error(`[FAIL] npm audit failed: ${error.summary || error.code || "missing audit metadata"}`);
+  if (error.detail) console.error(error.detail);
+  process.exit(2);
+}
+if (auditStatus !== 0 && auditStatus !== 1) {
+  console.error(`[FAIL] npm audit exited unexpectedly with status ${auditStatus}`);
+  process.exit(2);
+}
+const counts = report.metadata.vulnerabilities;
+const total = counts.total ?? Object.values(counts).reduce((sum, value) => sum + Number(value || 0), 0);
+console.log(`[AUDIT] total=${total} critical=${counts.critical || 0} high=${counts.high || 0} moderate=${counts.moderate || 0} low=${counts.low || 0}`);
+if (total === 0) {
+  if (auditStatus !== 0) {
+    console.error(`[FAIL] npm audit reported no vulnerabilities but exited with status ${auditStatus}`);
+    process.exit(2);
+  }
+  process.exit(0);
+}
+for (const [name, finding] of Object.entries(report.vulnerabilities || {})) {
+  console.error(`[VULNERABLE] ${name} severity=${finding.severity || "unknown"} direct=${Boolean(finding.isDirect)}`);
+}
+process.exit(1);
+NODE
+  classification=$?
+  set -e
+
+  rm -f "$AUDIT_OUTPUT"
+  AUDIT_OUTPUT=""
+  return "$classification"
+}
+
+check_installed() {
+  local status
+  require_tree
+  info "Auditing installed Pi packages in $PI_NPM_DIR"
+  set +e
+  run_audit "$PI_NPM_DIR"
+  status=$?
+  set -e
+  case "$status" in
+    0) pass "Installed Pi package tree has no known vulnerabilities." ;;
+    1) fail "Installed Pi package tree contains known vulnerabilities." ;;
+    *) fail "Installed Pi package tree could not be audited." ;;
+  esac
+  return "$status"
+}
+
+check_candidate() {
+  local status
+  local candidates=("$@")
+  local normalized=()
+  require_tree
+
+  node - "$PI_NPM_DIR/package.json" "${candidates[@]}" <<'NODE' || {
+const fs = require("fs");
+const manifest = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const exactVersion = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+const seen = new Set();
+for (const raw of process.argv.slice(3)) {
+  const spec = raw.replace(/^npm:/, "");
+  const separator = spec.lastIndexOf("@");
+  const name = spec.slice(0, separator);
+  const version = spec.slice(separator + 1);
+  if (separator <= 0 || !name || !exactVersion.test(version)) {
+    console.error(`[FAIL] Expected an exact package spec, received: ${raw}`);
+    process.exit(2);
+  }
+  if (!Object.hasOwn(manifest.dependencies || {}, name)) {
+    console.error(`[FAIL] ${name} is not a direct Pi package in the installed package.json`);
+    process.exit(2);
+  }
+  if (seen.has(name)) {
+    console.error(`[FAIL] Candidate package was specified more than once: ${name}`);
+    process.exit(2);
+  }
+  seen.add(name);
+}
+NODE
+    exit 2
+  }
+
+  for candidate in "${candidates[@]}"; do
+    normalized+=("${candidate#npm:}")
+  done
+
+  TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pi-package-audit.XXXXXX")"
+  cp "$PI_NPM_DIR/package.json" "$PI_NPM_DIR/package-lock.json" "$TEMP_DIR/"
+
+  info "Simulating combined candidate set: ${normalized[*]}"
+  info "Install scripts are disabled during the simulation"
+  if ! (cd "$TEMP_DIR" && npm install "${normalized[@]}" \
+    --package-lock-only --save-exact --ignore-scripts --legacy-peer-deps --audit=false); then
+    fail "npm could not resolve the candidate dependency tree."
+    return 2
+  fi
+
+  info "Auditing the complete combined candidate dependency tree"
+  set +e
+  run_audit "$TEMP_DIR"
+  status=$?
+  set -e
+  case "$status" in
+    0) pass "Combined candidate tree has no known vulnerabilities: ${normalized[*]}" ;;
+    1) fail "Candidates were not installed; their combined dependency tree is vulnerable." ;;
+    *) fail "Candidates were not installed; their combined dependency tree could not be audited." ;;
+  esac
+  return "$status"
+}
+
+case "${1:-}" in
+  "") check_installed ;;
+  --candidate)
+    [[ $# -ge 2 ]] || { usage >&2; exit 2; }
+    shift
+    check_candidate "$@"
+    ;;
+  -h|--help) usage ;;
+  *) usage >&2; exit 2 ;;
+esac

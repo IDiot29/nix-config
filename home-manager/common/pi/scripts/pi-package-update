@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+SECURITY_CHECK="${PI_PACKAGE_SECURITY_CHECK:-$SCRIPT_DIR/pi-package-security-check}"
+ACTION="${1:-check}"
+[[ $# -eq 0 ]] || shift
+
+PACKAGES_FILE=""
+PLAN_FILE=""
+CONFIG_TEMP=""
+
+cleanup() {
+  [[ -z "$PACKAGES_FILE" ]] || rm -f "$PACKAGES_FILE"
+  [[ -z "$PLAN_FILE" ]] || rm -f "$PLAN_FILE"
+  [[ -z "$CONFIG_TEMP" ]] || rm -f "$CONFIG_TEMP"
+}
+trap cleanup EXIT
+
+info() { printf '[INFO] %s\n' "$*"; }
+pass() { printf '[PASS] %s\n' "$*"; }
+skip() { printf '[SKIP] %s\n' "$*"; }
+fail() { printf '[FAIL] %s\n' "$*" >&2; }
+
+usage() {
+  cat <<'EOF'
+Usage:
+  pi-package-update check [PACKAGE...]
+  pi-package-update update [PACKAGE...]
+
+Finds semantically newer versions of npm Pi packages pinned in the Home
+Manager Pi module. Candidates are audited individually and then together
+against an isolated copy of the complete installed dependency tree.
+
+Commands:
+  check   Report available updates and whether the candidate set is eligible.
+  update  Atomically update eligible exact-version pins in the Nix source.
+
+With PACKAGE arguments, only those package names are considered. Without
+arguments, all configured npm packages are considered. Candidates with known
+npm advisories are skipped. Registry, checker, or editing errors apply no
+configuration changes.
+
+The update command never activates Home Manager or mutates the live Pi
+installation. After activation, run pi-package-security-check again.
+
+Environment:
+  PI_PACKAGES_CONFIG        Path to home-manager/common/pi/default.nix
+  PI_PACKAGE_SECURITY_CHECK Path to the companion security-check script
+  PI_AGENT_DIR / PI_NPM_DIR Passed through to the security check
+
+Exit codes:
+  0  Completed; all available updates passed, and update mode applied them
+  1  One or more available updates were blocked by known vulnerabilities
+  2  Usage, configuration, registry, checker, or editing error; no pins changed
+EOF
+}
+
+case "$ACTION" in
+  check|update) ;;
+  -h|--help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+if [[ ! -x "$SECURITY_CHECK" ]]; then
+  fail "Security checker is not executable: $SECURITY_CHECK"
+  exit 2
+fi
+
+find_config() {
+  local git_root xdg_repo
+  xdg_repo="${XDG_CONFIG_HOME:-$HOME/.config}/nix/home-manager/common/pi/default.nix"
+  if [[ -n "${PI_PACKAGES_CONFIG:-}" ]]; then
+    printf '%s\n' "$PI_PACKAGES_CONFIG"
+  elif [[ -f "$PWD/home-manager/common/pi/default.nix" ]]; then
+    printf '%s\n' "$PWD/home-manager/common/pi/default.nix"
+  elif git_root="$(git rev-parse --show-toplevel 2>/dev/null)" && \
+    [[ -f "$git_root/home-manager/common/pi/default.nix" ]]; then
+    printf '%s\n' "$git_root/home-manager/common/pi/default.nix"
+  elif [[ -f "$xdg_repo" ]]; then
+    printf '%s\n' "$xdg_repo"
+  elif [[ -f "$SCRIPT_DIR/../default.nix" ]]; then
+    printf '%s\n' "$SCRIPT_DIR/../default.nix"
+  else
+    return 1
+  fi
+}
+
+CONFIG="$(find_config)" || {
+  fail "Cannot find the Pi Home Manager module; set PI_PACKAGES_CONFIG."
+  exit 2
+}
+if [[ ! -f "$CONFIG" || ! -r "$CONFIG" ]]; then
+  fail "Pi package configuration is not a readable file: $CONFIG"
+  exit 2
+fi
+if [[ "$ACTION" == update && ! -w "$CONFIG" ]]; then
+  fail "Pi package configuration is not writable: $CONFIG"
+  exit 2
+fi
+
+PACKAGES_FILE="$(mktemp "${TMPDIR:-/tmp}/pi-packages.XXXXXX")"
+PLAN_FILE="$(mktemp "${TMPDIR:-/tmp}/pi-package-plan.XXXXXX")"
+
+node - "$CONFIG" >"$PACKAGES_FILE" <<'NODE'
+const fs = require("fs");
+const text = fs.readFileSync(process.argv[2], "utf8");
+const exactVersion = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+for (const [, spec] of text.matchAll(/"npm:([^"\s]+)"/g)) {
+  const separator = spec.lastIndexOf("@");
+  const name = spec.slice(0, separator);
+  const version = spec.slice(separator + 1);
+  if (separator > 0 && name && exactVersion.test(version)) console.log(`${name}\t${version}`);
+}
+NODE
+
+if [[ ! -s "$PACKAGES_FILE" ]]; then
+  fail "No exact npm package pins found in $CONFIG"
+  exit 2
+fi
+
+is_selected() {
+  local candidate="$1" requested
+  [[ $# -eq 1 ]] && return 0
+  shift
+  for requested in "$@"; do
+    [[ "$candidate" == "$requested" ]] && return 0
+  done
+  return 1
+}
+
+is_newer() {
+  node - "$1" "$2" <<'NODE'
+function parse(value) {
+  const match = value.match(/^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/);
+  if (!match) return null;
+  return { core: match.slice(1, 4).map(Number), pre: match[4]?.split(".") || [] };
+}
+function compare(left, right) {
+  for (let i = 0; i < 3; i++) if (left.core[i] !== right.core[i]) return left.core[i] > right.core[i] ? 1 : -1;
+  if (!left.pre.length || !right.pre.length) return left.pre.length === right.pre.length ? 0 : left.pre.length ? -1 : 1;
+  for (let i = 0; i < Math.max(left.pre.length, right.pre.length); i++) {
+    if (left.pre[i] === undefined || right.pre[i] === undefined) return left.pre[i] === undefined ? -1 : 1;
+    if (left.pre[i] === right.pre[i]) continue;
+    const leftNumeric = /^\d+$/.test(left.pre[i]);
+    const rightNumeric = /^\d+$/.test(right.pre[i]);
+    if (leftNumeric && rightNumeric) return Number(left.pre[i]) > Number(right.pre[i]) ? 1 : -1;
+    if (leftNumeric !== rightNumeric) return leftNumeric ? -1 : 1;
+    return left.pre[i] > right.pre[i] ? 1 : -1;
+  }
+  return 0;
+}
+const latest = parse(process.argv[2]);
+const current = parse(process.argv[3]);
+if (!latest || !current) process.exit(2);
+process.exit(compare(latest, current) > 0 ? 0 : 1);
+NODE
+}
+
+checked=0
+available=0
+secure=0
+blocked=0
+updated=0
+registry_errors=0
+checker_errors=0
+
+info "Reading package pins from $CONFIG"
+while IFS=$'\t' read -r package current; do
+  is_selected "$package" "$@" || continue
+  checked=$((checked + 1))
+  info "Checking $package (configured pin: $current)"
+
+  if ! latest="$(npm view "$package" version --json 2>/dev/null | node -e '
+    let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => {
+      try {
+        const value=JSON.parse(input);
+        if (typeof value !== "string") process.exit(2);
+        process.stdout.write(value);
+      } catch { process.exit(2); }
+    });
+  ')"; then
+    fail "Could not query a valid latest version from the npm registry for $package"
+    registry_errors=$((registry_errors + 1))
+    continue
+  fi
+
+  set +e
+  is_newer "$latest" "$current"
+  comparison=$?
+  set -e
+  if [[ $comparison -eq 1 ]]; then
+    if [[ "$latest" == "$current" ]]; then
+      pass "$package is current at $current"
+    else
+      skip "$package remains at $current because registry latest $latest is not newer"
+    fi
+    continue
+  elif [[ $comparison -ne 0 ]]; then
+    fail "Could not compare package versions for $package: current=$current latest=$latest"
+    registry_errors=$((registry_errors + 1))
+    continue
+  fi
+
+  available=$((available + 1))
+  info "Update available: $package $current -> $latest"
+  set +e
+  "$SECURITY_CHECK" --candidate "$package@$latest"
+  check_status=$?
+  set -e
+  case "$check_status" in
+    0)
+      secure=$((secure + 1))
+      printf '%s\t%s\t%s\n' "$package" "$current" "$latest" >>"$PLAN_FILE"
+      pass "$package@$latest passed its individual audit"
+      ;;
+    1)
+      blocked=$((blocked + 1))
+      skip "$package remains pinned at $current because $latest has known vulnerabilities"
+      ;;
+    *)
+      checker_errors=$((checker_errors + 1))
+      fail "Could not determine candidate security for $package@$latest"
+      ;;
+  esac
+done <"$PACKAGES_FILE"
+
+if [[ $checked -eq 0 ]]; then
+  fail "None of the requested package names matched configured Pi packages."
+  exit 2
+fi
+
+if [[ $registry_errors -gt 0 || $checker_errors -gt 0 ]]; then
+  printf '\nSummary: checked=%d available=%d individually_secure=%d blocked=%d updated=0 errors=%d\n' \
+    "$checked" "$available" "$secure" "$blocked" "$((registry_errors + checker_errors))"
+  fail "No pins changed because package discovery or security checks failed."
+  exit 2
+fi
+
+if [[ $secure -gt 0 ]]; then
+  combined_specs=()
+  while IFS=$'\t' read -r package _ latest; do
+    combined_specs+=("$package@$latest")
+  done <"$PLAN_FILE"
+
+  info "Checking all individually accepted updates together"
+  set +e
+  "$SECURITY_CHECK" --candidate "${combined_specs[@]}"
+  combined_status=$?
+  set -e
+  case "$combined_status" in
+    0) pass "Combined candidate set passed audit." ;;
+    1)
+      blocked=$((blocked + secure))
+      secure=0
+      fail "No pins changed because the combined candidate set is vulnerable."
+      ;;
+    *)
+      printf '\nSummary: checked=%d available=%d individually_secure=%d blocked=%d updated=0 errors=1\n' \
+        "$checked" "$available" "$secure" "$blocked"
+      fail "No pins changed because the combined candidate set could not be audited."
+      exit 2
+      ;;
+  esac
+fi
+
+if [[ "$ACTION" == update && $secure -gt 0 ]]; then
+  CONFIG_TEMP="$(mktemp "${CONFIG}.tmp.XXXXXX")"
+  cp -p "$CONFIG" "$CONFIG_TEMP"
+  node - "$CONFIG_TEMP" "$PLAN_FILE" <<'NODE'
+const fs = require("fs");
+const [config, plan] = process.argv.slice(2);
+let text = fs.readFileSync(config, "utf8");
+for (const line of fs.readFileSync(plan, "utf8").trim().split("\n")) {
+  if (!line) continue;
+  const [name, current, latest] = line.split("\t");
+  const oldSpec = `"npm:${name}@${current}"`;
+  if (text.split(oldSpec).length !== 2) {
+    console.error(`[FAIL] Expected exactly one ${oldSpec} in ${config}`);
+    process.exit(2);
+  }
+  text = text.replace(oldSpec, `"npm:${name}@${latest}"`);
+}
+fs.writeFileSync(config, text);
+NODE
+  mv "$CONFIG_TEMP" "$CONFIG"
+  CONFIG_TEMP=""
+  updated=$secure
+  pass "Atomically updated $updated secure package pin(s) in $CONFIG"
+elif [[ "$ACTION" == check && $secure -gt 0 ]]; then
+  pass "$secure package update(s) are eligible as one combined set."
+fi
+
+printf '\nSummary: checked=%d available=%d secure=%d blocked=%d updated=%d errors=0\n' \
+  "$checked" "$available" "$secure" "$blocked" "$updated"
+
+if [[ "$ACTION" == update && $updated -gt 0 ]]; then
+  info "Review the diff, activate Home Manager normally, then audit the live installation."
+fi
+[[ $blocked -eq 0 ]] || exit 1

@@ -5,6 +5,14 @@
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/extensions/pi-permission-system/config.json".source =
       ./extensions/pi-permission-system/config.json;
+    ".local/bin/pi-package-security-check" = {
+      source = ./scripts/pi-package-security-check;
+      executable = true;
+    };
+    ".local/bin/pi-package-update" = {
+      source = ./scripts/pi-package-update;
+      executable = true;
+    };
     ".pi/agent/themes/catppuccin-mocha.json".source = ./themes/catppuccin-mocha.json;
   };
 

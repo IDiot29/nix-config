@@ -1,0 +1,79 @@
+# Pi package maintenance
+
+These scripts make Pi package updates audit-first and keep the Home Manager
+module as the source of truth.
+
+> Here, **secure** means that npm reports no known advisories. An audit cannot
+> prove that package code is safe or non-malicious.
+
+## Installed security check
+
+```sh
+pi-package-security-check
+```
+
+Audits the complete installed dependency tree, including development
+dependencies, in `~/.pi/agent/npm`.
+
+Exit codes distinguish the outcomes:
+
+- `0`: no known vulnerabilities
+- `1`: known vulnerabilities found
+- `2`: audit could not run or its result was invalid
+
+## Candidate security check
+
+```sh
+pi-package-security-check --candidate pi-lens@3.8.71
+pi-package-security-check --candidate \
+  pi-lens@3.8.71 \
+  @plannotator/pi-extension@0.24.2
+```
+
+Candidate versions must be exact semantic versions. The script copies the
+current manifest and lockfile to a temporary directory, simulates all supplied
+updates together with install scripts disabled, and audits the resulting
+combined tree. It does not change the live installation.
+
+## Find secure updates
+
+```sh
+pi-package-update check
+pi-package-update check pi-lens pi-subagents
+```
+
+The updater considers only registry versions semantically newer than exact
+pins in `home-manager/common/pi/default.nix`. It audits each candidate and then
+audits all accepted candidates together.
+
+## Update secure pins
+
+```sh
+pi-package-update update
+pi-package-update update pi-lens
+```
+
+The updater writes only candidates that pass both audits. All accepted pins
+are written atomically; registry, checker, combined-audit, or editing errors
+leave the configuration unchanged. A vulnerable candidate is skipped, while
+other secure candidates may still be updated together.
+
+The command finds this repository automatically at `$XDG_CONFIG_HOME/nix`
+(default `~/.config/nix`) or from the current Git checkout. For a different
+checkout, set:
+
+```sh
+PI_PACKAGES_CONFIG=/path/to/home-manager/common/pi/default.nix \
+  pi-package-update check
+```
+
+The scripts deliberately do not activate Home Manager or mutate the live Pi
+installation. After normal activation, verify the installed result:
+
+```sh
+pi-package-security-check
+```
+
+Both scripts print stable `[INFO]`, `[PASS]`, `[SKIP]`, `[FAIL]`, `[AUDIT]`,
+and `[VULNERABLE]` messages plus meaningful exit codes so people and AI agents
+can use the same workflow.
