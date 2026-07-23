@@ -39,6 +39,7 @@ in {
     rtk
     nixd
     fd
+    hunk
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     ghostty
     keepassxc
