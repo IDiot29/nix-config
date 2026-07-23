@@ -3,6 +3,8 @@
 
   home.file = {
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
+    ".pi/agent/extensions/pi-permission-system/config.json".source =
+      ./extensions/pi-permission-system/config.json;
     ".pi/agent/themes/catppuccin-mocha.json".source = ./themes/catppuccin-mocha.json;
   };
 

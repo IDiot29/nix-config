@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+  "permission": {
+    "*": "allow",
+    "path": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "~/.ssh/*": "deny",
+      "~/.gnupg/*": "deny",
+      "~/.aws/*": "deny",
+      "~/.config/gcloud/*": "deny",
+      "~/.kube/*": "deny",
+      "~/.docker/config.json": "deny",
+      "~/.npmrc": "deny",
+      "~/.netrc": "deny",
+      "~/.pi/agent/auth.json": "deny",
+      "~/.pi/agent/settings.json": "deny"
+    },
+    "bash": {
+      "*": "allow",
+      "rm *": "deny",
+      "shred *": "deny",
+      "wipefs *": "deny",
+      "mkfs*": "deny",
+      "fdisk *": "deny",
+      "parted *": "deny",
+      "diskutil erase*": "deny",
+      "dd *": "deny",
+      "chmod -R *": "deny",
+      "chown -R *": "deny",
+      "shutdown*": "deny",
+      "reboot*": "deny",
+      "poweroff*": "deny",
+      "halt*": "deny",
+      "git push --force*": "deny",
+      "git reset --hard*": "deny",
+      "git clean *": "ask",
+      "sudo *": "ask"
+    },
+    "external_directory": "ask"
+  }
+}
