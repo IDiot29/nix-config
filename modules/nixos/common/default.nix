@@ -112,6 +112,7 @@
     pritunl-client
     devenv
     home-manager
+    uv
   ];
 
   fonts.packages = with pkgs; [
