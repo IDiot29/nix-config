@@ -31,6 +31,7 @@
     brews = [
       "mole"
       "tailscale"
+      "uv"
     ];
 
     casks = [
