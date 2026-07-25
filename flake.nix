@@ -88,23 +88,23 @@
     nixpkgs,
     nix-darwin,
     home-manager,
-    sops-nix,
-    nix-homebrew,
-    homebrew-core,
-    homebrew-cask,
-    niri,
-    zen-browser,
-    nvf,
-    vicinae,
-    vicinae-extensions,
-    winapps,
     ...
   } @ inputs: let
-    systems = [
-      "x86_64-linux"
-      "aarch64-darwin"
+    linuxHomeModules = [
+      ./home-manager/home.nix
+      # Note: niri home module is provided via NixOS module integration
+      inputs.dankMaterialShell.homeModules.dank-material-shell
+      inputs.noctalia.homeModules.default
+      inputs.zen-browser.homeModules.beta
+      inputs.nvf.homeManagerModules.default
+      inputs.vicinae.homeManagerModules.default
+      ./home-manager/nixos/default.nix
     ];
-    forAllSystems = nixpkgs.lib.genAttrs systems;
+    darwinHomeModules = [
+      ./home-manager/home.nix
+      inputs.nvf.homeManagerModules.default
+      ./home-manager/darwin/default.nix
+    ];
   in {
     nixosConfigurations = {
       thinker = nixpkgs.lib.nixosSystem {
@@ -117,18 +117,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "hm-bak";
-              users.rivaldo = {
-                imports = [
-                  ./home-manager/home.nix
-                  # Note: niri home module is provided via NixOS module integration
-                  inputs.dankMaterialShell.homeModules.dank-material-shell
-                  inputs.noctalia.homeModules.default
-                  inputs.zen-browser.homeModules.beta
-                  inputs.nvf.homeManagerModules.default
-                  inputs.vicinae.homeManagerModules.default
-                  ./home-manager/nixos/default.nix
-                ];
-              };
+              users.rivaldo.imports = linuxHomeModules;
               extraSpecialArgs = {inherit inputs;};
             };
           }
@@ -148,13 +137,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "hm-bak";
-              users.rivaldo = {
-                imports = [
-                  ./home-manager/home.nix
-                  inputs.nvf.homeManagerModules.default
-                  ./home-manager/darwin/default.nix
-                ];
-              };
+              users.rivaldo.imports = darwinHomeModules;
               extraSpecialArgs = {inherit inputs;};
             };
           }
@@ -183,16 +166,7 @@
           config.allowUnfree = true;
         };
         extraSpecialArgs = {inherit inputs;};
-        modules = [
-          ./home-manager/home.nix
-          # Note: niri home module is provided via NixOS module integration
-          inputs.dankMaterialShell.homeModules.dank-material-shell
-          inputs.noctalia.homeModules.default
-          inputs.zen-browser.homeModules.beta
-          inputs.nvf.homeManagerModules.default
-          inputs.vicinae.homeManagerModules.default
-          ./home-manager/nixos/default.nix
-        ];
+        modules = linuxHomeModules;
       };
 
       "rivaldo@Rivaldos-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
@@ -201,11 +175,7 @@
           config.allowUnfree = true;
         };
         extraSpecialArgs = {inherit inputs;};
-        modules = [
-          ./home-manager/home.nix
-          inputs.nvf.homeManagerModules.default
-          ./home-manager/darwin/default.nix
-        ];
+        modules = darwinHomeModules;
       };
     };
   };
