@@ -2,6 +2,7 @@
   imports = [ ./subagent ];
 
   home.file = {
+    ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/extensions/pi-permission-system/config.json".source =
       ./extensions/pi-permission-system/config.json;
