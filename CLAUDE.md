@@ -13,7 +13,9 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 
 ## Repo Map
 
-- `flake.nix`: main entrypoint, inputs, host outputs, exported modules, and standalone Home Manager output for `rivaldo@thinker`
+- `flake.nix`: main entrypoint, inputs, host outputs, shared Home Manager module lists, checks, and standalone Home Manager outputs
+- `caches.nix`: shared host cache URLs and trusted public keys
+- `.github/workflows/check.yml`: deterministic CI validation with commit-pinned actions
 - `hosts/nixos/thinker/configuration.nix`: thin NixOS host wrapper importing shared NixOS modules plus hardware config
 - `hosts/darwin/configuration.nix`: thin Darwin host wrapper importing shared Darwin modules
 - `modules/nixos/`: NixOS system modules
@@ -34,6 +36,7 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - Put macOS-only Home Manager config in `home-manager/darwin/*` and import it from `home-manager/darwin/default.nix`.
 - Keep `hosts/*/configuration.nix` thin. If logic grows, move it into a reusable module.
 - If a new module is introduced, wire it through the existing import path instead of growing host wrappers.
+- Keep Niri installation and display-manager integration in the NixOS module; keep its user configuration in Home Manager.
 
 ## Package and App Ownership
 
@@ -51,6 +54,9 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - Flake mode only sees tracked files. If a new file is added and Nix reports a missing path, run `git add -A`.
 - Darwin Home Manager uses `/Users/rivaldo`; NixOS uses `/home/rivaldo`.
 - Current secrets include `fish_secrets`, `nushell_secrets`, and on NixOS also `winapps_rdp_user` and `winapps_rdp_pass`.
+- External host cache settings are centralized in `caches.nix`. The literal `flake.nix` `nixConfig` values must remain synchronized because flake-level settings cannot import them.
+- Darwin intentionally trusts user `rivaldo` so devenv flakes can provide Cachix substituters and trusted keys.
+- Homebrew activation intentionally updates and upgrades packages on Darwin.
 
 ## Safe Workflow
 
@@ -58,11 +64,12 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 2. Keep changes minimal and reuse the current module split.
 3. Check package ownership before adding any package or app.
 4. Run `git status --short` before and after changes.
-5. Run `nix flake check` when validation is needed and it does not require privilege.
+5. Run `nix flake check --all-systems --no-build` when validation is needed.
 
 ## Safe Validation
 
-- Preferred: `nix flake check`
+- Preferred local check: `nix flake check --all-systems --no-build`
+- CI runs: `nix flake check --all-systems`
 - Allowed: non-mutating reads, searches, and static inspection
 - Do not run: `nixos-rebuild`, `darwin-rebuild`, `home-manager switch`, rollback commands, or other privileged/local-machine activation commands
 
@@ -75,7 +82,7 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 
 ## Commit Style
 
-- Use imperative present tense: `Add`, `Fix`, `Refactor`, `Update`
-- Keep scope obvious and repo-specific
+- Use lowercase imperative present tense: `add`, `fix`, `refactor`, `update`
+- Keep scope obvious and repo-specific.
 - This is for commit message style only. Do not create commits unless the user explicitly asks.
-- Example: `Refactor Darwin module placement rules in AGENTS guide`
+- Example: `refactor darwin module placement rules`

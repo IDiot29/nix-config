@@ -16,7 +16,9 @@ The design is simple:
 
 ## Directory guide
 
-- `flake.nix` - all inputs and outputs
+- `flake.nix` - inputs, host outputs, shared Home Manager module lists, and evaluation checks
+- `caches.nix` - shared host cache URLs and trusted keys
+- `.github/workflows/check.yml` - deterministic flake validation in CI
 - `hosts/` - minimal host wrappers
 - `modules/` - reusable system modules
   - `modules/nixos/` for NixOS-only system config
@@ -34,8 +36,8 @@ The design is simple:
 Run these from the repo root.
 
 ```bash
-# Validate flake and module graph
-nix flake check
+# Evaluate every supported system without building
+nix flake check --all-systems --no-build
 
 # Apply NixOS
 sudo nixos-rebuild switch --flake .#thinker
@@ -55,6 +57,8 @@ Use one owner per tool to avoid path conflicts:
 
 If a tool is already managed in Nix, do not also manage it in Brew.
 
+Niri is intentionally split by responsibility: its NixOS module owns installation, system integration, and the display-manager session; Home Manager owns the user configuration file.
+
 ## Secrets
 
 Secrets are managed with `sops-nix`.
@@ -71,15 +75,19 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 
 ## How to modify this repo safely
 
-1. Run `nix flake check` before changing anything.
+1. Run `nix flake check --all-systems --no-build` before changing anything.
 2. Make the change in the right layer:
    - system-level -> `modules/*`
    - user-level -> `home-manager/*`
    - shared user-scoped CLI tools -> `home-manager/common/packages.nix`
 3. Import new module from the nearest `default.nix` aggregator.
 4. `git add -A` when adding/renaming files (flakes only see tracked files).
-5. Run `nix flake check` again.
+5. Run `nix flake check --all-systems --no-build` again.
 6. Apply on target host.
+
+## Automated checks
+
+GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions and the flake check evaluates both host configurations.
 
 ## Validation shortcuts
 
@@ -104,6 +112,7 @@ sudo chown -R rivaldo:staff ~/.config/nushell ~/.config/fish
 ```
 
 - If flake says a path does not exist in `/nix/store/...-source`, you likely forgot to stage files: `git add -A`.
+- Host cache settings come from `caches.nix`. Keep the literal `flake.nix` `nixConfig` values synchronized because flake-level settings cannot import them.
 
 ## Rollback
 
