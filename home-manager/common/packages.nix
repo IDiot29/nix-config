@@ -35,7 +35,7 @@ in {
     sops
     pandoc
     ripgrep
-    antigravity
+    antigravity-ide
     rtk
     nixd
     fd
