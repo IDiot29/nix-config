@@ -13,15 +13,6 @@
       url = "https://mcp.exa.ai/mcp";
     };
 
-    firecrawl = {
-      type = "stdio";
-      command = "npx";
-      args = ["-y" "firecrawl-mcp"];
-      env = {
-        FIRECRAWL_API_KEY = "\${FIRECRAWL_API_KEY:-}";
-      };
-    };
-
     github = {
       type = "stdio";
       command = "${pkgs.github-mcp-server}/bin/github-mcp-server";
@@ -49,7 +40,7 @@ in {
       if [ -f "$claude_json" ]; then
         ${pkgs.jq}/bin/jq \
           --slurpfile mcp ${mcpJson} \
-          '.mcpServers = ((.mcpServers // {}) + $mcp[0].mcpServers)' \
+          '.mcpServers = (((.mcpServers // {}) | del(.firecrawl)) + $mcp[0].mcpServers)' \
           "$claude_json" > "$temp_file"
       else
         ${pkgs.jq}/bin/jq '.' ${mcpJson} > "$temp_file"

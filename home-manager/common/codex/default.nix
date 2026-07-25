@@ -12,15 +12,6 @@
         url = "https://mcp.exa.ai/mcp";
       };
 
-      firecrawl = {
-        command = "npx";
-        args = ["-y" "firecrawl-mcp"];
-        env = {
-          FIRECRAWL_API_KEY = "\${FIRECRAWL_API_KEY:-}";
-        };
-        enabled = false;
-      };
-
       github = {
         command = "${pkgs.github-mcp-server}/bin/github-mcp-server";
         args = ["stdio"];

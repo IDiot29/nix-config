@@ -44,13 +44,6 @@ in {
         enabled = true;
       };
 
-      mcp.firecrawl = {
-        type = "local";
-        command = ["npx" "-y" "firecrawl-mcp"];
-        environment.FIRECRAWL_API_KEY = "{env:FIRECRAWL_API_KEY}";
-        enabled = false;
-      };
-
       mcp.github = {
         type = "local";
         command = ["${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio"];
