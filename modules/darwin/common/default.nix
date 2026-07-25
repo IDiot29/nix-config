@@ -2,7 +2,9 @@
   inputs,
   pkgs,
   ...
-}: {
+}: let
+  caches = import ../../../caches.nix;
+in {
   nixpkgs = {
     config.allowUnfree = true;
 
@@ -24,14 +26,11 @@
   environment.etc."nix/nix.custom.conf".text = ''
     trusted-users = root rivaldo
     accept-flake-config = true
-    extra-substituters = https://vicinae.cachix.org https://niri.cachix.org https://devenv.cachix.org
-    extra-trusted-public-keys = vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc= niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+    extra-substituters = ${builtins.concatStringsSep " " caches.substituters}
+    extra-trusted-public-keys = ${builtins.concatStringsSep " " caches.trustedPublicKeys}
   '';
 
-  environment.systemPackages = with pkgs; [
-    devenv
-    home-manager
-  ];
+  environment.systemPackages = [pkgs.devenv];
 
   programs.direnv = {
     enable = true;
