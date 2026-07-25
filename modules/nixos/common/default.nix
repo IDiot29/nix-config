@@ -51,8 +51,11 @@
       networkmanager-openvpn
     ];
   };
+
   networking.hosts = {
-    "127.0.0.1" = ["example.com"];
+    # Example for adding on /etc/hosts
+    # "127.0.0.1" = ["app.test" "api.app.test"];
+    # "192.168.1.10" = ["server.test"];
   };
 
   time.timeZone = "Asia/Jakarta";
@@ -60,7 +63,7 @@
 
   users.users.rivaldo = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "docker"];
+    extraGroups = ["wheel" "networkmanager"];
     packages = with pkgs; [
       tree
     ];

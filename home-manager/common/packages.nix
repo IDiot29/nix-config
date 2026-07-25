@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   ...
@@ -10,13 +9,9 @@ in {
     # CLI
     neovim
     nushell
-    bat
     btop
     pwgen
-    zoxide
-    starship
     nodejs
-    atuin
     gh
     kubectl
     google-cloud-sdk

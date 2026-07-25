@@ -1,9 +1,3 @@
-{lib, ...}: {
-  virtualisation.podman = {
-    enable = true;
-  };
-
-  virtualisation.docker = {
-    enable = true;
-  };
+{...}: {
+  virtualisation.podman.enable = true;
 }

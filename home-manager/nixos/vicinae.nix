@@ -1,4 +1,4 @@
-{config, pkgs, lib, inputs, ...}:
+{pkgs, lib, inputs, ...}:
 {
   programs.vicinae = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
@@ -24,7 +24,6 @@
         opacity = 0.95;
       };
       extensions = with inputs.vicinae-extensions.packages.${pkgs.stdenv.hostPlatform.system}; [
-        bluetooth
         nix
         power-profile
         ssh
