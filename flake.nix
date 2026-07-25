@@ -159,6 +159,13 @@
       secrets = import ./modules/darwin/secrets.nix;
     };
 
+    checks.x86_64-linux.configurations = let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    in
+      assert self.nixosConfigurations.thinker.config.system.build.toplevel.drvPath != "";
+      assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
+      pkgs.runCommand "check-configurations" {} "touch $out";
+
     homeConfigurations = {
       "rivaldo@thinker" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
