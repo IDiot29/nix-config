@@ -24,7 +24,7 @@ in {
 
   # Determinate Nix owns nix.conf because nix.enable is false.
   environment.etc."nix/nix.custom.conf".text = ''
-    trusted-users = root rivaldo
+    trusted-users = root
     accept-flake-config = true
     extra-substituters = ${builtins.concatStringsSep " " caches.substituters}
     extra-trusted-public-keys = ${builtins.concatStringsSep " " caches.trustedPublicKeys}
