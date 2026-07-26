@@ -5,8 +5,9 @@
 // Line 2: [context bar] percent tokens/window      ↑in ↓out Rcache Wcache CHhit% $cost
 // Line 3: extension statuses (only when any extension called ctx.ui.setStatus)
 //
-// The bar colours by zone (green → yellow → red) and marks the point where
-// auto-compaction triggers, so the remaining headroom is readable at a glance.
+// The bar and the percentage share one zone colour (green → yellow → red) driven
+// by current usage, and the bar marks the point where auto-compaction triggers,
+// so the remaining headroom is readable at a glance.
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
@@ -75,6 +76,9 @@ function renderBar(theme: any, ratio: number | null, cells: number, markRatio: n
 	const markIndex =
 		markRatio > 0 && markRatio < 1 ? Math.min(cells - 1, Math.floor(markRatio * cells)) : -1;
 
+	// The whole filled run shares the percentage's colour, so bar and number agree.
+	const fillColor = ratio === null ? "dim" : zoneColor(ratio);
+
 	// Accumulate runs of same-coloured cells so one escape sequence covers each run.
 	const parts: string[] = [];
 	let runColor: string | null = null;
@@ -90,10 +94,10 @@ function renderBar(theme: any, ratio: number | null, cells: number, markRatio: n
 		let color: string;
 		if (eighths === 8) {
 			char = FULL_CELL;
-			color = zoneColor((i + 1) / cells);
+			color = fillColor;
 		} else if (eighths > 0) {
 			char = PARTIAL_CELLS[eighths - 1];
-			color = zoneColor((i + 1) / cells);
+			color = fillColor;
 		} else if (i === markIndex) {
 			char = COMPACT_MARK;
 			color = "muted";
