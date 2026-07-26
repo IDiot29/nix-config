@@ -57,6 +57,14 @@ Use one owner per tool to avoid path conflicts:
 
 If a tool is already managed in Nix, do not also manage it in Brew.
 
+The repository-owned `rtk` package is exported for both hosts and can be run without installation:
+
+```bash
+nix run github:valdo766hi/nix-config#rtk
+```
+
+Other installed tools come from nixpkgs and can be run directly with `nix run nixpkgs#<package>` when they provide an executable.
+
 Niri is intentionally split by responsibility: its NixOS module owns installation, system integration, and the display-manager session; Home Manager owns the user configuration file.
 
 ## Secrets
@@ -64,6 +72,7 @@ Niri is intentionally split by responsibility: its NixOS module owns installatio
 Secrets are managed with `sops-nix`.
 
 - Encrypted file: `secrets/secrets.yaml`
+- Private SSH host configuration is rendered from the encrypted `ssh_config` value.
 - Linux key: `/home/rivaldo/.config/sops/age/keys.txt`
 - macOS key: `/Users/rivaldo/.config/sops/age/keys.txt`
 
@@ -87,7 +96,7 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 
 ## Automated checks
 
-GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions and the flake check evaluates both host configurations.
+GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions, evaluates both host configurations, and builds the Linux `rtk` package.
 
 ## Validation shortcuts
 

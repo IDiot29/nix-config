@@ -24,7 +24,8 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - `home-manager/common/`: cross-platform Home Manager modules
 - `home-manager/nixos/`: Linux-only Home Manager modules
 - `home-manager/darwin/`: macOS-only Home Manager modules
-- `secrets/secrets.yaml`: encrypted secrets source
+- `secrets/secrets.yaml`: encrypted secrets source, including private SSH host configuration
+- `pkgs/rtk/`: repository-owned package exported through `packages.<system>.rtk`
 - `docs/`: reference docs and keybindings
 
 ## Placement Rules
@@ -53,7 +54,7 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - `backupFileExtension = "hm-bak"` is enabled.
 - Flake mode only sees tracked files. If a new file is added and Nix reports a missing path, run `git add -A`.
 - Darwin Home Manager uses `/Users/rivaldo`; NixOS uses `/home/rivaldo`.
-- Current secrets include `fish_secrets`, `nushell_secrets`, and on NixOS also `winapps_rdp_user` and `winapps_rdp_pass`.
+- Current secrets include `fish_secrets`, `nushell_secrets`, `ssh_config`, and on NixOS also `winapps_rdp_user` and `winapps_rdp_pass`.
 - External host cache settings are centralized in `caches.nix`. The literal `flake.nix` `nixConfig` values must remain synchronized because flake-level settings cannot import them.
 - Darwin trusts only `root`; devenv and Cachix caches are configured globally so `rivaldo` does not need Nix daemon trust.
 - Homebrew activation intentionally updates and upgrades packages on Darwin.
