@@ -80,8 +80,9 @@ can use the same workflow.
 
 ## Skill security checks
 
-Pi auto-allows read-only tools for global skills under `~/.agents/skills` and
-its built-in `~/.pi/agent` infrastructure. Writes, edits, and helper-script
+Pi auto-allows read-only tools for global skills under `~/.agents/skills`, its
+built-in `~/.pi/agent` infrastructure, and Pi-created `pi-clipboard-*` files in
+the operating system's temporary directory. Writes, edits, and helper-script
 execution outside the working directory still require the normal external-path
 approval. Existing path denials for secrets such as `.env`, SSH keys, and cloud
 credentials still take precedence.

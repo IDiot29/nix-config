@@ -1,7 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
   "piInfrastructureReadPaths": [
-    "~/.agents/skills"
+    "~/.agents/skills",
+    "/tmp/pi-clipboard-*",
+    "/var/folders/*/T/pi-clipboard-*"
   ],
   "permission": {
     "*": "allow",
