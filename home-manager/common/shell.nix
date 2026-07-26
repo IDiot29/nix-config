@@ -72,7 +72,7 @@
     '';
 
     shellAliases = {
-      rebuild = "${if pkgs.stdenv.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && nix run nix-darwin/master#darwin-rebuild -- switch --flake .#Rivaldos-MacBook-Pro"}";
+      rebuild = "${if pkgs.stdenv.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro"}";
       update-flake = "cd ~/.config/nix && nix flake update";
       g = "git";
       gs = "git status";
