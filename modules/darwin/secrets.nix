@@ -14,6 +14,7 @@
     secrets = {
       fish_secrets = {};
       nushell_secrets = {};
+      ssh_config = {};
     };
 
     templates = {
@@ -29,6 +30,12 @@
         content = ''
           ${config.sops.placeholder.nushell_secrets}
         '';
+        owner = "rivaldo";
+        mode = "0400";
+      };
+
+      "ssh-config" = {
+        content = config.sops.placeholder.ssh_config;
         owner = "rivaldo";
         mode = "0400";
       };

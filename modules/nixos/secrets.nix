@@ -14,6 +14,7 @@
     secrets = {
       fish_secrets = {};
       nushell_secrets = {};
+      ssh_config = {};
       winapps_rdp_user = {};
       winapps_rdp_pass = {};
     };
@@ -37,6 +38,13 @@
         group = "users";
         mode = "0400";
         path = "/home/rivaldo/.config/nushell/secrets.nu";
+      };
+
+      "ssh-config" = {
+        content = config.sops.placeholder.ssh_config;
+        owner = "rivaldo";
+        group = "users";
+        mode = "0400";
       };
 
       "winapps.conf" = {
