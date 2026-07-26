@@ -39,6 +39,12 @@
       "git clean *": "ask",
       "sudo *": "ask"
     },
-    "external_directory": "ask"
+    "external_directory": {
+      "*": "ask",
+      "~/.agents/skills": "allow",
+      "~/.agents/skills/*": "allow",
+      "~/.pi/agent/skills": "allow",
+      "~/.pi/agent/skills/*": "allow"
+    }
   }
 }
