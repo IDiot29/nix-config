@@ -2,16 +2,18 @@
 set -euo pipefail
 
 REPORT=""
+SKILL_LIST=""
 
 cleanup() {
-  [[ -z "$REPORT" ]] || rm -f "$REPORT"
+	[[ -z "$REPORT" ]] || rm -f "$REPORT"
+	[[ -z "$SKILL_LIST" ]] || rm -f "$SKILL_LIST"
 }
 trap cleanup EXIT
 
 fail() { printf '[FAIL] %s\n' "$*" >&2; }
 
 usage() {
-  cat <<'EOF'
+	cat <<'EOF'
 Usage: skill-sec-check.sh SKILL_PATH
 
 Recursively scans a skill directory, a directory containing multiple skills,
@@ -26,81 +28,138 @@ EOF
 }
 
 case "${1:-}" in
-  -h|--help)
-    usage
-    exit 0
-    ;;
+-h | --help)
+	usage
+	exit 0
+	;;
 esac
 
 if [[ $# -ne 1 ]]; then
-  usage >&2
-  exit 2
+	usage >&2
+	exit 2
 fi
 
 if [[ ! -e "$1" ]]; then
-  fail "Path does not exist: $1"
-  exit 2
+	fail "Path does not exist: $1"
+	exit 2
 fi
 
 if [[ -f "$1" ]]; then
-  if [[ "${1##*/}" != "SKILL.md" ]]; then
-    fail "Expected a skill directory or SKILL.md: $1"
-    exit 2
-  fi
-  TARGET="$(cd "$(dirname "$1")" && pwd -P)"
+	if [[ "${1##*/}" != "SKILL.md" ]]; then
+		fail "Expected a skill directory or SKILL.md: $1"
+		exit 2
+	fi
+	TARGET_INPUT="$(dirname "$1")"
 else
-  TARGET="$(cd "$1" && pwd -P)"
+	TARGET_INPUT="$1"
 fi
 
-SKILL_COUNT="$(find "$TARGET" -type f -name SKILL.md -not -path '*/.git/*' | wc -l | tr -d ' ')"
+if ! TARGET="$(cd "$TARGET_INPUT" && pwd -P)"; then
+	fail "Could not resolve skill path: $1"
+	exit 2
+fi
+
+if ! SKILL_LIST="$(mktemp "${TMPDIR:-/tmp}/skill-sec-list.XXXXXX")"; then
+	fail "Could not create the temporary skill list"
+	exit 2
+fi
+if ! find "$TARGET" -type f -name SKILL.md ! -path '*/.git/*' -print0 >"$SKILL_LIST"; then
+	fail "Could not enumerate skills under $TARGET"
+	exit 2
+fi
+
+SKILL_COUNT=0
+while IFS= read -r -d '' _skill; do
+	((SKILL_COUNT += 1))
+done <"$SKILL_LIST"
 if [[ "$SKILL_COUNT" -eq 0 ]]; then
-  fail "No SKILL.md files found under $TARGET"
-  exit 2
+	fail "No SKILL.md files found under $TARGET"
+	exit 2
 fi
 
 if ! command -v trivy >/dev/null 2>&1; then
-  fail "trivy is required but is not installed"
-  exit 2
+	fail "trivy is required but is not installed"
+	exit 2
 fi
 if ! command -v jq >/dev/null 2>&1; then
-  fail "jq is required but is not installed"
-  exit 2
+	fail "jq is required but is not installed"
+	exit 2
 fi
 
-REPORT="$(mktemp "${TMPDIR:-/tmp}/skill-sec-check.XXXXXX")"
+if ! REPORT="$(mktemp "${TMPDIR:-/tmp}/skill-sec-check.XXXXXX")"; then
+	fail "Could not create the temporary Trivy report"
+	exit 2
+fi
 printf '[INFO] Scanning %s skill(s) under %s\n' "$SKILL_COUNT" "$TARGET"
 
 if ! trivy fs \
-  --scanners vuln,secret,misconfig \
-  --skip-dirs .git \
-  --format json \
-  --output "$REPORT" \
-  "$TARGET"; then
-  fail "Trivy could not complete the scan"
-  exit 2
+	--scanners vuln,secret,misconfig \
+	--skip-dirs .git \
+	--format json \
+	--output "$REPORT" \
+	"$TARGET"; then
+	fail "Trivy could not complete the scan"
+	exit 2
 fi
 
-VULNERABILITIES="$(jq '[.Results[]?.Vulnerabilities[]?] | length' "$REPORT")"
-SECRETS="$(jq '[.Results[]?.Secrets[]?] | length' "$REPORT")"
-MISCONFIGURATIONS="$(jq '[.Results[]?.Misconfigurations[]?] | length' "$REPORT")"
+if ! COUNTS="$(jq -er '
+  if (.SchemaVersion | type) != "number" or
+     (.ArtifactName | type) != "string" or
+     ((.Results == null) | not) and ((.Results | type) != "array")
+  then error("unexpected Trivy report structure")
+  else [
+    ([.Results[]?.Vulnerabilities[]?] | length),
+    ([.Results[]?.Secrets[]?] | length),
+    ([.Results[]?.Misconfigurations[]?] | length)
+  ] | @tsv
+  end
+' "$REPORT")"; then
+	fail "Trivy returned an invalid or unsupported JSON report"
+	exit 2
+fi
+
+IFS=$'\t' read -r VULNERABILITIES SECRETS MISCONFIGURATIONS <<<"$COUNTS"
+if [[ ! "$VULNERABILITIES" =~ ^[0-9]+$ ||
+	! "$SECRETS" =~ ^[0-9]+$ ||
+	! "$MISCONFIGURATIONS" =~ ^[0-9]+$ ]]; then
+	fail "Trivy report counts were not numeric"
+	exit 2
+fi
 TOTAL=$((VULNERABILITIES + SECRETS + MISCONFIGURATIONS))
 
 printf '[SCAN] vulnerabilities=%s secrets=%s misconfigurations=%s total=%s\n' \
-  "$VULNERABILITIES" "$SECRETS" "$MISCONFIGURATIONS" "$TOTAL"
+	"$VULNERABILITIES" "$SECRETS" "$MISCONFIGURATIONS" "$TOTAL"
 
-jq -r '.Results[]? as $result | $result.Vulnerabilities[]? |
-  "[VULNERABLE] \(.PkgName // "unknown") \(.VulnerabilityID // "unknown") severity=\(.Severity // "UNKNOWN") target=\($result.Target // "unknown")"' \
-  "$REPORT" >&2
-jq -r '.Results[]? as $result | $result.Secrets[]? |
-  "[SECRET] \(.RuleID // "unknown") severity=\(.Severity // "UNKNOWN") target=\($result.Target // "unknown")"' \
-  "$REPORT" >&2
-jq -r '.Results[]? as $result | $result.Misconfigurations[]? |
-  "[MISCONFIG] \(.ID // "unknown") severity=\(.Severity // "UNKNOWN") target=\($result.Target // "unknown")"' \
-  "$REPORT" >&2
+if ! jq -r '
+  def finding($kind; $details): "[\($kind)] \($details | tojson)";
+  .Results[]? as $result |
+    ($result.Vulnerabilities[]? |
+      finding("VULNERABLE"; {
+        package: (.PkgName // "unknown"),
+        id: (.VulnerabilityID // "unknown"),
+        severity: (.Severity // "UNKNOWN"),
+        target: ($result.Target // "unknown")
+      })),
+    ($result.Secrets[]? |
+      finding("SECRET"; {
+        rule: (.RuleID // "unknown"),
+        severity: (.Severity // "UNKNOWN"),
+        target: ($result.Target // "unknown")
+      })),
+    ($result.Misconfigurations[]? |
+      finding("MISCONFIG"; {
+        id: (.ID // "unknown"),
+        severity: (.Severity // "UNKNOWN"),
+        target: ($result.Target // "unknown")
+      }))
+' "$REPORT" >&2; then
+	fail "Could not render the Trivy findings"
+	exit 2
+fi
 
 if [[ "$TOTAL" -gt 0 ]]; then
-  fail "Skill scan found items that require review"
-  exit 1
+	fail "Skill scan found items that require review"
+	exit 1
 fi
 
 printf '[PASS] No known vulnerabilities, exposed secrets, or misconfigurations found.\n'

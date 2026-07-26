@@ -1,5 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+  "piInfrastructureReadPaths": [
+    "~/.agents/skills"
+  ],
   "permission": {
     "*": "allow",
     "path": {
@@ -39,12 +42,6 @@
       "git clean *": "ask",
       "sudo *": "ask"
     },
-    "external_directory": {
-      "*": "ask",
-      "~/.agents/skills": "allow",
-      "~/.agents/skills/*": "allow",
-      "~/.pi/agent/skills": "allow",
-      "~/.pi/agent/skills/*": "allow"
-    }
+    "external_directory": "ask"
   }
 }

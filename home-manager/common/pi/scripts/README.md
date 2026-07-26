@@ -77,3 +77,30 @@ pi-package-security-check
 Both scripts print stable `[INFO]`, `[PASS]`, `[SKIP]`, `[FAIL]`, `[AUDIT]`,
 and `[VULNERABLE]` messages plus meaningful exit codes so people and AI agents
 can use the same workflow.
+
+## Skill security checks
+
+Pi auto-allows read-only tools for global skills under `~/.agents/skills` and
+its built-in `~/.pi/agent` infrastructure. Writes, edits, and helper-script
+execution outside the working directory still require the normal external-path
+approval. Existing path denials for secrets such as `.env`, SSH keys, and cloud
+credentials still take precedence.
+
+Scan one skill or a directory containing multiple skills:
+
+```sh
+skill-sec-check.sh ~/.agents/skills
+skill-sec-check.sh ~/.agents/skills/ponytail
+skill-sec-check.sh ~/.agents/skills/ponytail/SKILL.md
+```
+
+The command finds skills by `SKILL.md` and recursively runs Trivy's
+vulnerability, secret, and misconfiguration scanners. Exit codes distinguish
+the outcomes:
+
+- `0`: no findings
+- `1`: findings require review
+- `2`: invalid input or the scan could not complete
+
+A clean scan only means that these automated scanners found nothing. Skills
+contain instructions and executable code, so review their source before use.

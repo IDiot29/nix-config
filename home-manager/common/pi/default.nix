@@ -1,5 +1,18 @@
-{...}: {
+{pkgs, ...}: let
+  skillSecCheck = pkgs.writeShellApplication {
+    name = "skill-sec-check.sh";
+    runtimeInputs = with pkgs; [
+      coreutils
+      findutils
+      jq
+      trivy
+    ];
+    text = builtins.readFile ./scripts/skill-sec-check.sh;
+  };
+in {
   imports = [ ./subagent ];
+
+  home.packages = [skillSecCheck];
 
   home.file = {
     ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
