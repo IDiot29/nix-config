@@ -1,6 +1,6 @@
 [borders]
 enabled = true
-width = 2.0
+width = 1.0
 
 [gaps]
 size = 8.0
