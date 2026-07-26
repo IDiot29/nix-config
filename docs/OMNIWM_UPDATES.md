@@ -41,9 +41,10 @@ unexpectedly update unrelated inputs. Check the cask version at the newly
 pinned tap revision against the release reviewed above.
 
 If upstream default shortcuts changed, update
-[`OMNIWM_KEYBINDINGS.md`](./OMNIWM_KEYBINDINGS.md) in the same change. Do not
-replace `~/.config/omniwm/settings.toml` with a Nix-store symlink; OmniWM owns
-its writable settings and state.
+[`OMNIWM_KEYBINDINGS.md`](./OMNIWM_KEYBINDINGS.md) in the same change. Confirm
+that the minimal `home-manager/darwin/omniwm/settings.toml` still decodes with
+the new release. Home Manager copies it to a writable settings file on every
+activation rather than linking OmniWM directly to the Nix store.
 
 ## 3. Evaluate and Build Before Activation
 
@@ -93,7 +94,8 @@ Then check manually:
 - Input Monitoring is present only if a System Hyper Trigger or sided-modifier
   binding is enabled.
 - **Displays have separate Spaces** remains enabled.
-- Existing writable settings load without migration warnings.
+- The Home Manager-managed border width, gap, and corner radius still apply
+  without migration warnings.
 - Representative defaults work: `Option + Arrow`, `Option + 1-9`,
   `Option + Shift + Arrow`, `Option + Return`, and `Option + Shift + L`.
 - Niri/Dwindle layout behavior and multi-monitor focus still work as expected.

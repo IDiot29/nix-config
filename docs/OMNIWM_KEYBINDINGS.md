@@ -1,8 +1,10 @@
 # OmniWM Default Keybindings
 
-This reference records the upstream OmniWM **0.5.8** default hotkeys. This
-configuration intentionally leaves OmniWM settings user-writable and does not
-replace these defaults with an Aerospace-style configuration.
+<!-- markdownlint-disable MD013 -->
+
+This reference records the upstream OmniWM **0.5.8** default hotkeys. Home
+Manager writes a minimal, writable OmniWM configuration that changes only the
+focused border width and window gap; hotkeys continue to use upstream defaults.
 
 ## First Run
 
@@ -20,10 +22,12 @@ The nix-darwin module installs OmniWM and opens it at login. On the first
 launch, grant Accessibility access when prompted. Keep one macOS Space per
 display and use OmniWM workspaces for normal navigation.
 
-All shortcuts can be changed in **OmniWM Settings > Hotkeys**. `Hyper` means
-the literal `Control + Option + Shift + Command` chord. A System Hyper Trigger
-can map a single key or supported mouse button to that chord; leave it set to
-`None` if it is not needed.
+All shortcuts can be changed in **OmniWM Settings > Hotkeys**. Changes made
+only in the GUI last until the next Home Manager activation; persistent changes
+belong in `home-manager/darwin/omniwm/settings.toml`. `Hyper` means the literal
+`Control + Option + Shift + Command` chord. A System Hyper Trigger can map a
+single key or supported mouse button to that chord; leave it set to `None` if
+it is not needed.
 
 ## Layout Legend
 
