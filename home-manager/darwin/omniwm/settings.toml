@@ -5,6 +5,10 @@ width = 1.0
 [gaps]
 size = 8.0
 
+[gestures]
+scrollEnabled = false
+workspaceSwipeEnabled = false
+
 [[hotkeys]]
 id = "toggleWorkspaceBarVisibility"
 binding = "Control+Option+B"
