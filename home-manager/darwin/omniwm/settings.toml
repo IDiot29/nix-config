@@ -4,3 +4,7 @@ width = 1.0
 
 [gaps]
 size = 8.0
+
+[[hotkeys]]
+id = "toggleWorkspaceBarVisibility"
+binding = "Control+Option+B"
