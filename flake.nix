@@ -92,6 +92,11 @@
     home-manager,
     ...
   } @ inputs: let
+    systems = [
+      "x86_64-linux"
+      "aarch64-darwin"
+    ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
     linuxHomeModules = [
       ./home-manager/home.nix
       # Note: niri home module is provided via NixOS module integration
@@ -161,12 +166,26 @@
       secrets = import ./modules/darwin/secrets.nix;
     };
 
-    checks.x86_64-linux.configurations = let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    in
-      assert self.nixosConfigurations.thinker.config.system.build.toplevel.drvPath != "";
-      assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
-      pkgs.runCommand "check-configurations" {} "touch $out";
+    packages = forAllSystems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      rtk = pkgs.callPackage ./pkgs/rtk {};
+    in {
+      inherit rtk;
+      default = rtk;
+    });
+
+    checks.x86_64-linux = {
+      configurations = let
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      in
+        assert self.nixosConfigurations.thinker.config.system.build.toplevel.drvPath != "";
+        assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
+        pkgs.runCommand "check-configurations" {} "touch $out";
+      rtk = self.packages.x86_64-linux.rtk;
+    };
 
     homeConfigurations = {
       "rivaldo@thinker" = home-manager.lib.homeManagerConfiguration {
