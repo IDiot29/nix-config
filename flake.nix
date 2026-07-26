@@ -49,6 +49,11 @@
       flake = false;
     };
 
+    omniwm-tap = {
+      url = "github:BarutSRB/homebrew-tap";
+      flake = false;
+    };
+
     dankMaterialShell = {
       url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -163,6 +168,7 @@
       aerospace = import ./modules/darwin/aerospace/default.nix;
       common = import ./modules/darwin/common/default.nix;
       homebrew = import ./modules/darwin/homebrew/default.nix;
+      omniwm = import ./modules/darwin/omniwm/default.nix;
       secrets = import ./modules/darwin/secrets.nix;
     };
 

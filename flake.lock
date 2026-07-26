@@ -473,6 +473,22 @@
         "type": "github"
       }
     },
+    "omniwm-tap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784746070,
+        "narHash": "sha256-NLBKYlyevfc3k9TxN5J6H9eyWZGj2m1yWmb6JJEIZ6w=",
+        "owner": "BarutSRB",
+        "repo": "homebrew-tap",
+        "rev": "2de413ec2bfd47976598f952141374cb5a1e6903",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BarutSRB",
+        "repo": "homebrew-tap",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "dankMaterialShell": "dankMaterialShell",
@@ -485,6 +501,7 @@
         "nixpkgs": "nixpkgs",
         "noctalia": "noctalia",
         "nvf": "nvf",
+        "omniwm-tap": "omniwm-tap",
         "sops-nix": "sops-nix",
         "vicinae": "vicinae",
         "vicinae-extensions": "vicinae-extensions",

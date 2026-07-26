@@ -16,14 +16,14 @@
       "homebrew/homebrew-core" = inputs.homebrew-core;
       "homebrew/homebrew-cask" = inputs.homebrew-cask;
     };
-    mutableTaps = true;
+    mutableTaps = false;
   };
 
   homebrew = {
     enable = true;
 
     onActivation = {
-      autoUpdate = true;
+      autoUpdate = false;
       cleanup = "uninstall";
       upgrade = true;
     };
