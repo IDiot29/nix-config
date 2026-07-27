@@ -2,9 +2,9 @@
 
 <!-- markdownlint-disable MD013 -->
 
-This reference records the upstream OmniWM **0.5.8** default hotkeys. Home
-Manager writes a minimal, writable OmniWM configuration that changes only the
-focused border width and window gap; hotkeys continue to use upstream defaults.
+This reference records the upstream OmniWM **0.5.8** hotkeys plus the managed
+navigation overrides. Home Manager replaces the arrow-based focus and move
+bindings with Vim-style keys so macOS can keep `Option + Arrow` for text editing.
 
 ## First Run
 
@@ -56,7 +56,7 @@ it is not needed.
 
 | Action | Default shortcut | Layout |
 | --- | --- | --- |
-| Focus Left / Right / Up / Down | `Option + Arrow Keys` | `Shared` |
+| Focus Left / Down / Up / Right | `Option + H / J / K / L` | `Shared` |
 | Focus Down or Top / Up or Bottom | `Unassigned` | `Shared` |
 | Focus Previous Window | `Option + Tab` | `Niri` |
 | Traverse Backward | `Unassigned` | `Niri` |
@@ -75,7 +75,7 @@ it is not needed.
 
 | Action | Default shortcut | Layout |
 | --- | --- | --- |
-| Move Left / Right / Up / Down | `Option + Shift + Arrow Keys` | `Shared` |
+| Move Left / Down / Up / Right | `Option + Shift + H / J / K / L` | `Shared` |
 | Reorder Window Up / Down | `Unassigned` | `Shared` |
 
 ## Monitor
@@ -107,7 +107,7 @@ it is not needed.
 | Toggle Focused Window Floating | `Unassigned` | `Shared` |
 | Assign Focused Window to Scratchpad | `Unassigned` | `Shared` |
 | Toggle Scratchpad Window | `Unassigned` | `Shared` |
-| Toggle Workspace Layout | `Option + Shift + L` | `Shared` |
+| Toggle Workspace Layout | `Control + Option + Shift + L` | `Shared` |
 
 ## Container and Column
 
@@ -131,10 +131,10 @@ tab rail.
 
 | Goal | Default shortcut | Behavior |
 | --- | --- | --- |
-| Focus another tile | `Option + Arrow Keys` | Left/right are spatial; up/down are spatial for a singleton tile. |
-| Select the next/previous tab | `Option + Down / Up Arrow` | Down advances and Up goes back within a group. At an edge, OmniWM tries a spatial tile, then monitor transition, then local wrapping. |
-| Join a singleton into a tile or group | `Option + Shift + Arrow Keys` | Joins it with the touching tile in that direction. |
-| Extract the active tab | `Option + Shift + Arrow Keys` | Extracts only the active tab onto the requested side. |
+| Focus another tile | `Option + H / J / K / L` | Left/right are spatial; up/down are spatial for a singleton tile. |
+| Select the next/previous tab | `Option + J / K` | J advances and K goes back within a group. At an edge, OmniWM tries a spatial tile, then monitor transition, then local wrapping. |
+| Join a singleton into a tile or group | `Option + Shift + H / J / K / L` | Joins it with the touching tile in that direction. |
+| Extract the active tab | `Option + Shift + H / J / K / L` | Extracts only the active tab onto the requested side. |
 | Move the complete tile or group | `Control + Option + Shift + Left / Right Arrow` | Swaps the whole structure; the advanced up/down actions are unassigned. |
 | Select an exact tab | Click its tab rail item | Reveals and focuses that member without reordering the group. |
 

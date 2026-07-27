@@ -96,8 +96,9 @@ Then check manually:
 - **Displays have separate Spaces** remains enabled.
 - The Home Manager-managed border width, gap, and corner radius still apply
   without migration warnings.
-- Representative defaults work: `Option + Arrow`, `Option + 1-9`,
-  `Option + Shift + Arrow`, `Option + Return`, and `Option + Shift + L`.
+- Representative bindings work: `Option + H/J/K/L`, `Option + 1-9`,
+  `Option + Shift + H/J/K/L`, `Option + Return`, and
+  `Control + Option + Shift + L`.
 - Niri/Dwindle layout behavior and multi-monitor focus still work as expected.
 
 Recheck the upstream issue tracker after testing if any behavior changed or a
