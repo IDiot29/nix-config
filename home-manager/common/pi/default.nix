@@ -9,48 +9,12 @@
     ];
     text = builtins.readFile ./scripts/skill-sec-check.sh;
   };
-  piSsh = pkgs.writeShellScriptBin "pi-ssh" ''
-    if [ "$#" -lt 2 ]; then
-      echo "usage: pi-ssh <identity-filename> <destination> [remote-command ...]" >&2
-      exit 2
-    fi
-
-    identity=$1
-    destination=$2
-    case "$identity" in
-      ""|"."|".."|*[!A-Za-z0-9._-]*)
-        echo "pi-ssh: identity must be a filename inside ~/.ssh" >&2
-        exit 2
-        ;;
-    esac
-    case "$destination" in
-      -*)
-        echo "pi-ssh: destination must not be an SSH option" >&2
-        exit 2
-        ;;
-    esac
-    shift 2
-
-    exec ${pkgs.openssh}/bin/ssh \
-      -o BatchMode=yes \
-      -o ConnectTimeout=10 \
-      -i "$HOME/.ssh/$identity" \
-      "$destination" \
-      "$@"
-  '';
 in {
   imports = [ ./subagent ];
 
-  home.packages = [
-    skillSecCheck
-    piSsh
-  ];
+  home.packages = [skillSecCheck];
 
   home.file = {
-    ".pi/agent/APPEND_SYSTEM.md".text = ''
-      To authenticate with any private SSH key, run `pi-ssh <identity-filename> <destination> [remote command]`.
-      Pass only the key filename, never its path, and never read SSH private keys with a tool. The wrapper resolves the filename inside `~/.ssh`, which remains denied by the permission gate.
-    '';
     ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/extensions/pi-permission-system/config.json".source =

@@ -10,5 +10,41 @@ scrollEnabled = false
 workspaceSwipeEnabled = false
 
 [[hotkeys]]
+id = "focus.left"
+binding = "Option+H"
+
+[[hotkeys]]
+id = "focus.down"
+binding = "Option+J"
+
+[[hotkeys]]
+id = "focus.up"
+binding = "Option+K"
+
+[[hotkeys]]
+id = "focus.right"
+binding = "Option+L"
+
+[[hotkeys]]
+id = "move.left"
+binding = "Option+Shift+H"
+
+[[hotkeys]]
+id = "move.down"
+binding = "Option+Shift+J"
+
+[[hotkeys]]
+id = "move.up"
+binding = "Option+Shift+K"
+
+[[hotkeys]]
+id = "move.right"
+binding = "Option+Shift+L"
+
+[[hotkeys]]
+id = "toggleWorkspaceLayout"
+binding = "Control+Option+Shift+L"
+
+[[hotkeys]]
 id = "toggleWorkspaceBarVisibility"
 binding = "Control+Option+B"
