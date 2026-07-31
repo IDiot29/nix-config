@@ -35,6 +35,7 @@
     ];
 
     casks = [
+      "chatgpt"
       "ghostty"
       "google-chrome"
       "iterm2"
