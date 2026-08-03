@@ -7,6 +7,9 @@ export default function (pi: ExtensionAPI) {
 	let enabled = false;
 	let active = true;
 	let disposeAuthorizer;
+	const updateStatus = (ctx) => {
+		ctx.ui.setStatus("yolo", `YOLO: ${enabled ? "ON" : "OFF"}`);
+	};
 
 	pi.on("session_start", (_event, ctx) => {
 		enabled = false;
@@ -19,6 +22,7 @@ export default function (pi: ExtensionAPI) {
 				enabled = entry.data.enabled;
 			}
 		}
+		updateStatus(ctx);
 	});
 
 	const unsubscribeReady = pi.events.on("permissions:ready", () => {
@@ -56,6 +60,7 @@ export default function (pi: ExtensionAPI) {
 
 			enabled = requested ? requested === "on" : !enabled;
 			pi.appendEntry(STATE_TYPE, { enabled });
+			updateStatus(ctx);
 			ctx.ui.notify(
 				`YOLO mode ${enabled ? "on" : "off"}. Hard denials still apply.`,
 				enabled ? "warning" : "info",
