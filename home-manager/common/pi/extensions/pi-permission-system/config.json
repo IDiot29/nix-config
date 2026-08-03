@@ -1,5 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+  "yoloMode": false,
+  "authorizerChain": ["yolo"],
   "piInfrastructureReadPaths": [
     "~/.agents/skills",
     "/tmp/pi-clipboard-*",
