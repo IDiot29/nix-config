@@ -15,6 +15,16 @@ pi-package-security-check
 Audits the complete installed dependency tree, including development
 dependencies, in `~/.pi/agent/npm`.
 
+To repair vulnerable transitive dependencies without allowing breaking
+upgrades, run:
+
+```sh
+pi-package-security-check --repair
+```
+
+This applies the repository's safe npm overrides, runs `npm audit fix` with
+install scripts and `--force` disabled, then audits the repaired tree.
+
 Exit codes distinguish the outcomes:
 
 - `0`: no known vulnerabilities
@@ -31,9 +41,10 @@ pi-package-security-check --candidate \
 ```
 
 Candidate versions must be exact semantic versions. The script copies the
-current manifest and lockfile to a temporary directory, simulates all supplied
-updates together with install scripts disabled, and audits the resulting
-combined tree. It does not change the live installation.
+current manifest and lockfile to a temporary directory, applies the safe
+`fast-uri` override, simulates all supplied updates with install scripts
+disabled, repairs semver-compatible transitive dependencies, and audits the
+resulting combined tree. It does not change the live installation.
 
 ## Find secure updates
 
@@ -67,12 +78,17 @@ PI_PACKAGES_CONFIG=/path/to/home-manager/common/pi/default.nix \
   pi-package-update check
 ```
 
-The scripts deliberately do not activate Home Manager or mutate the live Pi
-installation. After normal activation, verify the installed result:
+The scripts deliberately do not activate Home Manager. `update` only changes
+the Nix source and candidate checks use isolated temporary trees. After normal
+activation, repair and verify the installed result:
 
 ```sh
+pi-package-security-check --repair
 pi-package-security-check
 ```
+
+The repair is limited to safe npm fixes and the pinned `fast-uri` override;
+it never uses `npm audit fix --force`.
 
 Both scripts print stable `[INFO]`, `[PASS]`, `[SKIP]`, `[FAIL]`, `[AUDIT]`,
 and `[VULNERABLE]` messages plus meaningful exit codes so people and AI agents

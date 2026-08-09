@@ -2,6 +2,7 @@
 set -euo pipefail
 
 PI_NPM_DIR="${PI_NPM_DIR:-${PI_AGENT_DIR:-$HOME/.pi/agent}/npm}"
+FAST_URI_VERSION="${PI_FAST_URI_VERSION:-3.1.5}"
 TEMP_DIR=""
 AUDIT_OUTPUT=""
 
@@ -19,22 +20,26 @@ usage() {
   cat <<'EOF'
 Usage:
   pi-package-security-check
+  pi-package-security-check --repair
   pi-package-security-check --candidate PACKAGE@VERSION [PACKAGE@VERSION...]
 
 Checks the complete Pi npm dependency tree, including development
 dependencies, for vulnerabilities known to the npm advisory database.
 
 Without arguments, audits the currently installed tree under
-~/.pi/agent/npm. With --candidate, it copies the current lockfile to a
-temporary directory, simulates one or more exact-version package updates
-without running install scripts, and audits the resulting combined tree.
+~/.pi/agent/npm. With --repair, it applies safe npm audit fixes and audits the
+repaired tree. With --candidate, it copies the current lockfile to a temporary
+directory, simulates one or more exact-version package updates, applies safe
+lockfile fixes without running install scripts, and audits the resulting
+combined tree.
 
-This detects known advisories; it does not prove that package code is safe or
-non-malicious.
+Repair never uses npm's --force option. This detects known advisories; it does
+not prove that package code is safe or non-malicious.
 
 Environment:
-  PI_AGENT_DIR  Override ~/.pi/agent
-  PI_NPM_DIR    Override the npm directory directly
+  PI_AGENT_DIR         Override ~/.pi/agent
+  PI_NPM_DIR           Override the npm directory directly
+  PI_FAST_URI_VERSION  Override the safe fast-uri override version
 
 Exit codes:
   0  No known vulnerabilities
@@ -48,6 +53,18 @@ require_tree() {
     fail "Pi npm package.json or package-lock.json not found in $PI_NPM_DIR"
     exit 2
   fi
+}
+
+apply_npm_overrides() {
+  local manifest="$1"
+  node - "$manifest" "$FAST_URI_VERSION" <<'NODE'
+const fs = require("fs");
+const [manifestPath, fastUriVersion] = process.argv.slice(2);
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+if (manifest.overrides?.["fast-uri"] === fastUriVersion) process.exit(0);
+manifest.overrides = {...(manifest.overrides || {}), "fast-uri": fastUriVersion};
+fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+NODE
 }
 
 run_audit() {
@@ -119,6 +136,22 @@ check_installed() {
   return "$status"
 }
 
+repair_installed() {
+  local status
+  require_tree
+  info "Applying safe npm audit fixes to $PI_NPM_DIR"
+  apply_npm_overrides "$PI_NPM_DIR/package.json"
+  set +e
+  (cd "$PI_NPM_DIR" && npm audit fix --include=dev --ignore-scripts)
+  status=$?
+  set -e
+  if [[ $status -gt 1 ]]; then
+    fail "npm could not repair the installed Pi package tree."
+    return 2
+  fi
+  check_installed
+}
+
 check_candidate() {
   local status
   local candidates=("$@")
@@ -159,12 +192,23 @@ NODE
 
   TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pi-package-audit.XXXXXX")"
   cp "$PI_NPM_DIR/package.json" "$PI_NPM_DIR/package-lock.json" "$TEMP_DIR/"
+  apply_npm_overrides "$TEMP_DIR/package.json"
 
   info "Simulating combined candidate set: ${normalized[*]}"
   info "Install scripts are disabled during the simulation"
   if ! (cd "$TEMP_DIR" && npm install "${normalized[@]}" \
     --package-lock-only --save-exact --ignore-scripts --legacy-peer-deps --audit=false); then
     fail "npm could not resolve the candidate dependency tree."
+    return 2
+  fi
+
+  info "Applying safe transitive dependency fixes"
+  set +e
+  (cd "$TEMP_DIR" && npm audit fix --include=dev --package-lock-only --ignore-scripts)
+  fix_status=$?
+  set -e
+  if [[ $fix_status -gt 1 ]]; then
+    fail "npm could not repair the candidate dependency tree."
     return 2
   fi
 
@@ -183,6 +227,10 @@ NODE
 
 case "${1:-}" in
   "") check_installed ;;
+  --repair)
+    [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+    repair_installed
+    ;;
   --candidate)
     [[ $# -ge 2 ]] || { usage >&2; exit 2; }
     shift

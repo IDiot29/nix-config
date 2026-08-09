@@ -57,11 +57,12 @@ in {
       defaultThinkingLevel = "medium";
       packages = [
         "npm:cc-safety-net@1.0.6"
-        "npm:pi-lens@3.8.70"
-        "npm:pi-mcp-adapter@2.11.0"
-        "npm:@plannotator/pi-extension@0.23.1"
-        "npm:pi-subagents@0.35.1"
-        "npm:@gotgenes/pi-permission-system@20.10.0"
+        "npm:pi-lens@3.8.74"
+        "npm:pi-mcp-adapter@2.21.1"
+        "npm:@plannotator/pi-extension@0.26.4"
+        "npm:pi-subagents@0.45.0"
+        "npm:@gotgenes/pi-permission-system@24.0.0"
+        "npm:@mtrojnar/pi-usage@0.1.3"
       ];
     };
   };

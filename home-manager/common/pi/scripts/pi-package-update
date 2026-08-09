@@ -42,7 +42,8 @@ npm advisories are skipped. Registry, checker, or editing errors apply no
 configuration changes.
 
 The update command never activates Home Manager or mutates the live Pi
-installation. After activation, run pi-package-security-check again.
+installation. After activation, run pi-package-security-check --repair and then
+pi-package-security-check.
 
 Environment:
   PI_PACKAGES_CONFIG        Path to home-manager/common/pi/default.nix
@@ -295,6 +296,6 @@ printf '\nSummary: checked=%d available=%d secure=%d blocked=%d updated=%d error
   "$checked" "$available" "$secure" "$blocked" "$updated"
 
 if [[ "$ACTION" == update && $updated -gt 0 ]]; then
-  info "Review the diff, activate Home Manager normally, then audit the live installation."
+  info "Review the diff, activate Home Manager normally, then run pi-package-security-check --repair."
 fi
 [[ $blocked -eq 0 ]] || exit 1

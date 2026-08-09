@@ -2,7 +2,7 @@
 
 <!-- markdownlint-disable MD013 -->
 
-This reference records the upstream OmniWM **0.5.8** hotkeys plus the managed
+This reference records the upstream OmniWM **0.6.0** hotkeys plus the managed
 navigation overrides. Home Manager replaces the arrow-based focus and move
 bindings with Vim-style keys so macOS can keep `Option + Arrow` for text editing.
 
@@ -24,10 +24,10 @@ display and use OmniWM workspaces for normal navigation.
 
 All shortcuts can be changed in **OmniWM Settings > Hotkeys**. Changes made
 only in the GUI last until the next Home Manager activation; persistent changes
-belong in `home-manager/darwin/omniwm/settings.toml`. `Hyper` means the literal
-`Control + Option + Shift + Command` chord. A System Hyper Trigger can map a
-single key or supported mouse button to that chord; leave it set to `None` if
-it is not needed.
+belong in `home-manager/darwin/omniwm/settings.toml`. `Hyper` defaults to the
+literal `Control + Option + Shift + Command` chord, and its modifier set is
+configurable. A System Hyper Trigger can map a single key or supported mouse
+button to that chord; leave it set to `None` if it is not needed.
 
 ## Layout Legend
 
@@ -85,6 +85,13 @@ it is not needed.
 | Focus Next Monitor | `Control + Command + Tab` | `Shared` |
 | Focus Previous Monitor | `Unassigned` | `Shared` |
 | Focus Last Monitor | `` Control + Command + ` `` | `Shared` |
+| Move Workspace to Left / Right / Up / Down Monitor | `Unassigned` | `Shared` |
+| Move Window to Left / Right / Up / Down Monitor | `Unassigned` | `Shared` |
+
+The workspace-to-monitor actions move the active workspace without changing
+its saved home monitor. The window-to-monitor actions move the focused window
+to the adjacent monitor's active workspace; **Follow Window to Monitor**
+controls whether focus follows it.
 
 ## Layout
 
@@ -144,11 +151,11 @@ Structural Dwindle moves are unavailable while Overview is open.
 
 ## Sources and Version Drift
 
-- [OmniWM 0.5.8 release](https://github.com/BarutSRB/OmniWM/releases/tag/v0.5.8)
+- [OmniWM 0.6.0 release](https://github.com/BarutSRB/OmniWM/releases/tag/v0.6.0)
 - [Upstream Keyboard Shortcuts tables](https://github.com/BarutSRB/OmniWM#keyboard-shortcuts)
 - [Official Homebrew cask](https://github.com/BarutSRB/homebrew-tap/blob/main/Casks/omniwm.rb)
 
-This document is pinned to the defaults published for OmniWM 0.5.8. Upstream
+This document is pinned to the defaults published for OmniWM 0.6.0. Upstream
 may add actions or change defaults in later releases. Before updating OmniWM,
 follow [OMNIWM_UPDATES.md](./OMNIWM_UPDATES.md), review the release notes and
 relevant issues, and compare the upstream tables with this document.
