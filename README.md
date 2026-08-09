@@ -29,7 +29,9 @@ The design is simple:
   - `home-manager/nixos/` Linux-only HM modules
   - `home-manager/darwin/` macOS-only HM modules
 - `secrets/` - encrypted secrets data
-- `docs/` - keybind and editor docs
+- `docs/` - keybind, editor, and Pi behavior docs
+  - `docs/PI_YOLO.md` - Pi YOLO behavior and troubleshooting
+- `home-manager/common/pi/extensions/yolo/` - Pi `/yolo` extension and its README
 
 ## Daily commands
 

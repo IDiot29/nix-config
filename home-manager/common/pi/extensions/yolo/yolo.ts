@@ -1,12 +1,59 @@
 // @ts-nocheck -- Pi provides its extension types at runtime.
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import {
+	getAgentDir,
+	type ExtensionAPI,
+} from "@earendil-works/pi-coding-agent";
+import { readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const STATE_TYPE = "yolo-state";
+const CONFIG_PATH = [
+	"extensions",
+	"pi-permission-system",
+	"config.json",
+] as const;
+
+type PermissionConfig = {
+	yoloMode?: unknown;
+};
+
+function permissionConfigPath(): string {
+	return join(getAgentDir(), ...CONFIG_PATH);
+}
+
+/**
+ * Native yolo rewrites ask→allow on every surface, including
+ * external_directory, while leaving explicit deny rules untouched.
+ */
+function setNativeYoloMode(enabled: boolean): void {
+	const configPath = permissionConfigPath();
+	const tempPath = `${configPath}.tmp`;
+	let tempWritten = false;
+
+	try {
+		const config = JSON.parse(
+			readFileSync(configPath, "utf8"),
+		) as PermissionConfig;
+		if (config.yoloMode === enabled) return;
+
+		config.yoloMode = enabled;
+		writeFileSync(tempPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+		tempWritten = true;
+		renameSync(tempPath, configPath);
+	} catch (error) {
+		if (tempWritten) {
+			try {
+				unlinkSync(tempPath);
+			} catch {
+				// Ignore cleanup failures.
+			}
+		}
+		throw error;
+	}
+}
 
 export default function (pi: ExtensionAPI) {
 	let enabled = false;
-	let active = true;
-	let disposeAuthorizer;
 	const updateStatus = (ctx) => {
 		ctx.ui.setStatus("yolo", `YOLO: ${enabled ? "ON" : "OFF"}`);
 	};
@@ -22,31 +69,16 @@ export default function (pi: ExtensionAPI) {
 				enabled = entry.data.enabled;
 			}
 		}
+
+		try {
+			setNativeYoloMode(enabled);
+		} catch {
+			ctx.ui.notify(
+				"YOLO could not update the permission-system native yolo setting.",
+				"warning",
+			);
+		}
 		updateStatus(ctx);
-	});
-
-	const unsubscribeReady = pi.events.on("permissions:ready", () => {
-		void (async () => {
-			try {
-				const { getPermissionsService } = await import(
-					"@gotgenes/pi-permission-system"
-				);
-				const permissions = getPermissionsService();
-				if (!active || !permissions) return;
-				disposeAuthorizer?.();
-				disposeAuthorizer = permissions.registerAuthorizer("yolo", async () =>
-					enabled ? { kind: "allow" } : { kind: "defer" },
-				);
-			} catch {
-				// Permission system is optional outside the configured Pi setup.
-			}
-		})();
-	});
-
-	pi.on("session_shutdown", () => {
-		active = false;
-		unsubscribeReady();
-		disposeAuthorizer?.();
 	});
 
 	pi.registerCommand("yolo", {
@@ -58,7 +90,18 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 
-			enabled = requested ? requested === "on" : !enabled;
+			const nextEnabled = requested ? requested === "on" : !enabled;
+			try {
+				setNativeYoloMode(nextEnabled);
+			} catch (error) {
+				ctx.ui.notify(
+					`YOLO could not update permission-system config: ${error instanceof Error ? error.message : String(error)}`,
+					"error",
+				);
+				return;
+			}
+
+			enabled = nextEnabled;
 			pi.appendEntry(STATE_TYPE, { enabled });
 			updateStatus(ctx);
 			ctx.ui.notify(
