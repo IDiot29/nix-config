@@ -1,7 +1,7 @@
 {
-  inputs,
   pkgs,
   lib,
+  ...
 }: let
   lazygitBin = "${pkgs.lazygit}/bin/lazygit";
   fishShell = "${pkgs.fish}/bin/fish";
@@ -841,10 +841,8 @@ in {
 
       lua = {
         enable = true;
-        lsp = {
-          enable = true;
-          lazydev.enable = true;
-        };
+        lsp.enable = true;
+        extensions.lazydev.enable = true;
         format.enable = true;
         extraDiagnostics.enable = true;
       };
