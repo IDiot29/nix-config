@@ -205,7 +205,7 @@ in {
         '';
       };
 
-      # Manual treesitter setup using new API (nvf's built-in is broken - issue #1312)
+      # Manual treesitter setup; see https://github.com/NotAShelf/nvf/issues/1312
       nvim-treesitter = {
         package = treesitterWithGrammars;
         setup = ''
@@ -338,6 +338,12 @@ in {
       # };
     };
 
+    lazy.plugins."lazydev-nvim" = {
+      package = "lazydev-nvim";
+      setupModule = "lazydev";
+      ft = "lua";
+    };
+
     snippets.luasnip = {
       enable = true;
       providers = with pkgs.vimPlugins; [
@@ -351,7 +357,7 @@ in {
 
     git.gitsigns.enable = true;
 
-    # FIXME: Temporarily disabled due to nvf bug #1312
+    # FIXME: Temporarily disabled due to https://github.com/NotAShelf/nvf/issues/1312
     # nvim-treesitter.configs module was removed in newer treesitter versions
     # Re-enable once nvf releases a fix
     treesitter = {
@@ -842,7 +848,9 @@ in {
       lua = {
         enable = true;
         lsp.enable = true;
-        extensions.lazydev.enable = true;
+        # Workaround for https://github.com/NotAShelf/nvf/pull/1769:
+        # nvf registers `lazydev` but the package is `lazydev-nvim`.
+        extensions.lazydev.enable = false;
         format.enable = true;
         extraDiagnostics.enable = true;
       };
