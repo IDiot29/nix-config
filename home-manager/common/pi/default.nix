@@ -56,13 +56,13 @@ in {
       hideThinkingBlock = true;
       defaultThinkingLevel = "medium";
       packages = [
-        "npm:cc-safety-net@1.0.6"
+        "npm:cc-safety-net@2.0.3"
         "npm:pi-lens@3.8.74"
-        "npm:pi-mcp-adapter@2.21.1"
-        "npm:@plannotator/pi-extension@0.26.4"
-        "npm:pi-subagents@0.45.0"
-        "npm:@gotgenes/pi-permission-system@24.0.0"
-        "npm:@mtrojnar/pi-usage@0.1.3"
+        "npm:pi-mcp-adapter@2.24.0"
+        "npm:@plannotator/pi-extension@0.27.1"
+        "npm:pi-subagents@0.48.0"
+        "npm:@gotgenes/pi-permission-system@25.1.0"
+        "npm:@mtrojnar/pi-usage@0.1.4"
       ];
     };
   };
