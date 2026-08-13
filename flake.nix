@@ -191,6 +191,10 @@
         assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
         pkgs.runCommand "check-configurations" {} "touch $out";
       rtk = self.packages.x86_64-linux.rtk;
+
+      pi-fast-extension =
+        nixpkgs.legacyPackages.x86_64-linux.callPackage
+        ./home-manager/common/pi/extensions/fast/check.nix {};
     };
 
     homeConfigurations = {

@@ -15,6 +15,7 @@ in {
   home.packages = [skillSecCheck];
 
   home.file = {
+    ".pi/agent/extensions/fast.ts".source = ./extensions/fast/fast.ts;
     ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/extensions/yolo.ts".source = ./extensions/yolo/yolo.ts;
