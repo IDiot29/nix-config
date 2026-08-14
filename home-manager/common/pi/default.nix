@@ -84,7 +84,6 @@ in {
       hideThinkingBlock = true;
       defaultThinkingLevel = "medium";
       packages = [
-        "npm:cc-safety-net@2.0.3"
         "npm:pi-lens@3.8.74"
         "npm:pi-mcp-adapter@2.24.0"
         "npm:@plannotator/pi-extension@0.27.1"
