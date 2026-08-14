@@ -9,7 +9,7 @@
     interactiveShellInit = ''
       set -gx TERM "xterm-256color"
 
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         set -gx PATH ~/.npm-global/bin $PATH
         set -gx NPM_CONFIG_PREFIX ~/.npm-global
       ''}
@@ -17,7 +17,7 @@
       set fish_greeting
 
       set -l fish_secrets_path ~/.config/fish/secrets.fish
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         set fish_secrets_path /run/secrets/rendered/fish-secrets
       ''}
 
@@ -61,7 +61,7 @@
 
       starship init fish | source
 
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         set -gx PATH ~/.npm-global/bin $PATH
         set -gx NPM_CONFIG_PREFIX ~/.npm-global
 
@@ -72,7 +72,7 @@
     '';
 
     shellAliases = {
-      rebuild = "${if pkgs.stdenv.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro"}";
+      rebuild = "${if pkgs.stdenv.hostPlatform.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro"}";
       update-flake = "cd ~/.config/nix && nix flake update";
       g = "git";
       gs = "git status";
@@ -86,7 +86,7 @@
       cd = "z";
       ff = "fastfetch";
       k = "kubectl";
-    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+    } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       bjg = "echo I use NixOS, BTW";
     };
   };

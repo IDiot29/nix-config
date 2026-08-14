@@ -102,10 +102,10 @@ in {
         yaml-language-server
         actionlint
       ])
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.wl-clipboard
       ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         pkgs.pngpaste
       ];
 

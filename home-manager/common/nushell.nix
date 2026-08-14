@@ -28,13 +28,13 @@
     }
 
     # Keep ~/.npm-global/bin early in PATH (Linux)
-    ${lib.optionalString pkgs.stdenv.isLinux ''
+    ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
       _path_prepend ($env.HOME | path join ".npm-global" "bin")
       $env.NPM_CONFIG_PREFIX = ($env.HOME | path join ".npm-global")
     ''}
 
     # Basic Homebrew compatibility for Nushell (macOS)
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
+    ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
       _path_prepend ($env.HOME | path join ".npm-global" "bin")
       $env.NPM_CONFIG_PREFIX = ($env.HOME | path join ".npm-global")
 
@@ -53,10 +53,10 @@
     # Nushell interactive config
 
     # Secrets are managed by sops-nix.
-    ${lib.optionalString pkgs.stdenv.isLinux ''
+    ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
       const secrets = "~/.config/nushell/secrets.nu"
     ''}
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
+    ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
       const secrets = "/run/secrets/rendered/nushell-secrets"
     ''}
     source-env $secrets
@@ -117,27 +117,27 @@
     alias ff = fastfetch
     alias k = kubectl
 
-    ${lib.optionalString pkgs.stdenv.isLinux ''
+    ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
       alias bjg = echo "I use NixOS, BTW"
     ''}
 
     def --env rebuild [] {
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         cd ($env.HOME | path join ".config" "nixos")
         sudo nixos-rebuild switch --flake .#thinker
       ''}
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         cd ($env.HOME | path join ".config" "nixos")
         nix run nix-darwin/master#darwin-rebuild -- switch --flake .#Rivaldos-MacBook-Pro
       ''}
     }
 
     def --env update-flake [] {
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         cd ($env.HOME | path join ".config" "nixos")
         nix flake update
       ''}
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         cd ($env.HOME | path join ".config" "nixos")
         nix flake update
       ''}
