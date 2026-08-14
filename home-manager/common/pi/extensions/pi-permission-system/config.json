@@ -24,8 +24,13 @@
       "~/.pi/agent/auth.json": "deny",
       "~/.pi/agent/settings.json": "deny"
     },
+    "read": {
+      "*": "allow",
+      "~/Documents/Work/Straitpoint/Creds/*": "deny"
+    },
     "bash": {
       "*": "allow",
+      "envsource ~/Documents/Work/Straitpoint/Creds/gh/token.txt": "allow",
       "rm *": "deny",
       "shred *": "deny",
       "wipefs *": "deny",
@@ -45,6 +50,9 @@
       "git clean *": "ask",
       "sudo *": "ask"
     },
-    "external_directory": "ask"
+    "external_directory": {
+      "*": "ask",
+      "~/Documents/Work/Straitpoint/Creds/*": "allow"
+    }
   }
 }
