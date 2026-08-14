@@ -78,6 +78,7 @@ in {
 
     settings = {
       theme = "catppuccin-mocha";
+      tuiMode = "fullscreen";
       defaultProvider = "openai-codex";
       defaultModel = "gpt-5.6-sol";
       hideThinkingBlock = true;
