@@ -19,8 +19,10 @@ in {
     ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
     ".pi/agent/extensions/yolo.ts".source = ./extensions/yolo/yolo.ts;
-    ".pi/agent/extensions/pi-permission-system/config.json".source =
-      ./extensions/pi-permission-system/config.json;
+    ".pi/agent/extensions/pi-permission-system/config.json" = {
+      source = ./extensions/pi-permission-system/config.json;
+      force = true;
+    };
     ".local/bin/pi-package-security-check" = {
       source = ./scripts/pi-package-security-check;
       executable = true;
