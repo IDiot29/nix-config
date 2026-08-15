@@ -57,8 +57,8 @@ in {
       - For version-sensitive technical facts, prefer current primary documentation.
 
       TOOLS
-      - Describes available internal URLs and tools.
-      - Prefer specialized tools over shell commands.
+      - Describes available internal URLs, tools, and MCPs.
+      - Prefer specialized tools and MCPs over shell commands.
 
       Prefer simple, idiomatic, maintainable solutions. Be concise.
     '';
