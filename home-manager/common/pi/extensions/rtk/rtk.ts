@@ -59,6 +59,7 @@ export default async function (pi: ExtensionAPI) {
 			if (
 				typeof command !== "string" ||
 				command.trim() === "" ||
+				/\bfind(?:\s|$)/.test(command) ||
 				command.startsWith("rtk ") ||
 				process.env.RTK_DISABLED === "1"
 			) {

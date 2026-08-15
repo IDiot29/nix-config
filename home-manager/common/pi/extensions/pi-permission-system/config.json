@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
   "yoloMode": false,
   "piInfrastructureReadPaths": [
+    "~/.pi/agent/skills",
     "~/.agents/skills",
     "/tmp/pi-clipboard-*",
     "/private/tmp/pi-clipboard-*",
@@ -54,6 +55,10 @@
     },
     "external_directory": {
       "*": "ask",
+      "~/.pi/agent/skills": "allow",
+      "~/.pi/agent/skills/*": "allow",
+      "~/.agents/skills": "allow",
+      "~/.agents/skills/*": "allow",
       "~/Documents/Work/Straitpoint/Creds/*": "allow"
     }
   }
