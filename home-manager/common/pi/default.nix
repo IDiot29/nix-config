@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{inputs, pkgs, ...}: let
   skillSecCheck = pkgs.writeShellApplication {
     name = "skill-sec-check.sh";
     runtimeInputs = with pkgs; [
@@ -56,6 +56,10 @@ in {
       Research:
       - For version-sensitive technical facts, prefer current primary documentation.
 
+      TOOLS
+      - Describes available internal URLs and tools.
+      - Prefer specialized tools over shell commands.
+
       Prefer simple, idiomatic, maintainable solutions. Be concise.
     '';
   };
@@ -76,7 +80,7 @@ in {
 
   programs.pi-coding-agent = {
     enable = true;
-    package = null;
+    package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
 
     settings = {
       theme = "catppuccin-mocha";
