@@ -92,6 +92,7 @@ in {
       packages = [
         "npm:pi-lens@3.8.74"
         "npm:pi-mcp-adapter@2.24.0"
+        "git:github.com/algal/pi-openai-server-compaction@8a3de2f3b0c178fdd6f73f2f94172dfc3943e466"
         "npm:@plannotator/pi-extension@0.27.1"
         "npm:pi-subagents@0.48.0"
         "npm:@gotgenes/pi-permission-system@25.1.0"
