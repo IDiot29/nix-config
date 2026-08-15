@@ -8,6 +8,7 @@
     ./git.nix
     ./ghostty.nix
     ./herdr.nix
+    ./hunk.nix
     ./kitty.nix
     ./lazygit.nix
     ./opencode/default.nix
