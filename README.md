@@ -29,6 +29,7 @@ The design is simple:
   - `home-manager/nixos/` Linux-only HM modules
   - `home-manager/darwin/` macOS-only HM modules
 - `secrets/` - encrypted secrets data
+- `pkgs/configured-apps/` - wrappers for configured application flake outputs
 - `docs/` - keybind, editor, and Pi behavior docs
   - `docs/PI_YOLO.md` - Pi YOLO behavior and troubleshooting
 - `home-manager/common/pi/extensions/yolo/` - Pi `/yolo` extension and its README
@@ -65,6 +66,22 @@ The repository-owned `rtk` package is exported for both hosts and can be run wit
 nix run github:valdo766hi/nix-config#rtk
 ```
 
+Configured applications are also exported for both supported systems:
+
+```bash
+nix run github:valdo766hi/nix-config#neovim
+nix run github:valdo766hi/nix-config#yazi
+nix run github:valdo766hi/nix-config#lazygit
+nix run github:valdo766hi/nix-config#pi
+```
+
+These outputs reuse the Home Manager configuration. Yazi uses an immutable
+configuration directory, so its `y` shell wrapper cannot change the parent
+shell's directory when launched through `nix run`. LazyGit uses the managed
+Catppuccin configuration and Nix-provided Delta. Pi uses the Nix package while
+its extensions, settings, authentication, and mutable state remain under
+`~/.pi`.
+
 Other installed tools come from nixpkgs and can be run directly with `nix run nixpkgs#<package>` when they provide an executable.
 
 Niri is intentionally split by responsibility: its NixOS module owns installation, system integration, and the display-manager session; Home Manager owns the user configuration file.
@@ -98,7 +115,7 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 
 ## Automated checks
 
-GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions, evaluates both host configurations, and builds the Linux `rtk` package.
+GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions, evaluates both host configurations, and builds the Linux `rtk`, Neovim, Yazi, LazyGit, and Pi packages.
 
 ## Validation shortcuts
 

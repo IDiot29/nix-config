@@ -1,4 +1,4 @@
-{lib, ...}: {
+{pkgs, ...}: {
   xdg.configFile."lazygit/config.yml" = {
     force = true;
     text = ''
@@ -29,7 +29,7 @@
       git:
         pagers:
           - colorArg: always
-            pager: delta --dark --paging=never
+            pager: ${pkgs.delta}/bin/delta --dark --paging=never
     '';
   };
 }

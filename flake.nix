@@ -177,16 +177,40 @@
       secrets = import ./modules/darwin/secrets.nix;
     };
 
-    packages = forAllSystems (system: let
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-      rtk = pkgs.callPackage ./pkgs/rtk {};
-    in {
-      inherit rtk;
-      default = rtk;
-    });
+    packages = forAllSystems (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        home =
+          if system == "x86_64-linux"
+          then self.homeConfigurations."rivaldo@thinker"
+          else self.homeConfigurations."rivaldo@Rivaldos-MacBook-Pro";
+        configuredApps = import ./pkgs/configured-apps {
+          lib = nixpkgs.lib;
+          inherit pkgs;
+        };
+        rtk = pkgs.callPackage ./pkgs/rtk {};
+      in {
+        inherit rtk;
+        default = rtk;
+        neovim = configuredApps.mkNeovim {
+          package = home.config.programs.nvf.finalPackage;
+        };
+        yazi = configuredApps.mkYazi {
+          package = home.config.programs.yazi.package;
+          yaziToml = home.config.xdg.configFile."yazi/yazi.toml".source;
+          themeToml = home.config.xdg.configFile."yazi/theme.toml".source;
+        };
+        lazygit = configuredApps.mkLazygit {
+          package = pkgs.lazygit;
+          configFile = home.config.xdg.configFile."lazygit/config.yml".source;
+        };
+        pi = configuredApps.mkPi {
+          package = home.config.programs."pi-coding-agent".package;
+        };
+      });
 
     checks.x86_64-linux = {
       configurations = let
@@ -196,6 +220,10 @@
         assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
         pkgs.runCommand "check-configurations" {} "touch $out";
       rtk = self.packages.x86_64-linux.rtk;
+      neovim = self.packages.x86_64-linux.neovim;
+      yazi = self.packages.x86_64-linux.yazi;
+      lazygit = self.packages.x86_64-linux.lazygit;
+      pi = self.packages.x86_64-linux.pi;
 
       pi-fast-extension =
         nixpkgs.legacyPackages.x86_64-linux.callPackage

@@ -26,6 +26,7 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - `home-manager/darwin/`: macOS-only Home Manager modules
 - `secrets/secrets.yaml`: encrypted secrets source, including private SSH host configuration
 - `pkgs/rtk/`: repository-owned package exported through `packages.<system>.rtk`
+- `pkgs/configured-apps/`: wrappers for configured Neovim, Yazi, LazyGit, and Pi outputs
 - `docs/`: reference docs and keybindings
 
 ## Placement Rules
@@ -70,6 +71,7 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 ## Safe Validation
 
 - Preferred local check: `nix flake check --all-systems --no-build`
+- Configured applications: `nix run .#neovim`, `nix run .#yazi`, `nix run .#lazygit`, and `nix run .#pi`
 - CI runs: `nix flake check --all-systems`
 - Allowed: non-mutating reads, searches, and static inspection
 - Do not run: `nixos-rebuild`, `darwin-rebuild`, `home-manager switch`, rollback commands, or other privileged/local-machine activation commands
