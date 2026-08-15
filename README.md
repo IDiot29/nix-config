@@ -75,6 +75,12 @@ nix run github:valdo766hi/nix-config#lazygit
 nix run github:valdo766hi/nix-config#pi
 ```
 
+If `home-manager` is not yet on `PATH`, bootstrap the current profile with:
+
+```bash
+nix run .#home-manager -- switch --flake .#rivaldo@Rivaldos-MacBook-Pro
+```
+
 These outputs reuse the Home Manager configuration. Yazi uses an immutable
 configuration directory, so its `y` shell wrapper cannot change the parent
 shell's directory when launched through `nix run`. LazyGit uses the managed
