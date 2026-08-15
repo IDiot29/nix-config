@@ -194,6 +194,7 @@
         rtk = pkgs.callPackage ./pkgs/rtk {};
       in {
         inherit rtk;
+        home-manager = inputs.home-manager.packages.${system}.home-manager;
         default = rtk;
         neovim = configuredApps.mkNeovim {
           package = home.config.programs.nvf.finalPackage;
