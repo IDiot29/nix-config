@@ -80,9 +80,9 @@ in {
       theme = "catppuccin-mocha";
       tuiMode = "fullscreen";
       defaultProvider = "openai-codex";
-      defaultModel = "gpt-5.6-sol";
+      defaultModel = "gpt-5.6-luna";
       hideThinkingBlock = true;
-      defaultThinkingLevel = "medium";
+      defaultThinkingLevel = "max";
       packages = [
         "npm:pi-lens@3.8.74"
         "npm:pi-mcp-adapter@2.24.0"

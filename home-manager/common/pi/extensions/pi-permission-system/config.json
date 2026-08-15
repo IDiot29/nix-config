@@ -4,7 +4,9 @@
   "piInfrastructureReadPaths": [
     "~/.agents/skills",
     "/tmp/pi-clipboard-*",
-    "/var/folders/*/T/pi-clipboard-*"
+    "/private/tmp/pi-clipboard-*",
+    "/var/folders/*/T/pi-clipboard-*",
+    "/private/var/folders/*/T/pi-clipboard-*"
   ],
   "permission": {
     "*": "allow",
