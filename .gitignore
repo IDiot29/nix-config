@@ -13,4 +13,5 @@ result
 result-*
 
 # Subagent artifacts
+.pi/
 .pi-subagents/

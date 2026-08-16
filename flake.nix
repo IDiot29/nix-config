@@ -102,42 +102,72 @@
     home-manager,
     ...
   } @ inputs: let
+    inherit (nixpkgs) lib;
     systems = [
       "x86_64-linux"
       "aarch64-darwin"
     ];
-    forAllSystems = nixpkgs.lib.genAttrs systems;
-    linuxHomeModules = [
-      ./home-manager/home.nix
-      # Note: niri home module is provided via NixOS module integration
-      inputs.dankMaterialShell.homeModules.dank-material-shell
-      inputs.noctalia.homeModules.default
-      inputs.zen-browser.homeModules.beta
-      inputs.nvf.homeManagerModules.default
-      inputs.vicinae.homeManagerModules.default
-      ./home-manager/nixos/default.nix
-    ];
-    darwinHomeModules = [
-      ./home-manager/home.nix
-      inputs.nvf.homeManagerModules.default
-      ./home-manager/darwin/default.nix
-    ];
+    forAllSystems = lib.genAttrs systems;
+    specialArgs = {inherit inputs;};
+    mkPkgs = system:
+      import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+    commonHomeModules = [./home-manager/home.nix];
+    linuxHomeModules =
+      commonHomeModules
+      ++ [
+        # Note: niri home module is provided via NixOS module integration
+        inputs.dankMaterialShell.homeModules.dank-material-shell
+        inputs.noctalia.homeModules.default
+        inputs.zen-browser.homeModules.beta
+        inputs.nvf.homeManagerModules.default
+        inputs.vicinae.homeManagerModules.default
+        ./home-manager/nixos/default.nix
+      ];
+    darwinHomeModules =
+      commonHomeModules
+      ++ [
+        inputs.nvf.homeManagerModules.default
+        ./home-manager/darwin/default.nix
+      ];
+    mkHomeManagerModule = modules: {
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        backupFileExtension = "hm-bak";
+        users.rivaldo.imports = modules;
+        extraSpecialArgs = specialArgs;
+      };
+    };
+    mkHomeConfiguration = {
+      system,
+      modules,
+    }:
+      home-manager.lib.homeManagerConfiguration {
+        pkgs = mkPkgs system;
+        inherit modules;
+        extraSpecialArgs = specialArgs;
+      };
+    homeConfigurations = {
+      "rivaldo@thinker" = mkHomeConfiguration {
+        system = "x86_64-linux";
+        modules = linuxHomeModules;
+      };
+      "rivaldo@Rivaldos-MacBook-Pro" = mkHomeConfiguration {
+        system = "aarch64-darwin";
+        modules = darwinHomeModules;
+      };
+    };
   in {
     nixosConfigurations = {
-      thinker = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
+      thinker = lib.nixosSystem {
+        inherit specialArgs;
         modules = [
           ./hosts/nixos/thinker/configuration.nix
           home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-bak";
-              users.rivaldo.imports = linuxHomeModules;
-              extraSpecialArgs = {inherit inputs;};
-            };
-          }
+          (mkHomeManagerModule linuxHomeModules)
         ];
       };
     };
@@ -145,56 +175,42 @@
     darwinConfigurations = {
       "Rivaldos-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        specialArgs = {inherit inputs;};
+        inherit specialArgs;
         modules = [
           ./hosts/darwin/configuration.nix
           home-manager.darwinModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-bak";
-              users.rivaldo.imports = darwinHomeModules;
-              extraSpecialArgs = {inherit inputs;};
-            };
-          }
+          (mkHomeManagerModule darwinHomeModules)
         ];
       };
     };
 
     nixosModules = {
-      common = import ./modules/nixos/common/default.nix;
-      desktop = import ./modules/nixos/desktop.nix;
-      secrets = import ./modules/nixos/secrets.nix;
-      virtualisation = import ./modules/nixos/virtualisation.nix;
+      common = ./modules/nixos/common/default.nix;
+      desktop = ./modules/nixos/desktop.nix;
+      secrets = ./modules/nixos/secrets.nix;
+      virtualisation = ./modules/nixos/virtualisation.nix;
     };
 
     darwinModules = {
-      aerospace = import ./modules/darwin/aerospace/default.nix;
-      common = import ./modules/darwin/common/default.nix;
-      homebrew = import ./modules/darwin/homebrew/default.nix;
-      omniwm = import ./modules/darwin/omniwm/default.nix;
-      secrets = import ./modules/darwin/secrets.nix;
+      aerospace = ./modules/darwin/aerospace/default.nix;
+      common = ./modules/darwin/common/default.nix;
+      homebrew = ./modules/darwin/homebrew/default.nix;
+      omniwm = ./modules/darwin/omniwm/default.nix;
+      secrets = ./modules/darwin/secrets.nix;
     };
 
     packages = forAllSystems (system:
       let
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-        home =
-          if system == "x86_64-linux"
-          then self.homeConfigurations."rivaldo@thinker"
-          else self.homeConfigurations."rivaldo@Rivaldos-MacBook-Pro";
-        configuredApps = import ./pkgs/configured-apps {
-          lib = nixpkgs.lib;
-          inherit pkgs;
-        };
+        pkgs = mkPkgs system;
+        home = {
+          "x86_64-linux" = homeConfigurations."rivaldo@thinker";
+          "aarch64-darwin" = homeConfigurations."rivaldo@Rivaldos-MacBook-Pro";
+        }.${system};
+        configuredApps = import ./pkgs/configured-apps {inherit lib pkgs;};
         rtk = pkgs.callPackage ./pkgs/rtk {};
       in {
         inherit rtk;
-        home-manager = inputs.home-manager.packages.${system}.home-manager;
+        home-manager = home-manager.packages.${system}.home-manager;
         default = rtk;
         neovim = configuredApps.mkNeovim {
           package = home.config.programs.nvf.finalPackage;
@@ -220,35 +236,14 @@
         assert self.nixosConfigurations.thinker.config.system.build.toplevel.drvPath != "";
         assert self.darwinConfigurations."Rivaldos-MacBook-Pro".system.drvPath != "";
         pkgs.runCommand "check-configurations" {} "touch $out";
-      rtk = self.packages.x86_64-linux.rtk;
-      neovim = self.packages.x86_64-linux.neovim;
-      yazi = self.packages.x86_64-linux.yazi;
-      lazygit = self.packages.x86_64-linux.lazygit;
-      pi = self.packages.x86_64-linux.pi;
+      inherit (self.packages.x86_64-linux) rtk neovim yazi lazygit pi;
 
       pi-fast-extension =
         nixpkgs.legacyPackages.x86_64-linux.callPackage
         ./home-manager/common/pi/extensions/fast/check.nix {};
     };
 
-    homeConfigurations = {
-      "rivaldo@thinker" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "x86_64-linux";
-          config.allowUnfree = true;
-        };
-        extraSpecialArgs = {inherit inputs;};
-        modules = linuxHomeModules;
-      };
+    inherit homeConfigurations;
 
-      "rivaldo@Rivaldos-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        extraSpecialArgs = {inherit inputs;};
-        modules = darwinHomeModules;
-      };
-    };
   };
 }
