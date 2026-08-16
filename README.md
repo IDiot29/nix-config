@@ -32,7 +32,7 @@ The design is simple:
 - `pkgs/configured-apps/` - wrappers for configured application flake outputs
 - `docs/` - keybind, editor, and Pi behavior docs
   - `docs/PI_YOLO.md` - Pi YOLO behavior and troubleshooting
-- `home-manager/common/pi/extensions/yolo/` - Pi `/yolo` extension and its README
+- `home-manager/common/pi/` - Pi package settings, permission policy, checks, and maintenance scripts
 
 ## Daily commands
 
@@ -83,7 +83,9 @@ If `home-manager` is not yet on `PATH`, bootstrap the current profile with:
 nix run .#home-manager -- switch --flake .#rivaldo@Rivaldos-MacBook-Pro
 ```
 
-These outputs reuse the Home Manager configuration. Yazi uses an immutable
+These outputs reuse the Home Manager configuration. Pi loads the `fast`,
+`footer`, and `yolo` extensions from the published `@valdo766hi` npm packages;
+RTK and the Catppuccin theme remain Nix-managed. Yazi uses an immutable
 configuration directory, so its `y` shell wrapper cannot change the parent
 shell's directory when launched through `nix run`. LazyGit uses the managed
 Catppuccin configuration and Nix-provided Delta. Pi uses the Nix package while

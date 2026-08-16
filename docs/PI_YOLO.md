@@ -11,8 +11,9 @@ without disabling the permission policy's explicit denials.
 /yolo off   # disable
 ```
 
-After changing the mode, the next agent turn uses the updated permission
-setting. Restart Pi after a Home Manager activation.
+After changing the mode, the extension reloads Pi so the permission system
+sees the updated setting immediately. Restart Pi after a Home Manager
+activation.
 
 ## What YOLO changes
 
@@ -50,13 +51,13 @@ The source policy is
 
 ## How it is wired
 
-- `home-manager/common/pi/extensions/yolo/yolo.ts` registers the command and
-  stores `yolo-state` in the current Pi session.
+- The published `@valdo766hi/pi-yolo` package registers the command and stores
+  `yolo-state` in the current Pi session.
 - `home-manager/common/pi/extensions/pi-permission-system/config.json` keeps
   native `yoloMode` disabled by default.
 - `/yolo` updates the live permission-system config atomically at
-  `~/.pi/agent/extensions/pi-permission-system/config.json`.
-- Home Manager installs both files through
+  `~/.pi/agent/extensions/pi-permission-system/config.json` and reloads Pi.
+- Home Manager installs the package through the Pi settings in
   `home-manager/common/pi/default.nix`.
 
 Because Home Manager manages the live config path, a later activation can
@@ -66,7 +67,7 @@ again when needed.
 
 ## Troubleshooting
 
-1. Run `/yolo on` and start the next agent turn.
+1. Run `/yolo on` and retry the operation.
 2. Check the footer for `YOLO: ON`.
 3. If an external path still prompts, restart Pi after Home Manager activation
    and try again.

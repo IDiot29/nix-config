@@ -41,10 +41,7 @@ in {
   home.packages = [skillSecCheck];
 
   home.file = {
-    ".pi/agent/extensions/fast.ts".source = ./extensions/fast/fast.ts;
-    ".pi/agent/extensions/footer.ts".source = ./extensions/footer/footer.ts;
     ".pi/agent/extensions/rtk.ts".source = ./extensions/rtk/rtk.ts;
-    ".pi/agent/extensions/yolo.ts".source = ./extensions/yolo/yolo.ts;
     ".pi/agent/extensions/pi-permission-system/config.json" = {
       source = ./extensions/pi-permission-system/config.json;
       force = true;
@@ -123,6 +120,9 @@ in {
         "npm:@plannotator/pi-extension@0.27.1"
         "npm:pi-subagents@0.48.0"
         "npm:@gotgenes/pi-permission-system@25.1.0"
+        "npm:@valdo766hi/pi-fast@0.1.0"
+        "npm:@valdo766hi/pi-footer@0.1.0"
+        "npm:@valdo766hi/pi-yolo@0.1.0"
         "npm:@mtrojnar/pi-usage@0.1.4"
       ];
     };
