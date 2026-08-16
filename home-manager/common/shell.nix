@@ -49,10 +49,23 @@
           return 1
         end
 
-        for line in (cat $envfile | grep -v '^#' | grep -v '^$')
+        for line in (cat $envfile | string match -r -v '^[[:space:]]*(#|$)')
+          set line (string trim -- $line)
+          set line (string replace -r '^export[ \t]+' "" -- $line)
           set item (string split -m 1 '=' -- $line)
+          if test (count $item) -ne 2
+            echo "Skipping malformed line in '$envfile'" >&2
+            continue
+          end
+
+          set -l key $item[1]
+          if not string match -qr '^[A-Za-z_][A-Za-z0-9_]*$' -- $key
+            echo "Skipping invalid variable name '$key' in '$envfile'" >&2
+            continue
+          end
+
           set -l value (string trim --chars='\'"' -- $item[2])
-          set -gx $item[1] $value
+          set -gx $key $value
         end
         echo "Sourced $envfile"
       end

@@ -15,8 +15,16 @@
       fish_secrets = {};
       nushell_secrets = {};
       ssh_config = {};
-      winapps_rdp_user = {};
-      winapps_rdp_pass = {};
+      winapps_rdp_user = {
+        owner = "rivaldo";
+        group = "users";
+        mode = "0400";
+      };
+      winapps_rdp_pass = {
+        owner = "rivaldo";
+        group = "users";
+        mode = "0400";
+      };
     };
 
     templates = {
@@ -53,8 +61,11 @@
           #   WINAPPS CONFIGURATION FILE   #
           ##################################
 
-          RDP_USER="${config.sops.placeholder.winapps_rdp_user}"
-          RDP_PASS="${config.sops.placeholder.winapps_rdp_pass}"
+          # Read credentials at runtime instead of interpolating raw values into
+          # shell syntax. This keeps quotes, dollar signs, and newlines in the
+          # decrypted values from changing the generated configuration.
+          RDP_USER="$(cat /run/secrets/winapps_rdp_user)"
+          RDP_PASS="$(cat /run/secrets/winapps_rdp_pass)"
           RDP_DOMAIN=""
           RDP_IP="127.0.0.1"
           VM_NAME="RDPWindows"

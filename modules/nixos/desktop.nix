@@ -1,11 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
-  services.xserver.enable = true;
-
-  services.desktopManager.gnome.enable = true;
+{pkgs, ...}: {
   services.displayManager.gdm.enable = false;
 
   services.greetd = {

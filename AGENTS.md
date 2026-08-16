@@ -47,13 +47,14 @@ This repo manages one NixOS host (`thinker`) and one macOS host (`Rivaldos-MacBo
 - Prefer `modules/nixos/common/default.nix` or `modules/darwin/common/default.nix` when a tool needs platform-native system options or service wiring.
 - macOS GUI apps belong in Homebrew casks in `modules/darwin/homebrew/default.nix`.
 - Avoid Homebrew formulas for CLI tools unless there is a strong reason Nix cannot own them.
+- `uv` is intentionally host-owned: NixOS installs it system-wide with `nix-ld`; Darwin uses the Homebrew formula.
 
 ## Repo-Specific Facts
 
 - Home Manager has one shared base: `home-manager/home.nix`.
 - NixOS imports `home-manager/nixos/default.nix`; Darwin imports `home-manager/darwin/default.nix`.
 - `backupFileExtension = "hm-bak"` is enabled.
-- Flake mode only sees tracked files. If a new file is added and Nix reports a missing path, run `git add -A`.
+- Flake mode only sees tracked files. If a new file is added and Nix reports a missing path, stage that path explicitly with `git add path/to/file`.
 - Darwin Home Manager uses `/Users/rivaldo`; NixOS uses `/home/rivaldo`.
 - Current secrets include `fish_secrets`, `nushell_secrets`, `ssh_config`, and on NixOS also `winapps_rdp_user` and `winapps_rdp_pass`.
 - External host cache settings are centralized in `caches.nix`. The literal `flake.nix` `nixConfig` values must remain synchronized because flake-level settings cannot import them.

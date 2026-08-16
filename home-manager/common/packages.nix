@@ -7,7 +7,6 @@
 in {
   home.packages = with pkgs; [
     # CLI
-    neovim
     nushell
     btop
     pwgen
@@ -20,8 +19,6 @@ in {
     fluxcd
     cilium-cli
     kustomize
-    podman
-    podman-compose
     fzf
     kubernetes-helm
     jq
@@ -37,6 +34,8 @@ in {
     nixd
     fd
     hunk
+    tree
+    fastfetch
   ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
     ghostty
     keepassxc

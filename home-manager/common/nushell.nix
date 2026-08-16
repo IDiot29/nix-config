@@ -59,7 +59,9 @@
     ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
       const secrets = "/run/secrets/rendered/nushell-secrets"
     ''}
-    source-env $secrets
+    if ($secrets | path exists) {
+      source-env $secrets
+    }
 
     # Source bash-style env files (.env) into Nushell
     def --env envsource [file: path] {
@@ -123,22 +125,22 @@
 
     def --env rebuild [] {
       ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-        cd ($env.HOME | path join ".config" "nixos")
+        cd ($env.HOME | path join ".config" "nix")
         sudo nixos-rebuild switch --flake .#thinker
       ''}
       ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-        cd ($env.HOME | path join ".config" "nixos")
-        nix run nix-darwin/master#darwin-rebuild -- switch --flake .#Rivaldos-MacBook-Pro
+        cd ($env.HOME | path join ".config" "nix")
+        sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro
       ''}
     }
 
     def --env update-flake [] {
       ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-        cd ($env.HOME | path join ".config" "nixos")
+        cd ($env.HOME | path join ".config" "nix")
         nix flake update
       ''}
       ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-        cd ($env.HOME | path join ".config" "nixos")
+        cd ($env.HOME | path join ".config" "nix")
         nix flake update
       ''}
     }

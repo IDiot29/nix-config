@@ -70,7 +70,10 @@ leave the configuration unchanged. A vulnerable candidate is skipped, while
 other secure candidates may still be updated together.
 
 The command finds this repository automatically at `$XDG_CONFIG_HOME/nix`
-(default `~/.config/nix`) or from the current Git checkout. For a different
+(default `~/.config/nix`) or from the current Git checkout. Direct package
+versions are pinned in the Nix module, but the installed dependency tree under
+`~/.pi/agent/npm` remains mutable application state and is not represented in
+`flake.lock`; run the security check after activation. For a different
 checkout, set:
 
 ```sh
@@ -89,6 +92,12 @@ pi-package-security-check
 
 The repair is limited to safe npm fixes and the pinned `fast-uri` override;
 it never uses `npm audit fix --force`.
+
+Pi is launched with an allowlisted environment: only the Context7 and Exa
+credentials needed by its configured MCP servers are passed through from the
+interactive shell. The permission rules are approval UX, not a process
+sandbox; keep the Bash default at `ask` and treat `/yolo` as an explicit
+opt-out.
 
 Both scripts print stable `[INFO]`, `[PASS]`, `[SKIP]`, `[FAIL]`, `[AUDIT]`,
 and `[VULNERABLE]` messages plus meaningful exit codes so people and AI agents

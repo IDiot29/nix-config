@@ -1,4 +1,30 @@
 {inputs, pkgs, ...}: let
+  piPackage = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
+
+  # Pi is launched from shells that contain provider and Git credentials. Keep
+  # only the two credentials required by the configured MCP servers.
+  piLauncher = pkgs.writeShellApplication {
+    name = "pi";
+    runtimeInputs = [pkgs.coreutils];
+    text = ''
+      exec env -i \
+        HOME="$HOME" \
+        PATH="$PATH" \
+        TERM="''${TERM:-xterm-256color}" \
+        LANG="''${LANG:-}" \
+        LC_ALL="''${LC_ALL:-}" \
+        XDG_CONFIG_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}" \
+        XDG_DATA_HOME="''${XDG_DATA_HOME:-$HOME/.local/share}" \
+        XDG_STATE_HOME="''${XDG_STATE_HOME:-$HOME/.local/state}" \
+        XDG_CACHE_HOME="''${XDG_CACHE_HOME:-$HOME/.cache}" \
+        XDG_RUNTIME_DIR="''${XDG_RUNTIME_DIR:-}" \
+        DBUS_SESSION_BUS_ADDRESS="''${DBUS_SESSION_BUS_ADDRESS:-}" \
+        CONTEXT7_API_KEY="''${CONTEXT7_API_KEY:-}" \
+        EXA_API_KEY="''${EXA_API_KEY:-}" \
+        ${piPackage}/bin/pi "$@"
+    '';
+  };
+
   skillSecCheck = pkgs.writeShellApplication {
     name = "skill-sec-check.sh";
     runtimeInputs = with pkgs; [
@@ -81,7 +107,7 @@ in {
 
   programs.pi-coding-agent = {
     enable = true;
-    package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
+    package = piLauncher;
 
     settings = {
       theme = "catppuccin-mocha";

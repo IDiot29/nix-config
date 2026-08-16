@@ -58,6 +58,8 @@ Use one owner per tool to avoid path conflicts:
 - macOS GUI apps -> Homebrew casks
 - Homebrew formulas -> avoid for CLI tools unless strictly necessary
 
+`uv` is an intentional exception: NixOS owns it system-wide alongside `nix-ld`, while Darwin owns it through the Homebrew formula.
+
 If a tool is already managed in Nix, do not also manage it in Brew.
 
 The repository-owned `rtk` package is exported for both hosts and can be run without installation:
@@ -92,6 +94,13 @@ Other installed tools come from nixpkgs and can be run directly with `nix run ni
 
 Niri is intentionally split by responsibility: its NixOS module owns installation, system integration, and the display-manager session; Home Manager owns the user configuration file.
 
+Flatpak apps are intentionally installed outside Home Manager activation so a network or Flathub outage cannot break a profile switch:
+
+```bash
+flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak --user install -y flathub org.telegram.desktop io.kinvolk.Headlamp
+```
+
 ## Secrets
 
 Secrets are managed with `sops-nix`.
@@ -115,13 +124,13 @@ nix shell nixpkgs#sops -c sops secrets/secrets.yaml
    - user-level -> `home-manager/*`
    - shared user-scoped CLI tools -> `home-manager/common/packages.nix`
 3. Import new module from the nearest `default.nix` aggregator.
-4. `git add -A` when adding/renaming files (flakes only see tracked files).
+4. Stage only added or renamed paths explicitly (flakes only see tracked files), for example `git add home-manager/common/new-module.nix`.
 5. Run `nix flake check --all-systems --no-build` again.
 6. Apply on target host.
 
 ## Automated checks
 
-GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions, evaluates both host configurations, and builds the Linux `rtk`, Neovim, Yazi, LazyGit, and Pi packages.
+GitHub Actions runs `nix flake check --all-systems` for every push and pull request. The workflow uses commit-pinned actions, evaluates both host configurations, and builds the Linux Home Manager profile, `rtk`, Neovim, Yazi, LazyGit, Pi, and Pi extension checks.
 
 ## Validation shortcuts
 
@@ -145,7 +154,7 @@ darwin-rebuild build --flake .#Rivaldos-MacBook-Pro
 sudo chown -R rivaldo:staff ~/.config/nushell ~/.config/fish
 ```
 
-- If flake says a path does not exist in `/nix/store/...-source`, you likely forgot to stage files: `git add -A`.
+- If flake says a path does not exist in `/nix/store/...-source`, stage the missing path explicitly with `git add path/to/file`.
 - Host cache settings come from `caches.nix`. Keep the literal `flake.nix` `nixConfig` values synchronized because flake-level settings cannot import them.
 
 ## Rollback

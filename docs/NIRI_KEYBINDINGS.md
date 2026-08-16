@@ -4,12 +4,12 @@ This doc is split into:
 
 - Global Niri keybindings (compositor actions)
 - DMS keybindings (commands that call `dms ipc ...`)
-- Noctalia keybindings (commands that call `noctalia-shell ipc ...`)
+- Noctalia keybindings (commands that call `noctalia ipc ...`)
 
 ## Global: System & Help
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+/` | Show hotkey overlay |
 | `Mod+Shift+E` | Quit Niri (with confirmation) |
 | `Ctrl+Alt+Delete` | Quit Niri |
@@ -19,14 +19,14 @@ This doc is split into:
 ## Global: Application Launcher & Tools
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+T` | Open terminal (alacritty) |
 | `Mod+D` | Launch Vicinae |
 
 ## Global: Window Management
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Q` | Close window |
 | `Mod+W` | Toggle column tabbed display |
 | `Mod+Shift+W` | Toggle window floating |
@@ -36,7 +36,7 @@ This doc is split into:
 ## Global: Window Focus (Arrow Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Left` | Focus column left |
 | `Mod+Right` | Focus column right |
 | `Mod+Up` | Focus window up |
@@ -45,7 +45,7 @@ This doc is split into:
 ## Global: Window Focus (Vim Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+H` | Focus column left |
 | `Mod+L` | Focus column right |
 | `Mod+K` | Focus window up |
@@ -54,7 +54,7 @@ This doc is split into:
 ## Global: Move Windows/Columns (Arrow Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Ctrl+Left` | Move column left |
 | `Mod+Ctrl+Right` | Move column right |
 | `Mod+Ctrl+Up` | Move window up |
@@ -63,7 +63,7 @@ This doc is split into:
 ## Global: Move Windows/Columns (Vim Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Ctrl+H` | Move column left |
 | `Mod+Ctrl+L` | Move column right |
 | `Mod+Ctrl+K` | Move window up |
@@ -72,7 +72,7 @@ This doc is split into:
 ## Global: Column Navigation
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Home` | Focus first column |
 | `Mod+End` | Focus last column |
 | `Mod+Ctrl+Home` | Move column to first |
@@ -81,7 +81,7 @@ This doc is split into:
 ## Global: Monitor Focus (Arrow Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+Left` | Focus monitor left |
 | `Mod+Shift+Right` | Focus monitor right |
 | `Mod+Shift+Up` | Focus monitor up |
@@ -90,7 +90,7 @@ This doc is split into:
 ## Global: Monitor Focus (Vim Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+H` | Focus monitor left |
 | `Mod+Shift+L` | Focus monitor right |
 | `Mod+Shift+K` | Focus monitor up |
@@ -99,7 +99,7 @@ This doc is split into:
 ## Global: Move Column to Monitor (Arrow Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+Ctrl+Left` | Move column to monitor left |
 | `Mod+Shift+Ctrl+Right` | Move column to monitor right |
 | `Mod+Shift+Ctrl+Up` | Move column to monitor up |
@@ -108,7 +108,7 @@ This doc is split into:
 ## Global: Move Column to Monitor (Vim Keys)
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+Ctrl+H` | Move column to monitor left |
 | `Mod+Shift+Ctrl+L` | Move column to monitor right |
 | `Mod+Shift+Ctrl+K` | Move column to monitor up |
@@ -117,7 +117,7 @@ This doc is split into:
 ## Global: Workspace Navigation
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+U` | Focus workspace down |
 | `Mod+I` | Focus workspace up |
 | `Mod+Page_Down` | Focus workspace down |
@@ -127,7 +127,7 @@ This doc is split into:
 ## Global: Move Column to Workspace
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Ctrl+U` | Move column to workspace down |
 | `Mod+Ctrl+I` | Move column to workspace up |
 | `Mod+Ctrl+Page_Down` | Move column to workspace down |
@@ -137,7 +137,7 @@ This doc is split into:
 ## Global: Move Workspace
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Shift+U` | Move workspace down |
 | `Mod+Shift+I` | Move workspace up |
 | `Mod+Shift+Page_Down` | Move workspace down |
@@ -146,7 +146,7 @@ This doc is split into:
 ## Global: Column & Window Sizing
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+R` | Switch preset column width |
 | `Mod+Shift+R` | Switch preset window height |
 | `Mod+Ctrl+R` | Reset window height |
@@ -161,7 +161,7 @@ This doc is split into:
 ## Global: Column Arrangement
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+C` | Center column |
 | `Mod+Ctrl+C` | Center all visible columns |
 | `Mod+BracketLeft` | Consume or expel window left |
@@ -172,13 +172,13 @@ This doc is split into:
 ## Global: Lock Screen
 
 | Keybind | Action |
-|---------|--------|
-| `Super+Alt+L` | Lock screen (swaylock) |
+| --------- | -------- |
+| `Mod+Alt+L` | Lock screen (`dms ipc call lock lock`) |
 
 ## Global: Screenshots
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Print` | Screenshot |
 | `Ctrl+Print` | Screenshot screen |
 | `Alt+Print` | Screenshot window |
@@ -186,7 +186,7 @@ This doc is split into:
 ## Global: Media & Volume
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `XF86AudioRaiseVolume` | Increase volume |
 | `XF86AudioLowerVolume` | Decrease volume |
 | `XF86AudioMute` | Toggle mute |
@@ -197,10 +197,12 @@ This doc is split into:
 ## Global: Mouse Wheel Bindings
 
 ### Workspace Navigation
+
 - `Mod+WheelScrollDown/Up` - Focus workspace down/up
 - `Mod+Ctrl+WheelScrollDown/Up` - Move column to workspace down/up
 
 ### Column Navigation
+
 - `Mod+WheelScrollRight/Left` - Focus column right/left
 - `Mod+Ctrl+WheelScrollRight/Left` - Move column right/left
 - `Mod+Shift+WheelScrollDown/Up` - Focus column right/left
@@ -215,7 +217,7 @@ This doc is split into:
 These keybindings only work when the DMS systemd user service is running.
 
 | Keybind | Action |
-|---------|--------|
+| --------- | -------- |
 | `Mod+Space` | Application launcher (`dms ipc call spotlight toggle`) |
 | `Mod+M` | Task manager (`dms ipc call processlist toggle`) |
 | `Mod+N` | Notification center (`dms ipc call notifications toggle`) |
@@ -230,11 +232,11 @@ These keybindings only work when the Noctalia systemd user service is running.
 They are intentionally non-conflicting with the DMS defaults.
 
 | Keybind | Action |
-|---------|--------|
-| `Mod+Ctrl+Space` | Launcher (`noctalia-shell ipc call launcher toggle`) |
-| `Mod+Ctrl+S` | Control Center (`noctalia-shell ipc call controlCenter toggle`) |
-| `Mod+Ctrl+Comma` | Settings (`noctalia-shell ipc call settings toggle`) |
-| `Mod+Ctrl+N` | Notifications history (`noctalia-shell ipc call notifications toggleHistory`) |
-| `Mod+Ctrl+M` | System monitor (`noctalia-shell ipc call systemMonitor toggle`) |
-| `Mod+Ctrl+V` | Clipboard (`noctalia-shell ipc call launcher clipboard`) |
-| `Mod+Ctrl+Alt+L` | Lock screen (`noctalia-shell ipc call lockScreen lock`) |
+| --------- | -------- |
+| `Mod+Ctrl+Space` | Launcher (`noctalia ipc launcher toggle`) |
+| `Mod+Ctrl+S` | Control Center (`noctalia ipc controlCenter toggle`) |
+| `Mod+Ctrl+Comma` | Settings (`noctalia ipc settings toggle`) |
+| `Mod+Ctrl+N` | Notifications history (`noctalia ipc notifications toggleHistory`) |
+| `Mod+Ctrl+M` | System monitor (`noctalia ipc systemMonitor toggle`) |
+| `Mod+Ctrl+V` | Clipboard (`noctalia ipc launcher clipboard`) |
+| `Mod+Ctrl+Alt+L` | Lock screen (`noctalia ipc lockScreen lock`) |

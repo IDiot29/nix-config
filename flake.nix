@@ -72,6 +72,7 @@
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     nvf = {
@@ -84,9 +85,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    vicinae.url = "github:vicinaehq/vicinae";
+    vicinae = {
+      url = "github:vicinaehq/vicinae";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    vicinae-extensions.url = "github:vicinaehq/extensions";
+    vicinae-extensions = {
+      url = "github:vicinaehq/extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     winapps = {
       url = "github:winapps-org/winapps";
@@ -238,9 +245,15 @@
         pkgs.runCommand "check-configurations" {} "touch $out";
       inherit (self.packages.x86_64-linux) rtk neovim yazi lazygit pi;
 
+      home-profile = self.homeConfigurations."rivaldo@thinker".activationPackage;
+
       pi-fast-extension =
         nixpkgs.legacyPackages.x86_64-linux.callPackage
         ./home-manager/common/pi/extensions/fast/check.nix {};
+
+      pi-tools =
+        nixpkgs.legacyPackages.x86_64-linux.callPackage
+        ./home-manager/common/pi/check.nix {};
     };
 
     inherit homeConfigurations;

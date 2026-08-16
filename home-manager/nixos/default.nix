@@ -1,7 +1,6 @@
-{lib, ...}: {
+{lib, pkgs, ...}: {
   imports = [
     ./dank-material-shell.nix
-    ./flatpak.nix
     ./niri/default.nix
     ./noctalia-shell.nix
     ./vicinae.nix
@@ -9,6 +8,7 @@
   ];
 
   home.homeDirectory = lib.mkDefault "/home/rivaldo";
+  home.packages = [pkgs.podman-compose];
   programs.zen-browser.enable = true;
   systemd.user.startServices = "sd-switch";
 }

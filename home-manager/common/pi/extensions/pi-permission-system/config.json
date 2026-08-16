@@ -25,15 +25,19 @@
       "~/.npmrc": "deny",
       "~/.netrc": "deny",
       "~/.pi/agent/auth.json": "deny",
-      "~/.pi/agent/settings.json": "deny"
+      "~/.pi/agent/settings.json": "deny",
+      "~/.config/fish/secrets.fish": "deny",
+      "~/.config/nushell/secrets.nu": "deny",
+      "~/.config/winapps/winapps.conf": "deny",
+      "/run/secrets/rendered/fish-secrets": "deny",
+      "/run/secrets/rendered/nushell-secrets": "deny"
     },
     "read": {
       "*": "allow",
       "~/Documents/Work/Straitpoint/Creds/*": "deny"
     },
     "bash": {
-      "*": "allow",
-      "envsource ~/Documents/Work/Straitpoint/Creds/gh/token.txt": "allow",
+      "*": "ask",
       "rm *": "deny",
       "shred *": "deny",
       "wipefs *": "deny",
@@ -58,8 +62,7 @@
       "~/.pi/agent/skills": "allow",
       "~/.pi/agent/skills/*": "allow",
       "~/.agents/skills": "allow",
-      "~/.agents/skills/*": "allow",
-      "~/Documents/Work/Straitpoint/Creds/*": "allow"
+      "~/.agents/skills/*": "allow"
     }
   }
 }

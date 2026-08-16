@@ -58,9 +58,6 @@ in {
   users.users.rivaldo = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];
-    packages = with pkgs; [
-      tree
-    ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJetj70q+Atvrws3WlGgJJrqq4Dvnok5OLHccgwy0Xx rivaldo.silalahi@lintasarta.co.id"
     ];
@@ -71,7 +68,12 @@ in {
     enable = true;
     nix-direnv.enable = true;
   };
-  programs.niri.enable = true;
+  # Use nixpkgs' maintained package; the niri-flake package currently expects
+  # a removed libdisplay-info compatibility input.
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri;
+  };
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -83,7 +85,17 @@ in {
   };
   hardware.steam-hardware.enable = true;
   programs.nm-applet.enable = true;
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      openssl
+      libffi
+      glibc
+    ];
+  };
+  environment.localBinInPath = true;
 
   services.openssh = {
     enable = true;
@@ -102,9 +114,7 @@ in {
     vim
     wget
     curl
-    git
     alacritty
-    tailscale
     openvpn
     pritunl-client
     devenv
