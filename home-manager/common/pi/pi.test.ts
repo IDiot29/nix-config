@@ -115,9 +115,13 @@ test("yolo command atomically updates the native permission setting", async () =
 	const handlers = new Map<string, (event: any, ctx: any) => any>();
 	const commands = new Map<string, any>();
 	const entries: unknown[] = [];
+	let reloads = 0;
 	const ctx = {
 		sessionManager: { getBranch: () => [] },
 		ui: { setStatus() {}, notify() {} },
+		reload: async () => {
+			reloads += 1;
+		},
 	};
 	const pi = {
 		on: (event: string, handler: any) => handlers.set(event, handler),
@@ -139,6 +143,7 @@ test("yolo command atomically updates the native permission setting", async () =
 		assert.fail(error);
 	}
 	assert.equal(JSON.parse(readFileSync(configPath, "utf8")).yoloMode, true);
+	assert.equal(reloads, 1);
 	assert.deepEqual(entries, [{ enabled: true }]);
 	try {
 		await yolo.handler("off", ctx);
@@ -146,6 +151,7 @@ test("yolo command atomically updates the native permission setting", async () =
 		assert.fail(error);
 	}
 	assert.equal(JSON.parse(readFileSync(configPath, "utf8")).yoloMode, false);
+	assert.equal(reloads, 2);
 	rmSync(agentDir, { recursive: true, force: true });
 });
 

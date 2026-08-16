@@ -108,6 +108,10 @@ export default function (pi: ExtensionAPI) {
 				`YOLO mode ${enabled ? "on" : "off"}. Hard denials still apply.`,
 				enabled ? "warning" : "info",
 			);
+
+			// pi-permission-system caches its config for the session. Reload so its
+			// in-memory yolo reader sees the file we just updated.
+			await ctx.reload();
 		},
 	});
 }
