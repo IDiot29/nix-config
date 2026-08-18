@@ -122,7 +122,7 @@ in {
         "npm:@gotgenes/pi-permission-system@25.1.0"
         "npm:@valdo766hi/pi-fast@0.1.2"
         "npm:@valdo766hi/pi-footer@0.1.0"
-        "npm:@valdo766hi/pi-yolo@0.1.0"
+        "npm:@valdo766hi/pi-yolo@0.1.2"
         "npm:@valdo766hi/pi-lazy-skill-tool@0.1.1"
         "npm:@mtrojnar/pi-usage@0.1.4"
       ];
