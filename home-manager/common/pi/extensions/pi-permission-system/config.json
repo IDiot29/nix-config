@@ -20,7 +20,6 @@
       "~/.gnupg/*": "deny",
       "~/.aws/*": "deny",
       "~/.config/gcloud/*": "deny",
-      "~/.kube/*": "deny",
       "~/.docker/config.json": "deny",
       "~/.npmrc": "deny",
       "~/.netrc": "deny",
@@ -38,6 +37,7 @@
     "read": {
       "*": "allow",
       "~/Documents/Work/Straitpoint/Creds/*": "deny",
+      "~/.kube/*": "deny",
       "/run/secrets/rendered/ssh-config": "deny",
       "/run/secrets/winapps_rdp_user": "deny",
       "/run/secrets/winapps_rdp_pass": "deny"
