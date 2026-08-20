@@ -21,6 +21,11 @@ EOF
   cp ${./scripts/pi-package-update} pi-package-update
   cp ${./scripts/pi-package-security-check} pi-package-security-check
   chmod +x pi-package-update pi-package-security-check
+  # The Linux build sandbox does not provide /usr/bin/env.
+  substituteInPlace pi-package-update \
+    --replace-fail '#!/usr/bin/env bash' '#!${bash}/bin/bash'
+  substituteInPlace pi-package-security-check \
+    --replace-fail '#!/usr/bin/env bash' '#!${bash}/bin/bash'
   cp ${./pi.test.ts} pi.test.ts
   cat > package.json <<'EOF'
 {"type":"module"}
