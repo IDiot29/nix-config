@@ -27,9 +27,11 @@
       "~/.pi/agent/settings.json": "deny",
       "~/.config/fish/secrets.fish": "deny",
       "~/.config/nushell/secrets.nu": "deny",
+      "~/.config/shell-secrets.env": "deny",
       "~/.config/winapps/winapps.conf": "deny",
       "/run/secrets/rendered/fish-secrets": "deny",
       "/run/secrets/rendered/nushell-secrets": "deny",
+      "/run/secrets/rendered/shell-secrets": "deny",
       "/run/secrets/rendered/ssh-config": "deny",
       "/run/secrets/winapps_rdp_user": "deny",
       "/run/secrets/winapps_rdp_pass": "deny"
@@ -38,6 +40,8 @@
       "*": "allow",
       "~/Documents/Work/Straitpoint/Creds/*": "deny",
       "~/.kube/*": "deny",
+      "~/.config/shell-secrets.env": "deny",
+      "/run/secrets/rendered/shell-secrets": "deny",
       "/run/secrets/rendered/ssh-config": "deny",
       "/run/secrets/winapps_rdp_user": "deny",
       "/run/secrets/winapps_rdp_pass": "deny"

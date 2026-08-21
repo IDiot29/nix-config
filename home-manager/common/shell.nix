@@ -2,7 +2,52 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  commonAliases = {
+    rebuild = "${if pkgs.stdenv.hostPlatform.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro"}";
+    update-flake = "cd ~/.config/nix && nix flake update";
+    g = "git";
+    gs = "git status";
+    ga = "git add";
+    gc = "git commit";
+    gp = "git push";
+    gl = "git log --oneline --graph";
+    ll = "ls -la";
+    vim = "nvim";
+    nv = "nvim";
+    cd = "z";
+    ff = "fastfetch";
+    k = "kubectl";
+  } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+    bjg = "echo I use NixOS, BTW";
+  };
+
+  shellSecretsSource =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then ''
+      if [ -r /run/secrets/rendered/shell-secrets ]; then
+        . /run/secrets/rendered/shell-secrets
+      fi
+    ''
+    else ''
+      if [ -r "$HOME/.config/shell-secrets.env" ]; then
+        . "$HOME/.config/shell-secrets.env"
+      fi
+    '';
+in {
+  programs.bash = {
+    enable = true;
+    bashrcExtra = shellSecretsSource;
+    profileExtra = shellSecretsSource;
+    shellAliases = commonAliases;
+  };
+
+  programs.zsh = {
+    enable = true;
+    envExtra = shellSecretsSource;
+    shellAliases = commonAliases;
+  };
+
   programs.fish = {
     enable = true;
 
@@ -15,15 +60,6 @@
       ''}
 
       set fish_greeting
-
-      set -l fish_secrets_path ~/.config/fish/secrets.fish
-      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-        set fish_secrets_path /run/secrets/rendered/fish-secrets
-      ''}
-
-      if test -f $fish_secrets_path
-        source $fish_secrets_path
-      end
 
       function envsource
         if test (count $argv) -eq 0; or test "$argv[1]" = "--help"
@@ -70,6 +106,15 @@
         echo "Sourced $envfile"
       end
 
+      set -l shell_secrets_path ~/.config/shell-secrets.env
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+        set shell_secrets_path /run/secrets/rendered/shell-secrets
+      ''}
+
+      if test -f $shell_secrets_path
+        envsource $shell_secrets_path >/dev/null
+      end
+
       atuin init fish | sed "s/-k up/up/g" | source
 
       starship init fish | source
@@ -84,23 +129,6 @@
       zoxide init fish | source
     '';
 
-    shellAliases = {
-      rebuild = "${if pkgs.stdenv.hostPlatform.isLinux then "cd ~/.config/nix && sudo nixos-rebuild switch --flake .#thinker" else "cd ~/.config/nix && sudo darwin-rebuild switch --flake .#Rivaldos-MacBook-Pro"}";
-      update-flake = "cd ~/.config/nix && nix flake update";
-      g = "git";
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git log --oneline --graph";
-      ll = "ls -la";
-      vim = "nvim";
-      nv = "nvim";
-      cd = "z";
-      ff = "fastfetch";
-      k = "kubectl";
-    } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-      bjg = "echo I use NixOS, BTW";
-    };
+    shellAliases = commonAliases;
   };
 }

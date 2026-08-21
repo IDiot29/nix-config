@@ -12,8 +12,7 @@
     age.keyFile = "/home/rivaldo/.config/sops/age/keys.txt";
 
     secrets = {
-      fish_secrets = {};
-      nushell_secrets = {};
+      shell_secrets = {};
       ssh_config = {};
       winapps_rdp_user = {
         owner = "rivaldo";
@@ -28,24 +27,12 @@
     };
 
     templates = {
-      "fish-secrets" = {
-        content = ''
-          ${config.sops.placeholder.fish_secrets}
-        '';
+      "shell-secrets" = {
+        content = config.sops.placeholder.shell_secrets;
         owner = "rivaldo";
         group = "users";
         mode = "0400";
-        path = "/home/rivaldo/.config/fish/secrets.fish";
-      };
-
-      "nushell-secrets" = {
-        content = ''
-          ${config.sops.placeholder.nushell_secrets}
-        '';
-        owner = "rivaldo";
-        group = "users";
-        mode = "0400";
-        path = "/home/rivaldo/.config/nushell/secrets.nu";
+        path = "/home/rivaldo/.config/shell-secrets.env";
       };
 
       "ssh-config" = {

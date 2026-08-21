@@ -52,16 +52,13 @@
   xdg.configFile."nushell/config.nu".text = ''
     # Nushell interactive config
 
-    # Secrets are managed by sops-nix.
+    # Shared shell secrets are managed by sops-nix.
     ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-      const secrets = "~/.config/nushell/secrets.nu"
+      const secrets = "~/.config/shell-secrets.env"
     ''}
     ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-      const secrets = "/run/secrets/rendered/nushell-secrets"
+      const secrets = "/run/secrets/rendered/shell-secrets"
     ''}
-    if ($secrets | path exists) {
-      source-env $secrets
-    }
 
     # Source bash-style env files (.env) into Nushell
     def --env envsource [file: path] {
@@ -100,6 +97,10 @@
       }
 
       print $"Sourced ($file)"
+    }
+
+    if ($secrets | path exists) {
+      envsource $secrets | ignore
     }
 
     # Starship / Atuin / Zoxide are loaded via Nushell vendor autoload.
