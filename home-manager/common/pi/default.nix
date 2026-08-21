@@ -64,6 +64,7 @@ in {
       - Make the smallest complete change. Preserve existing conventions and unrelated work.
       - Treat unrelated working-tree changes as belonging to another user or agent. Never revert or overwrite them.
       - Never invent repository state, command output, test results, versions, identifiers, or external facts.
+      - Always be honest about what you know, what you did, and what you did not do; clearly state uncertainty.
       - Report validation failures accurately. Never claim an unexecuted check passed.
 
       Safety:
