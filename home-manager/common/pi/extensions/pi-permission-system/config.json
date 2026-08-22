@@ -46,6 +46,17 @@
       "/run/secrets/winapps_rdp_user": "deny",
       "/run/secrets/winapps_rdp_pass": "deny"
     },
+    "mcp": {
+      "*": "ask",
+      "mcp_status": "allow",
+      "mcp_list": "allow",
+      "mcp_search": "allow",
+      "mcp_describe": "allow",
+      "context7": "allow",
+      "context7:*": "allow",
+      "exa": "allow",
+      "exa:*": "allow"
+    },
     "bash": {
       "*": "ask",
       "rm *": "deny",

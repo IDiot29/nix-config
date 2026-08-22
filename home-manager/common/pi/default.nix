@@ -46,6 +46,7 @@ in {
       source = ./extensions/pi-permission-system/config.json;
       force = true;
     };
+    ".pi/agent/plannotator.json".source = ./extensions/plannotator/config.json;
     ".local/bin/pi-package-security-check" = {
       source = ./scripts/pi-package-security-check;
       executable = true;
@@ -90,6 +91,11 @@ in {
   };
 
   xdg.configFile."mcp/mcp.json".text = builtins.toJSON {
+    settings = {
+      mcpFooterStatus = "compact";
+      scriptMode = true;
+    };
+
     mcpServers = {
       context7 = {
         url = "https://mcp.context7.com/mcp";
@@ -115,17 +121,17 @@ in {
       hideThinkingBlock = true;
       defaultThinkingLevel = "max";
       packages = [
-        "npm:pi-lens@3.8.74"
-        "npm:pi-mcp-adapter@2.26.1"
+        "npm:pi-lens@4.1.1"
+        "npm:pi-mcp-adapter@2.27.0"
         "git:github.com/algal/pi-openai-server-compaction@8a3de2f3b0c178fdd6f73f2f94172dfc3943e466"
-        "npm:@plannotator/pi-extension@0.27.1"
-        "npm:pi-subagents@0.48.0"
-        "npm:@gotgenes/pi-permission-system@25.1.0"
+        "npm:@plannotator/pi-extension@0.27.6"
+        "npm:pi-subagents@0.54.0"
+        "npm:@gotgenes/pi-permission-system@27.0.0"
         "npm:@valdo766hi/pi-fast@0.1.2"
         "npm:@valdo766hi/pi-footer@0.1.0"
         "npm:@valdo766hi/pi-yolo@0.1.2"
         "npm:@valdo766hi/pi-lazy-skill-tool@0.1.1"
-        "npm:@mtrojnar/pi-usage@0.1.4"
+        "npm:@mtrojnar/pi-usage@0.1.5"
       ];
     };
   };
