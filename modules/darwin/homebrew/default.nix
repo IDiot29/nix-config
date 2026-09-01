@@ -45,6 +45,7 @@
       "raycast"
       "telegram"
       "vlc"
+      "cursor"
     ];
 
     taps = [
