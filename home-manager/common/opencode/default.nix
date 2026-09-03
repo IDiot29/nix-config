@@ -1,4 +1,4 @@
-{lib, pkgs, ...}: let
+{inputs, lib, pkgs, ...}: let
   mkModel = {
     name,
     context,
@@ -23,6 +23,7 @@ in {
 
   programs.opencode = {
     enable = lib.mkDefault true;
+    package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2;
     settings = lib.mkDefault {
       plugin = [ ];
 
