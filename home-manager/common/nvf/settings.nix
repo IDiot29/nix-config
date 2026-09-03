@@ -224,17 +224,6 @@ in {
         '';
       };
 
-      # copilot-lua = {
-      #   package = pkgs.vimPlugins.copilot-lua;
-      #   setup = ''
-      #     require('copilot').setup({
-      #       suggestion = { enabled = false },
-      #       panel = { enabled = false },
-      #     })
-      #     require('copilot_cmp').setup()
-      #   '';
-      # };
-
       # FIXME: Disabled temporarily - re-enable when needed
       # copilot-chat = {
       #   package = pkgs.vimPlugins.CopilotChat-nvim;
