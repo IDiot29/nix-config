@@ -7,7 +7,6 @@
     name = "pi";
     runtimeInputs = [pkgs.coreutils];
     text = ''
-      # Pi's built-in OpenCode Go provider expects OPENCODE_API_KEY.
       exec env -i \
         HOME="$HOME" \
         PATH="$PATH" \
