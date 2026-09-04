@@ -2,11 +2,12 @@
   piPackage = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
 
   # Pi is launched from shells that contain provider and Git credentials. Keep
-  # only the two credentials required by the configured MCP servers.
+  # only the credentials required by the configured MCP servers and providers.
   piLauncher = pkgs.writeShellApplication {
     name = "pi";
     runtimeInputs = [pkgs.coreutils];
     text = ''
+      # Pi's built-in OpenCode Go provider expects OPENCODE_API_KEY.
       exec env -i \
         HOME="$HOME" \
         PATH="$PATH" \
@@ -21,6 +22,7 @@
         DBUS_SESSION_BUS_ADDRESS="''${DBUS_SESSION_BUS_ADDRESS:-}" \
         CONTEXT7_API_KEY="''${CONTEXT7_API_KEY:-}" \
         EXA_API_KEY="''${EXA_API_KEY:-}" \
+        OPENCODE_API_KEY="''${OPENCODE_GO_API_KEY:-}" \
         ${piPackage}/bin/pi "$@"
     '';
   };
